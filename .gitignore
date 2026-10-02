@@ -1,0 +1,30 @@
+# NachoQuest - Archivos ignorados por Git
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android Studio
+*.iml
+.idea/
+local.properties
+
+# APK y bundles
+*.apk
+*.aab
+*.ap_
+
+# Firebase (contiene claves sensibles)
+# app/google-services.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+*.class
+
+# Ignorar el plan de trabajo
+plan_nachoquest.md
+docs/plan_nachoquest.md

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "45710268937",
+    "project_id": "nachoquest",
+    "storage_bucket": "nachoquest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45710268937:android:153b77df1ad928dfcdb6d8",
+        "android_client_info": {
+          "package_name": "com.unal.nachoquest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45710268937-hbfl8uovk0tbbi54rk05197olcj6icaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.unal.nachoquest",
+            "certificate_hash": "5602bcec40fc73337b661603caf7ae27e465f68f"
+          }
+        },
+        {
+          "client_id": "45710268937-cie6uok2gmns89h4lppa5dvjjlq3okj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwydwTrzcXE7pv8A0UGOnUGhyVayckWb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45710268937-cie6uok2gmns89h4lppa5dvjjlq3okj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

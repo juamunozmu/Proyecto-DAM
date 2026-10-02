@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NachoQuest</string>
+    <string name="welcome_message">Bienvenido a NachoQuest</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="register">Registrarse</string>
+    <string name="explore">Explorar</string>
+    <string name="profile">Perfil</string>
+    <string name="settings">Ajustes</string>
+    <string name="error_default">Ha ocurrido un error inesperado.</string>
+</resources>
