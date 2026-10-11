@@ -48,9 +48,14 @@ fun NachoQuestTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            try {
+                val activity = view.context as? Activity
+                if (activity != null) {
+                    WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = !darkTheme
+                }
+            } catch (_: Exception) {
+                // Proteccion para capas de personalizacion de fabricantes (Motorola/Xiaomi)
+            }
         }
     }
 

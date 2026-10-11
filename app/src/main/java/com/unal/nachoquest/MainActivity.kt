@@ -16,7 +16,6 @@ import com.unal.nachoquest.ui.theme.NachoQuestTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             NachoQuestTheme {
                 NachoQuestNavHost()

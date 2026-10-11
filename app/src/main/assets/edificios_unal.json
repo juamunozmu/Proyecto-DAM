@@ -1,0 +1,1362 @@
+{
+    "puntos": [
+        {
+            "id": "edif_561",
+            "nombre": "Departamento de Ciencias de Producción Animal",
+            "edificio": "561",
+            "descripcion": "Edificio 561 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.637696,
+            "longitud": -74.0877308,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561"
+            ]
+        },
+        {
+            "id": "edif_561C",
+            "nombre": "Bioterio y Establos de Producción",
+            "edificio": "561C",
+            "descripcion": "Edificio 561C ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6375455,
+            "longitud": -74.0879536,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561C"
+            ]
+        },
+        {
+            "id": "edif_561D",
+            "nombre": "Comportamiento Animal",
+            "edificio": "561D",
+            "descripcion": "Edificio 561D ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6373792,
+            "longitud": -74.0880285,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561D"
+            ]
+        },
+        {
+            "id": "edif_500",
+            "nombre": "Facultad de Ciencias Agrarias",
+            "edificio": "500",
+            "descripcion": "Sede de programas de Agronomía e Ingeniería Agrícola, con invernaderos adyacentes.",
+            "latitud": 4.6359964,
+            "longitud": -74.0872885,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500",
+                "Agronomia",
+                "Ciencias Agrarias"
+            ]
+        },
+        {
+            "id": "edif_210",
+            "nombre": "Facultad de Odontología",
+            "edificio": "210",
+            "descripcion": "Sede de la facultad y clínicas odontológicas universitarias.",
+            "latitud": 4.6344895,
+            "longitud": -74.0852278,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "210",
+                "Odontologia",
+                "Clinicas Odontologicas"
+            ]
+        },
+        {
+            "id": "edif_451",
+            "nombre": "Departamento de Química",
+            "edificio": "451",
+            "descripcion": "Laboratorios de docencia e investigación en química orgánica, inorgánica y analítica.",
+            "latitud": 4.63755,
+            "longitud": -74.0839297,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "451",
+                "Quimica",
+                "Edificio de Quimica"
+            ]
+        },
+        {
+            "id": "edif_301",
+            "nombre": "Facultad de Artes (Bellas Artes)",
+            "edificio": "301",
+            "descripcion": "Espacio de formación en artes plásticas, diseño, arquitectura y cine.",
+            "latitud": 4.6362813,
+            "longitud": -74.0822148,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "301",
+                "Artes",
+                "Bellas Artes"
+            ]
+        },
+        {
+            "id": "edif_104",
+            "nombre": "Auditorio León de Greiff",
+            "edificio": "104",
+            "descripcion": "Monumento Nacional de Colombia, diseñado por Eugenia Mantilla de Cardoso, famoso por su extraordinaria acústica.",
+            "latitud": 4.6357451,
+            "longitud": -74.0823147,
+            "tieneRetoDisponible": true,
+            "alias": [
+                "104",
+                "Leon de Greiff",
+                "Auditorio",
+                "Conciertos"
+            ],
+            "imagenUrl": null
+        },
+        {
+            "id": "edif_102",
+            "nombre": "Biblioteca Central Gabriel García Márquez",
+            "edificio": "102",
+            "descripcion": "Principal centro de documentación del campus, inaugurado en los años 70 y diseñado por Alberto Estrada.",
+            "latitud": 4.6352789,
+            "longitud": -74.0832676,
+            "tieneRetoDisponible": true,
+            "alias": [
+                "102",
+                "Biblioteca",
+                "Biblioteca Central",
+                "Biblio",
+                "Gabo"
+            ],
+            "imagenUrl": "foto_biblioteca"
+        },
+        {
+            "id": "edif_201",
+            "nombre": "Facultad de Derecho y Ciencias Políticas",
+            "edificio": "201",
+            "descripcion": "Edificio histórico declarado Bien de Interés Cultural, diseñado por Alberto Wills Ferro.",
+            "latitud": 4.6354096,
+            "longitud": -74.0839448,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "201",
+                "Derecho",
+                "Ciencias Politicas",
+                "Politica"
+            ],
+            "imagenUrl": null
+        },
+        {
+            "id": "edif_205",
+            "nombre": "Edificio de Sociología",
+            "edificio": "205",
+            "descripcion": "Cuna del primer departamento de sociología en América Latina, fundado por Orlando Fals Borda y Camilo Torres.",
+            "latitud": 4.6345103,
+            "longitud": -74.0839447,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "205",
+                "Sociologia",
+                "Fals Borda"
+            ]
+        },
+        {
+            "id": "edif_207",
+            "nombre": "Museo de Arquitectura Leopoldo Rother",
+            "edificio": "207",
+            "descripcion": "Único museo especializado en arquitectura en Colombia, nombrado en honor al urbanista del campus.",
+            "latitud": 4.6339627,
+            "longitud": -74.0831741,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "207",
+                "Museo de Arquitectura",
+                "Leopoldo Rother"
+            ]
+        },
+        {
+            "id": "edif_217",
+            "nombre": "Edificio Francisco de Paula Santander",
+            "edificio": "217",
+            "descripcion": "Sede administrativa y de docencia de la Facultad de Ciencias Humanas.",
+            "latitud": 4.6333357,
+            "longitud": -74.0831999,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "217",
+                "Santander",
+                "Francisco de Paula Santander"
+            ]
+        },
+        {
+            "id": "edif_214",
+            "nombre": "Edificio Antonio Nariño",
+            "edificio": "214",
+            "descripcion": "Alberga oficinas docentes y aulas especializadas de ciencias humanas y lingüística.",
+            "latitud": 4.6335964,
+            "longitud": -74.0840211,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "214",
+                "Antonio Nariño",
+                "Nariño"
+            ]
+        },
+        {
+            "id": "edif_103",
+            "nombre": "Centro Polideportivo",
+            "edificio": "103",
+            "descripcion": "Instalaciones deportivas cubiertas con canchas múltiples, gimnasio y áreas de acondicionamiento físico.",
+            "latitud": 4.63463,
+            "longitud": -74.0828003,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "103",
+                "Polideportivo",
+                "Poli",
+                "Gimnasio"
+            ]
+        },
+        {
+            "id": "edif_101",
+            "nombre": "Torre de Enfermería",
+            "edificio": "101",
+            "descripcion": "Edificio emblemático de la Facultad de Enfermería y Ciencias de la Salud.",
+            "latitud": 4.6351397,
+            "longitud": -74.0822622,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "101",
+                "Enfermeria",
+                "Torre de Enfermeria"
+            ],
+            "imagenUrl": null
+        },
+        {
+            "id": "edif_317",
+            "nombre": "Museo de Arte UNAL",
+            "edificio": "317",
+            "descripcion": "Espacio de exposiciones de arte contemporáneo abierto al público y la comunidad académica.",
+            "latitud": 4.6345781,
+            "longitud": -74.0808648,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "317",
+                "Museo de Arte",
+                "Arte contemporaneo"
+            ]
+        },
+        {
+            "id": "edif_305",
+            "nombre": "Conservatorio de Música",
+            "edificio": "305",
+            "descripcion": "Formación musical superior con salas de ensayo y auditorios de cámara.",
+            "latitud": 4.6357816,
+            "longitud": -74.0812862,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "305",
+                "Conservatorio",
+                "Musica"
+            ]
+        },
+        {
+            "id": "edif_404",
+            "nombre": "Edificio Yu Takeuchi (Matemáticas y Física)",
+            "edificio": "404",
+            "descripcion": "Nombrado en honor al legendario profesor Yu Takeuchi, aloja los departamentos de Matemáticas y Física.",
+            "latitud": 4.6378857,
+            "longitud": -74.0822089,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "404",
+                "Yu Takeuchi",
+                "Takeuchi",
+                "Matematicas",
+                "Fisica"
+            ]
+        },
+        {
+            "id": "edif_406",
+            "nombre": "Instituto de Extensión e Investigación (IEI)",
+            "edificio": "406",
+            "descripcion": "Centro de investigación y proyectos de ingeniería vinculados con la industria.",
+            "latitud": 4.6383476,
+            "longitud": -74.0825617,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "406",
+                "IEI",
+                "Extension"
+            ]
+        },
+        {
+            "id": "edif_411",
+            "nombre": "Laboratorios de Ingeniería Química",
+            "edificio": "411",
+            "descripcion": "Plantas piloto y laboratorios de termodinámica, reactores y operaciones unitarias.",
+            "latitud": 4.6390267,
+            "longitud": -74.0825286,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "411",
+                "Ingenieria Quimica",
+                "Lab Quimica"
+            ]
+        },
+        {
+            "id": "edif_410",
+            "nombre": "Playa de Modelos",
+            "edificio": "410",
+            "descripcion": "Edificio 410 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.638898,
+            "longitud": -74.0817689,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "410"
+            ]
+        },
+        {
+            "id": "edif_408",
+            "nombre": "Laboratorio de Hidráulica",
+            "edificio": "408",
+            "descripcion": "Edificio 408 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6381907,
+            "longitud": -74.0813045,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "408"
+            ]
+        },
+        {
+            "id": "edif_310",
+            "nombre": "Escuela de Diseño Gráfico",
+            "edificio": "310",
+            "descripcion": "Talleres y laboratorios de tipografía, ilustración y diseño digital.",
+            "latitud": 4.6373416,
+            "longitud": -74.0808077,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "310",
+                "Diseño",
+                "Diseño Grafico"
+            ]
+        },
+        {
+            "id": "edif_314",
+            "nombre": "Edificio SINDÚ (Arquitectura)",
+            "edificio": "314",
+            "descripcion": "Antiguo Servicio Integrado de Dibujo Urbano, actual sede de talleres de arquitectura y urbanismo.",
+            "latitud": 4.6358289,
+            "longitud": -74.0806023,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "314",
+                "Sindu",
+                "SINDÚ",
+                "Taller de Arquitectura",
+                "Arquitectura"
+            ]
+        },
+        {
+            "id": "edif_251",
+            "nombre": "Capilla",
+            "edificio": "251",
+            "descripcion": "Edificio 251 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6328712,
+            "longitud": -74.0814726,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "251"
+            ]
+        },
+        {
+            "id": "edif_229",
+            "nombre": "Departamento de Lenguas Extranjeras",
+            "edificio": "229",
+            "descripcion": "Edificio 229 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6330593,
+            "longitud": -74.0844444,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "229"
+            ]
+        },
+        {
+            "id": "edif_503",
+            "nombre": "Auditorios, Anfiteatros y Microbiología",
+            "edificio": "503",
+            "descripcion": "Edificio 503 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6350474,
+            "longitud": -74.0855803,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "503"
+            ]
+        },
+        {
+            "id": "edif_504",
+            "nombre": "Unidad de Apoyo y Rescate a Animales Salvages",
+            "edificio": "504",
+            "descripcion": "Edificio 504 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6353503,
+            "longitud": -74.0857042,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "504"
+            ]
+        },
+        {
+            "id": "edif_502",
+            "nombre": "Aulas y Laboratorio de Histopatología e Inceminación Artificial",
+            "edificio": "502",
+            "descripcion": "Edificio 502 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6357238,
+            "longitud": -74.0856855,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "502"
+            ]
+        },
+        {
+            "id": "edif_501",
+            "nombre": "Facultad de Medicina Veterinaria y de Zootecnia",
+            "edificio": "501",
+            "descripcion": "Clínicas veterinarias y laboratorios de diagnóstico animal.",
+            "latitud": 4.6361994,
+            "longitud": -74.0858718,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "501",
+                "Veterinaria",
+                "Zootecnia",
+                "Vete"
+            ]
+        },
+        {
+            "id": "edif_505",
+            "nombre": "Laboratorio Inceminación y Corral Equinos",
+            "edificio": "505",
+            "descripcion": "Edificio 505 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6355607,
+            "longitud": -74.0859425,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "505"
+            ]
+        },
+        {
+            "id": "edif_506",
+            "nombre": "Laboratorio Patología Clínica y corral bovinos",
+            "edificio": "506",
+            "descripcion": "Edificio 506 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6362006,
+            "longitud": -74.0861488,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "506"
+            ]
+        },
+        {
+            "id": "edif_476",
+            "nombre": "Ciencias",
+            "edificio": "476",
+            "descripcion": "Edificio 476 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6373057,
+            "longitud": -74.085517,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "476",
+                "Facultad de Ciencias"
+            ]
+        },
+        {
+            "id": "edif_453",
+            "nombre": "Aulas de Ingeniería",
+            "edificio": "453",
+            "descripcion": "Edificio central de clases teóricas para todas las ramas de la Facultad de Ingeniería.",
+            "latitud": 4.6384818,
+            "longitud": -74.0838627,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "453",
+                "Aulas de Ingenieria",
+                "Ingenieria",
+                "Bloque 453"
+            ]
+        },
+        {
+            "id": "edif_606",
+            "nombre": "Instituto Interamericano de Cooperación para la Agricultura",
+            "edificio": "606",
+            "descripcion": "Edificio 606 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.636562,
+            "longitud": -74.0798367,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "606",
+                "IICA - CIRA"
+            ]
+        },
+        {
+            "id": "edif_608",
+            "nombre": "Centro de Cómputo",
+            "edificio": "608",
+            "descripcion": "Edificio 608 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6374078,
+            "longitud": -74.0800052,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "608"
+            ]
+        },
+        {
+            "id": "edif_610",
+            "nombre": "Facultad de Derecho, Ciencias Políticas y Sociales",
+            "edificio": "610",
+            "descripcion": "Edificio 610 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6378363,
+            "longitud": -74.080166,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "610",
+                "FDCPS - (610)"
+            ]
+        },
+        {
+            "id": "edif_615",
+            "nombre": "Laboratorio de Química Ingeominas",
+            "edificio": "615",
+            "descripcion": "Edificio 615 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6393747,
+            "longitud": -74.0809469,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "615"
+            ]
+        },
+        {
+            "id": "edif_631",
+            "nombre": "Servicio Geológico Colombiano",
+            "edificio": "631",
+            "descripcion": "Edificio 631 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6409653,
+            "longitud": -74.0803806,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "631",
+                "Ingeominas (631)"
+            ]
+        },
+        {
+            "id": "edif_421",
+            "nombre": "Biología",
+            "edificio": "421",
+            "descripcion": "Edificio 421 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6410844,
+            "longitud": -74.0817144,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "421",
+                "Facultad Biología"
+            ]
+        },
+        {
+            "id": "edif_425",
+            "nombre": "Instituto de Ciencias Naturales",
+            "edificio": "425",
+            "descripcion": "Edificio 425 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.642061,
+            "longitud": -74.0817817,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "425"
+            ]
+        },
+        {
+            "id": "edif_433",
+            "nombre": "Taller de Imprenta",
+            "edificio": "433",
+            "descripcion": "Edificio 433 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6407247,
+            "longitud": -74.0835029,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "433"
+            ]
+        },
+        {
+            "id": "edif_500I",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500I",
+            "descripcion": "Edificio 500I ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6366078,
+            "longitud": -74.0894691,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500I"
+            ]
+        },
+        {
+            "id": "edif_500J",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500J",
+            "descripcion": "Edificio 500J ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6362941,
+            "longitud": -74.0891165,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500J"
+            ]
+        },
+        {
+            "id": "edif_500K",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500K",
+            "descripcion": "Edificio 500K ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6359816,
+            "longitud": -74.0887655,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500K"
+            ]
+        },
+        {
+            "id": "edif_500H",
+            "nombre": "Invernadero de Programación",
+            "edificio": "500H",
+            "descripcion": "Edificio 500H ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6367313,
+            "longitud": -74.0884425,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500H"
+            ]
+        },
+        {
+            "id": "edif_500A",
+            "nombre": "Planta de Leches y Vegetales",
+            "edificio": "500A",
+            "descripcion": "Edificio 500A ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6359593,
+            "longitud": -74.0880092,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500A",
+                "Facultad de Agronomía"
+            ]
+        },
+        {
+            "id": "edif_761",
+            "nombre": "Concha Acústica",
+            "edificio": "761",
+            "descripcion": "Edificio 761 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6388447,
+            "longitud": -74.087178,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "761"
+            ]
+        },
+        {
+            "id": "edif_621",
+            "nombre": "Instituto Geográfico Agustín Codazzi",
+            "edificio": "621",
+            "descripcion": "Edificio 621 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6390628,
+            "longitud": -74.0799233,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "621",
+                "Instituto Geográfico Agustín Codazzi (621)"
+            ]
+        },
+        {
+            "id": "edif_413",
+            "nombre": "Observatorio Astronómico",
+            "edificio": "413",
+            "descripcion": "Edificio 413 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6397162,
+            "longitud": -74.0833268,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "413",
+                "OAN"
+            ]
+        },
+        {
+            "id": "edif_450",
+            "nombre": "Farmacia",
+            "edificio": "450",
+            "descripcion": "Edificio 450 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6372078,
+            "longitud": -74.0837732,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "450",
+                "Facultad de Farmacia"
+            ]
+        },
+        {
+            "id": "edif_701",
+            "nombre": "Cine y Televisión",
+            "edificio": "701",
+            "descripcion": "Edificio 701 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6405272,
+            "longitud": -74.0855721,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "701",
+                "Facultad de Cine y Televisión"
+            ]
+        },
+        {
+            "id": "edif_409",
+            "nombre": "Laboratorio de Ensayos Hidráulicos",
+            "edificio": "409",
+            "descripcion": "Edificio 409 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6386585,
+            "longitud": -74.0818275,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "409"
+            ]
+        },
+        {
+            "id": "edif_500C",
+            "nombre": "Laboratorio de Control de Calidad",
+            "edificio": "500C",
+            "descripcion": "Edificio 500C ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6356707,
+            "longitud": -74.0877454,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500C"
+            ]
+        },
+        {
+            "id": "edif_401",
+            "nombre": "Edificio Julio Garavito Armero (Ciencia y Tecnología)",
+            "edificio": "401",
+            "descripcion": "Uno de los edificios más modernos del campus, inaugurado con aportes de Luis Carlos Sarmiento Angulo.",
+            "latitud": 4.6372097,
+            "longitud": -74.0829187,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "401",
+                "CYT",
+                "CyT",
+                "Ciencia y Tecnologia",
+                "Garavito"
+            ],
+            "imagenUrl": "foto_cyt"
+        },
+        {
+            "id": "edif_412",
+            "nombre": "Laboratorio de Ingeniería Civil",
+            "edificio": "412",
+            "descripcion": "Instalaciones para ensayos de resistencia de materiales, suelos y estructuras.",
+            "latitud": 4.638834,
+            "longitud": -74.0831455,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "412",
+                "Civil",
+                "Ingenieria Civil"
+            ]
+        },
+        {
+            "id": "edif_477",
+            "nombre": "Aulas de Informática",
+            "edificio": "477",
+            "descripcion": "Edificio 477 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6368752,
+            "longitud": -74.0852969,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "477"
+            ]
+        },
+        {
+            "id": "edif_437",
+            "nombre": "Centro de Acopio de Residuos Sólidos",
+            "edificio": "437",
+            "descripcion": "Edificio 437 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6413338,
+            "longitud": -74.0840314,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "437"
+            ]
+        },
+        {
+            "id": "edif_454",
+            "nombre": "Edificio de Ciencia y Tecnología",
+            "edificio": "454",
+            "descripcion": "Edificio 454 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.638058,
+            "longitud": -74.0847474,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "454",
+                "Edificio de Ciencia y Tecnología Luis Carlos Sarmiento Angulo"
+            ]
+        },
+        {
+            "id": "edif_407",
+            "nombre": "Posgrados en Materiales y Procesos de Manofactura",
+            "edificio": "407",
+            "descripcion": "Edificio 407 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6391199,
+            "longitud": -74.0821296,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "407"
+            ]
+        },
+        {
+            "id": "edif_405",
+            "nombre": "Posgrados en Matematicas y Fisica",
+            "edificio": "405",
+            "descripcion": "Edificio 405 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.637781,
+            "longitud": -74.0817121,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "405",
+                "Piscina"
+            ]
+        },
+        {
+            "id": "edif_452",
+            "nombre": "Posgrado de Química y Carbones",
+            "edificio": "452",
+            "descripcion": "Edificio 452 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6372863,
+            "longitud": -74.0845863,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "452"
+            ]
+        },
+        {
+            "id": "edif_471",
+            "nombre": "Facultad de Medicina",
+            "edificio": "471",
+            "descripcion": "Sede de ciencias biomédicas, anatomía y patología dentro de la Ciudad Universitaria.",
+            "latitud": 4.6363894,
+            "longitud": -74.0843581,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "471",
+                "Medicina",
+                "Facultad de Medicina"
+            ]
+        },
+        {
+            "id": "edif_473",
+            "nombre": "Perrera",
+            "edificio": "473",
+            "descripcion": "Edificio 473 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6366062,
+            "longitud": -74.0851579,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "473",
+                "Facultad de Medicina"
+            ]
+        },
+        {
+            "id": "edif_507",
+            "nombre": "Clínica de Pequeños Animales",
+            "edificio": "507",
+            "descripcion": "Edificio 507 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6366677,
+            "longitud": -74.0862025,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "507"
+            ]
+        },
+        {
+            "id": "edif_510",
+            "nombre": "Farmacia y Oficinas",
+            "edificio": "510",
+            "descripcion": "Edificio 510 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6358232,
+            "longitud": -74.0861993,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "510"
+            ]
+        },
+        {
+            "id": "edif_211",
+            "nombre": "Cafetería Odontología",
+            "edificio": "211",
+            "descripcion": "Edificio 211 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.634384,
+            "longitud": -74.0854588,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "211"
+            ]
+        },
+        {
+            "id": "edif_213",
+            "nombre": "Cafetería Campus",
+            "edificio": "213",
+            "descripcion": "Edificio 213 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.633792,
+            "longitud": -74.0843887,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "213"
+            ]
+        },
+        {
+            "id": "edif_238",
+            "nombre": "Contaduría",
+            "edificio": "238",
+            "descripcion": "Edificio 238 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6326253,
+            "longitud": -74.0831768,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "238"
+            ]
+        },
+        {
+            "id": "edif_230",
+            "nombre": "Banco Popular",
+            "edificio": "230",
+            "descripcion": "Edificio 230 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6329082,
+            "longitud": -74.0847452,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "230"
+            ]
+        },
+        {
+            "id": "edif_311",
+            "nombre": "Ciencias Económicas II",
+            "edificio": "311",
+            "descripcion": "Edificio 311 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6368715,
+            "longitud": -74.0806808,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "311",
+                "Bloque II Facultad Ciencias Económicas"
+            ]
+        },
+        {
+            "id": "edif_500D",
+            "nombre": "Supermercado",
+            "edificio": "500D",
+            "descripcion": "Edificio 500D ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6354551,
+            "longitud": -74.0876365,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500D"
+            ]
+        },
+        {
+            "id": "edif_500F",
+            "nombre": "Invernadero de Control",
+            "edificio": "500F",
+            "descripcion": "Edificio 500F ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6366106,
+            "longitud": -74.0887767,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500F"
+            ]
+        },
+        {
+            "id": "edif_500G",
+            "nombre": "Caseta de Servicios",
+            "edificio": "500G",
+            "descripcion": "Edificio 500G ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6364925,
+            "longitud": -74.0881727,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500G"
+            ]
+        },
+        {
+            "id": "edif_500E",
+            "nombre": "Caseta de Máquinas",
+            "edificio": "500E",
+            "descripcion": "Edificio 500E ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6366563,
+            "longitud": -74.0879825,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500E"
+            ]
+        },
+        {
+            "id": "edif_562",
+            "nombre": "Galpón de Biología (632)",
+            "edificio": "562",
+            "descripcion": "Edificio 562 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6404333,
+            "longitud": -74.0808004,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "562"
+            ]
+        },
+        {
+            "id": "edif_438",
+            "nombre": "Talleres y Vestieres de Mantenimiento",
+            "edificio": "438",
+            "descripcion": "Edificio 438 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6420981,
+            "longitud": -74.0833918,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "438"
+            ]
+        },
+        {
+            "id": "edif_435",
+            "nombre": "Talleres de Mantenimiento",
+            "edificio": "435",
+            "descripcion": "Edificio 435 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6410512,
+            "longitud": -74.0834099,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "435"
+            ]
+        },
+        {
+            "id": "edif_614",
+            "nombre": "Central Telefónica",
+            "edificio": "614",
+            "descripcion": "Edificio 614 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6394823,
+            "longitud": -74.0818133,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "614"
+            ]
+        },
+        {
+            "id": "edif_500M",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500M",
+            "descripcion": "Edificio 500M ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6355595,
+            "longitud": -74.089132,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500M"
+            ]
+        },
+        {
+            "id": "edif_500P",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500P",
+            "descripcion": "Edificio 500P ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6351579,
+            "longitud": -74.0895034,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500P"
+            ]
+        },
+        {
+            "id": "edif_508",
+            "nombre": "Oficinas docentes",
+            "edificio": "508",
+            "descripcion": "Edificio 508 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6364491,
+            "longitud": -74.0861973,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "508"
+            ]
+        },
+        {
+            "id": "edif_561I",
+            "nombre": "Horno Crematorio",
+            "edificio": "561I",
+            "descripcion": "Edificio 561I ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6371307,
+            "longitud": -74.0884344,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561I"
+            ]
+        },
+        {
+            "id": "edif_561H",
+            "nombre": "Aulas y depócitos Unibiblos",
+            "edificio": "561H",
+            "descripcion": "Edificio 561H ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6369098,
+            "longitud": -74.0876416,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561H"
+            ]
+        },
+        {
+            "id": "edif_561F",
+            "nombre": "Bioterio de investigación",
+            "edificio": "561F",
+            "descripcion": "Edificio 561F ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6370991,
+            "longitud": -74.0878283,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561F"
+            ]
+        },
+        {
+            "id": "edif_480",
+            "nombre": "CEMU",
+            "edificio": "480",
+            "descripcion": "Edificio 480 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.63647,
+            "longitud": -74.0851579,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "480",
+                "Depósitos facultad de medicina"
+            ]
+        },
+        {
+            "id": "edif_500B",
+            "nombre": "Archivo Central Histórico",
+            "edificio": "500B",
+            "descripcion": "Edificio 500B ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6355481,
+            "longitud": -74.0885605,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500B"
+            ]
+        },
+        {
+            "id": "edif_561E",
+            "nombre": "Investigaciones Avícolas (561C)",
+            "edificio": "561E",
+            "descripcion": "Edificio 561E ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6371444,
+            "longitud": -74.088103,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561E"
+            ]
+        },
+        {
+            "id": "edif_561A",
+            "nombre": "Oficina de Producción Animal",
+            "edificio": "561A",
+            "descripcion": "Edificio 561A ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6375471,
+            "longitud": -74.0872629,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561A"
+            ]
+        },
+        {
+            "id": "edif_309",
+            "nombre": "Talleres y aulas",
+            "edificio": "309",
+            "descripcion": "Edificio 309 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6362371,
+            "longitud": -74.0805635,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "309"
+            ]
+        },
+        {
+            "id": "edif_561G",
+            "nombre": "Unibiblos",
+            "edificio": "561G",
+            "descripcion": "Edificio 561G ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6371573,
+            "longitud": -74.0875164,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "561G"
+            ]
+        },
+        {
+            "id": "edif_474",
+            "nombre": "Cafeteria de Medicina",
+            "edificio": "474",
+            "descripcion": "Edificio 474 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6367957,
+            "longitud": -74.0844788,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "474"
+            ]
+        },
+        {
+            "id": "edif_231",
+            "nombre": "Departamento de Lenguas Extranjeras",
+            "edificio": "231",
+            "descripcion": "Edificio 231 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6328439,
+            "longitud": -74.0845099,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "231",
+                "Departamento de lenguas extrangeras"
+            ]
+        },
+        {
+            "id": "edif_436",
+            "nombre": "Parque Automotor",
+            "edificio": "436",
+            "descripcion": "Edificio 436 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6416941,
+            "longitud": -74.0834776,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "436"
+            ]
+        },
+        {
+            "id": "edif_212",
+            "nombre": "Aulas de Ciencias Humanas",
+            "edificio": "212",
+            "descripcion": "Espacio principal de clases teóricas de la Facultad de Ciencias Humanas.",
+            "latitud": 4.6339812,
+            "longitud": -74.0846916,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "212",
+                "Humanas",
+                "Aulas de Humanas"
+            ]
+        },
+        {
+            "id": "edif_228",
+            "nombre": "Facultad de Enfermería",
+            "edificio": "228",
+            "descripcion": "Edificio 228 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6353141,
+            "longitud": -74.0848312,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "228"
+            ]
+        },
+        {
+            "id": "edif_604",
+            "nombre": "Edificio 604",
+            "edificio": "604",
+            "descripcion": "Edificio 604 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6346126,
+            "longitud": -74.0799359,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "604"
+            ]
+        },
+        {
+            "id": "edif_605",
+            "nombre": "Edificio 605",
+            "edificio": "605",
+            "descripcion": "Edificio 605 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6349978,
+            "longitud": -74.0798346,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "605"
+            ]
+        },
+        {
+            "id": "edif_239",
+            "nombre": "Filosofía",
+            "edificio": "239",
+            "descripcion": "Edificio 239 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6323858,
+            "longitud": -74.0832596,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "239"
+            ]
+        },
+        {
+            "id": "edif_235",
+            "nombre": "Portería Peatonal Calle 26",
+            "edificio": "235",
+            "descripcion": "Edificio 235 ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6325097,
+            "longitud": -74.0839562,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "235"
+            ]
+        },
+        {
+            "id": "poi_plaza_che",
+            "nombre": "Plaza Central Santander (Plaza Che)",
+            "edificio": "Plaza Central",
+            "descripcion": "El corazón neurálgico y punto de encuentro más icónico de la comunidad estudiantil de la UNAL.",
+            "latitud": 4.63545,
+            "longitud": -74.08274,
+            "tieneRetoDisponible": true,
+            "alias": [
+                "Plaza Che",
+                "Plaza Central",
+                "El Che",
+                "Santander",
+                "Che"
+            ],
+            "imagenUrl": "foto_plaza_che"
+        },
+        {
+            "id": "poi_estadio",
+            "nombre": "Estadio Alfonso López Pumarejo",
+            "edificio": "Estadio",
+            "descripcion": "Estadio olímpico del campus, escenario de grandes eventos deportivos y de la historia atlética universitaria.",
+            "latitud": 4.6395,
+            "longitud": -74.0862,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "Estadio",
+                "Alfonso Lopez",
+                "Cancha de futbol",
+                "Pista"
+            ]
+        },
+        {
+            "id": "poi_concha",
+            "nombre": "Concha Acústica",
+            "edificio": "Concha Acústica",
+            "descripcion": "Espacio al aire libre rodeado de zonas verdes para presentaciones culturales, asambleas y arte estudiantil.",
+            "latitud": 4.6385,
+            "longitud": -74.0848,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "Concha Acustica",
+                "La Concha",
+                "Teatro al aire libre"
+            ]
+        },
+        {
+            "id": "poi_capilla",
+            "nombre": "Capilla Cristo Maestro",
+            "edificio": "Capilla",
+            "descripcion": "Espacio arquitectónico patrimonial diseñado en la modernidad para la comunidad universitaria.",
+            "latitud": 4.6341,
+            "longitud": -74.0825,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "Capilla",
+                "Cristo Maestro",
+                "Iglesia"
+            ]
+        }
+    ]
+}

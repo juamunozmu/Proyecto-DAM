@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.unal.nachoquest"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "0.1.0"
 
@@ -51,6 +51,7 @@ kotlin {
 }
 
 dependencies {
+    implementation("com.github.MKergall:osmbonuspack:6.9.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -64,13 +65,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
 
-    // Firebase y Autenticación con Google
+    // Firebase y AutenticaciÃƒÂ³n con Google
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
 
-    // Inyección de dependencias
+    // InyecciÃƒÂ³n de dependencias
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -80,10 +81,11 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // Imágenes
+    // ImÃƒÂ¡genes
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
-    // Serialización
+    // SerializaciÃƒÂ³n
     implementation(libs.kotlinx.serialization.json)
 
     // Testing

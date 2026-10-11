@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.domain.model
+package com.unal.nachoquest.domain.model
 
 /**
  * Modelo de dominio que representa un punto de interés en el campus UNAL.
@@ -14,5 +14,7 @@ data class PointOfInterest(
     // Lista de coordenadas (Lat, Lon) que forman el polígono de la zona
     val zonaPoligono: List<Pair<Double, Double>>? = null,
     val tieneRetoDisponible: Boolean = false,
-    val visitado: Boolean = false
+    val visitado: Boolean = false,
+    val alias: List<String> = emptyList(),
+    val imagenUrl: String? = null
 )

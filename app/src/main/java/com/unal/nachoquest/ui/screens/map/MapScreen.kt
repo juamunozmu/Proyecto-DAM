@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.ui.screens.map
+package com.unal.nachoquest.ui.screens.map
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -10,6 +10,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,6 +76,14 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
@@ -91,7 +105,7 @@ fun MapScreen(
         if (isGranted) {
             locationOverlay?.enableMyLocation()
         } else {
-            Toast.makeText(context, "Se requiere GPS para ver tu ubicación", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Se requiere GPS para ver tu ubicaciÃ³n", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -134,14 +148,14 @@ fun MapScreen(
                     controller.setZoom(17.0)
                     controller.setCenter(unalCenter)
                     
-                    // Ligeramente más flexible para poder alejar un poquito más
+                    // Ligeramente mÃ¡s flexible para poder alejar un poquito mÃ¡s
                     setScrollableAreaLimitDouble(
                         org.osmdroid.util.BoundingBox(4.650, -74.070, 4.620, -74.100)
                     )
                     minZoomLevel = 13.5
                     maxZoomLevel = 20.0
                     
-                    // Capa de Mi Ubicación
+                    // Capa de Mi UbicaciÃ³n
                     val myLocation = MyLocationNewOverlay(GpsMyLocationProvider(ctx), this)
                     if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         myLocation.enableMyLocation()
@@ -151,7 +165,7 @@ fun MapScreen(
                 }
             },
             update = { mapView ->
-                // Conservar la capa de ubicación (que es MyLocationNewOverlay)
+                // Conservar la capa de ubicaciÃ³n (que es MyLocationNewOverlay)
                 mapView.overlays.removeAll { it is Marker || it is MapEventsOverlay || it is Polygon }
                 
                 val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
@@ -163,23 +177,25 @@ fun MapScreen(
                 })
                 mapView.overlays.add(0, mapEventsOverlay)
                 
-                state.puntosDeInteres.forEach { punto ->
-                    punto.zonaPoligono?.let { coordenadas ->
-                        val polygon = Polygon(mapView).apply {
-                            points = coordenadas.map { GeoPoint(it.first, it.second) }
-                            fillPaint.color = android.graphics.Color.argb(70, 45, 80, 22)
-                            outlinePaint.color = android.graphics.Color.argb(200, 45, 80, 22)
-                            outlinePaint.strokeWidth = 4f
-                            setOnClickListener { _, _, _ ->
-                                viewModel.seleccionarPunto(punto)
-                                true
-                            }
-                        }
-                        mapView.overlays.add(polygon)
-                    }
+                                val clusterer = RadiusMarkerClusterer(context).apply {
+                    val bitmap = (ContextCompat.getDrawable(context, android.R.drawable.presence_online) as BitmapDrawable).bitmap
+                    setIcon(bitmap)
+                    textPaint.textSize = 36f
+                    textPaint.color = android.graphics.Color.WHITE
+                    mAnchorV = Marker.ANCHOR_CENTER
+                    mAnchorU = Marker.ANCHOR_CENTER
+                }
+                
+                val pinVerde = crearPinDrawable(context, android.graphics.Color.rgb(46, 125, 50), false)
+                val pinRojo = crearPinDrawable(context, android.graphics.Color.rgb(220, 20, 60), true)
 
+                var marcadorSeleccionado: Marker? = null
+
+                state.puntosDeInteres.forEach { punto ->
+                    val isSelected = state.puntoSeleccionado?.id == punto.id
                     val marker = Marker(mapView).apply {
                         position = GeoPoint(punto.latitud, punto.longitud)
+                        icon = if (isSelected) pinRojo else pinVerde
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = punto.nombre
                         setOnMarkerClickListener { _, _ ->
@@ -187,26 +203,83 @@ fun MapScreen(
                             true
                         }
                     }
-                    mapView.overlays.add(marker)
+                    if (isSelected) {
+                        marcadorSeleccionado = marker
+                    } else {
+                        clusterer.add(marker)
+                    }
                 }
+                mapView.overlays.add(clusterer)
+
+                // El seleccionado va encima y fuera del clusterer para destacar en rojo
+                marcadorSeleccionado?.let { selectedMarker ->
+                    mapView.overlays.add(selectedMarker)
+                    selectedMarker.showInfoWindow()
+                }
+
                 mapView.invalidate()
             },
             modifier = Modifier.fillMaxSize()
         )
 
-        TopStatusBar(
-            nivel = state.nivelUsuario, xp = state.xpUsuario, estrellas = state.estrellasUsuario,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+                Column(modifier = Modifier.align(Alignment.TopCenter)) {
+            TopStatusBar(
+                nivel = state.nivelUsuario, xp = state.xpUsuario, estrellas = state.estrellasUsuario,
+                modifier = Modifier.fillMaxWidth()
+            )
+            
+            // Barra de bÃºsqueda
+            OutlinedTextField(
+                value = state.searchQuery,
+                onValueChange = { viewModel.actualizarBusqueda(it) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).background(Color.White, RoundedCornerShape(12.dp)),
+                placeholder = { Text("Buscar edificio (ej: CYT, 401)") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+                shape = RoundedCornerShape(12.dp),
+                singleLine = true
+            )
+            
+            // Resultados de bÃºsqueda
+            AnimatedVisibility(visible = state.resultadosBusqueda.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    LazyColumn(modifier = Modifier.height(200.dp)) {
+                        items(state.resultadosBusqueda) { punto ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        viewModel.actualizarBusqueda("") // Limpiar bÃºsqueda
+                                        viewModel.seleccionarPunto(punto)
+                                        mapViewReference?.controller?.animateTo(GeoPoint(punto.latitud, punto.longitud), 18.0, 1000)
+                                    }
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.LocationOn, contentDescription = null, tint = NachoGreen)
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column {
+                                    Text(punto.nombre, fontWeight = FontWeight.Bold)
+                                    Text(punto.edificio, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
-        // Botón flotante para centrar la cámara en el GPS
+        // BotÃ³n flotante para centrar la cÃ¡mara en el GPS
         FloatingActionButton(
             onClick = {
                 val myLoc = locationOverlay?.myLocation
                 if (myLoc != null) {
                     mapViewReference?.controller?.animateTo(myLoc, 18.0, 1000)
                 } else {
-                    Toast.makeText(context, "Buscando ubicación...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Buscando ubicaciÃ³n...", Toast.LENGTH_SHORT).show()
                 }
             },
             containerColor = Color.White,
@@ -240,7 +313,7 @@ private fun TopStatusBar(nivel: Int, xp: Int, estrellas: Int, modifier: Modifier
     Row(modifier = modifier.fillMaxWidth().background(Color.White.copy(alpha = 0.9f)).padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(NachoGreen).padding(horizontal = 16.dp, vertical = 6.dp)) { Text(text = "Nivel ${nivel}", color = Color.White, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold) }
         Spacer(modifier = Modifier.weight(1f))
-        Row(verticalAlignment = Alignment.CenterVertically) { Box(modifier = Modifier.size(24.dp).clip(CircleShape).background(NachoYellow), contentAlignment = Alignment.Center) { Text("⚡", fontSize = 12.sp) }; Spacer(modifier = Modifier.width(4.dp)); Text(text = "${xp}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium) }
+        Row(verticalAlignment = Alignment.CenterVertically) { Box(modifier = Modifier.size(24.dp).clip(CircleShape).background(NachoYellow), contentAlignment = Alignment.Center) { Text("âš¡", fontSize = 12.sp) }; Spacer(modifier = Modifier.width(4.dp)); Text(text = "${xp}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium) }
         Spacer(modifier = Modifier.width(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Default.Star, contentDescription = "Estrellas", tint = NachoYellow, modifier = Modifier.size(24.dp)); Spacer(modifier = Modifier.width(4.dp)); Text(text = "${estrellas}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium) }
     }
@@ -248,30 +321,105 @@ private fun TopStatusBar(nivel: Int, xp: Int, estrellas: Int, modifier: Modifier
 
 @Composable
 private fun PointOfInterestCard(punto: PointOfInterest, onDismiss: () -> Unit, onIniciarReto: (String) -> Unit = {}) {
-    Card(modifier = Modifier.fillMaxWidth().padding(16.dp), shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)).background(NachoGreen.copy(alpha = 0.1f)), contentAlignment = Alignment.Center) { Icon(Icons.Default.LocationOn, contentDescription = null, tint = NachoGreen, modifier = Modifier.size(28.dp)) }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column { Text(text = punto.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold); Text(text = "${punto.edificio} • ${punto.campus}", style = MaterialTheme.typography.bodySmall, color = Color.Gray) }
+    val context = LocalContext.current
+    val imageModel: Any? = remember(punto.imagenUrl) {
+        val raw = punto.imagenUrl?.trim()
+        if (raw.isNullOrBlank()) null
+        else if (raw.startsWith("http://") || raw.startsWith("https://")) raw
+        else {
+            val cleanName = raw.substringBeforeLast(".")
+            val resId = context.resources.getIdentifier(cleanName, "drawable", context.packageName)
+            if (resId != 0) resId
+            else "file:///android_asset/$raw"
+        }
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column {
+            if (imageModel != null) {
+                coil3.compose.AsyncImage(
+                    model = imageModel,
+                    contentDescription = punto.nombre,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(170.dp),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
             }
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(text = punto.descripcion, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
-            if (punto.tieneRetoDisponible) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(colors = CardDefaults.cardColors(containerColor = NachoGreen.copy(alpha = 0.08f)), shape = RoundedCornerShape(12.dp)) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = NachoGreen, modifier = Modifier.size(20.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column { Text("Reto disponible", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = NachoGreenDark); Text("Responde 5 preguntas sobre la historia del lugar", style = MaterialTheme.typography.bodySmall, color = Color.Gray) }
+
+            Column(modifier = Modifier.padding(20.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)).background(NachoGreen.copy(alpha = 0.1f)), contentAlignment = Alignment.Center) { Icon(Icons.Default.LocationOn, contentDescription = null, tint = NachoGreen, modifier = Modifier.size(28.dp)) }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column { Text(text = punto.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold); Text(text = "${punto.edificio} • ${punto.campus}", style = MaterialTheme.typography.bodySmall, color = Color.Gray) }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text = punto.descripcion, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
+                if (punto.tieneRetoDisponible) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Card(colors = CardDefaults.cardColors(containerColor = NachoGreen.copy(alpha = 0.08f)), shape = RoundedCornerShape(12.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = NachoGreen, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column { Text("Reto disponible", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = NachoGreenDark); Text("Responde 5 preguntas sobre la historia del lugar", style = MaterialTheme.typography.bodySmall, color = Color.Gray) }
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (punto.tieneRetoDisponible) { Button(onClick = { onIniciarReto(punto.id) }, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = NachoGreen), shape = RoundedCornerShape(12.dp)) { Text("Comenzar reto", fontWeight = FontWeight.Bold) } }
-                Button(onClick = onDismiss, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray.copy(alpha = 0.3f), contentColor = Color.DarkGray), shape = RoundedCornerShape(12.dp)) { Text("Cerrar") }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if (punto.tieneRetoDisponible) { Button(onClick = { onIniciarReto(punto.id) }, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = NachoGreen), shape = RoundedCornerShape(12.dp)) { Text("Comenzar reto", fontWeight = FontWeight.Bold) } }
+                    Button(onClick = onDismiss, modifier = Modifier.weight(1f).height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray.copy(alpha = 0.3f), contentColor = Color.DarkGray), shape = RoundedCornerShape(12.dp)) { Text("Cerrar") }
+                }
             }
         }
     }
+}
+
+private fun crearPinDrawable(context: android.content.Context, color: Int, isSelected: Boolean): Drawable {
+    val density = context.resources.displayMetrics.density
+    val width = if (isSelected) (36 * density).toInt() else (26 * density).toInt()
+    val height = if (isSelected) (48 * density).toInt() else (36 * density).toInt()
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = color
+        style = Paint.Style.FILL
+    }
+    val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = android.graphics.Color.WHITE
+        style = Paint.Style.STROKE
+        strokeWidth = if (isSelected) 3f * density else 2f * density
+    }
+
+    val radius = width / 2f
+    val path = Path().apply {
+        arcTo(RectF(0f, 0f, width.toFloat(), width.toFloat()), 180f, 180f, false)
+        lineTo(radius, height.toFloat())
+        close()
+    }
+
+    canvas.drawPath(path, paint)
+    canvas.drawPath(path, strokePaint)
+
+    val innerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = android.graphics.Color.WHITE
+        style = Paint.Style.FILL
+    }
+    canvas.drawCircle(radius, radius, radius * 0.42f, innerPaint)
+
+    if (isSelected) {
+        val centerDot = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = color
+            style = Paint.Style.FILL
+        }
+        canvas.drawCircle(radius, radius, radius * 0.22f, centerDot)
+    }
+
+    return BitmapDrawable(context.resources, bitmap)
 }
