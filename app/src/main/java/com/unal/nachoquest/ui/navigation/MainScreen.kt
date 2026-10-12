@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.ui.navigation
+package com.unal.nachoquest.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -110,7 +110,7 @@ fun MainScreen(
                 MapScreen(onIniciarReto = onIniciarReto)
             }
             composable<ChallengesRoute> {
-                ChallengesScreen()
+                ChallengesScreen(onIniciarReto = onIniciarReto)
             }
             composable<InventoryRoute> {
                 InventoryScreen()

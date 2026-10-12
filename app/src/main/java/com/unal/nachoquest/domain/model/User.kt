@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.domain.model
+package com.unal.nachoquest.domain.model
 
 data class UserProfile(
     val id: String = "",
@@ -7,5 +7,7 @@ data class UserProfile(
     val xp: Int = 0,
     val nivel: Int = 1,
     val estrellas: Int = 0,
-    val retosCompletados: List<String> = emptyList()
+    val retosCompletados: List<String> = emptyList(),
+    val itemsDesbloqueados: List<String> = emptyList(),
+    val insignias: List<String> = emptyList()
 )

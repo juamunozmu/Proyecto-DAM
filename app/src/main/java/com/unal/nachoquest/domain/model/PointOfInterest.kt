@@ -16,5 +16,7 @@ data class PointOfInterest(
     val tieneRetoDisponible: Boolean = false,
     val visitado: Boolean = false,
     val alias: List<String> = emptyList(),
-    val imagenUrl: String? = null
+    val imagenUrl: String? = null,
+    val capituloHistoria: Int? = null,
+    val itemRequeridoId: String? = null
 )

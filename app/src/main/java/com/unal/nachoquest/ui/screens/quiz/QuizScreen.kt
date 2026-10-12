@@ -231,61 +231,147 @@ private fun OpcionPregunta(
 
 @Composable
 private fun PantallaResultados(state: QuizUiState, onTerminar: () -> Unit) {
+    val aprobado = state.retoAprobado
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.Star,
+            imageVector = if (aprobado) Icons.Default.CheckCircle else Icons.Default.Close,
             contentDescription = null,
-            modifier = Modifier.size(100.dp),
-            tint = NachoYellow
+            modifier = Modifier.size(80.dp),
+            tint = if (aprobado) NachoGreen else Color(0xFFD32F2F)
         )
-        Spacer(modifier = Modifier.height(24.dp))
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
-            "¡Reto Completado!",
+            text = if (aprobado) "¡Reto Superado!" else "Casi lo logras...",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = NachoGreenDark
+            color = if (aprobado) NachoGreenDark else Color(0xFFD32F2F)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(
-            "Acertaste ${state.respuestasCorrectas} de ${state.reto?.preguntas?.size} preguntas.",
-            style = MaterialTheme.typography.bodyLarge
+            text = "Acertaste ${state.respuestasCorrectas} de ${state.reto?.preguntas?.size} preguntas.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.DarkGray
         )
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Tarjeta de XP
         Card(
-            colors = CardDefaults.cardColors(containerColor = NachoGreen.copy(alpha = 0.1f)),
-            shape = RoundedCornerShape(16.dp)
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Recompensas obtenidas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("⚡", fontSize = 24.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("+${state.xpGanada} XP", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text("⚡", fontSize = 28.sp)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text("Experiencia", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
+                    Text("+${state.xpGanada} XP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = NachoGreenDark)
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        // Ítem Clave de Historia Desbloqueado
+        if (state.itemDesbloqueado != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Card(
+                colors = CardDefaults.cardColors(containerColor = NachoGreen.copy(alpha = 0.12f)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(state.itemDesbloqueado.emojiIcono, fontSize = 32.sp)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text("¡NUEVO ÍTEM CLAVE!", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = NachoGreenDark)
+                        Text(state.itemDesbloqueado.nombre, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                        if (state.itemDesbloqueado.nombrePuntoDesbloqueado != null) {
+                            Text(
+                                "🔓 Abre acceso a: ${state.itemDesbloqueado.nombrePuntoDesbloqueado}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = NachoGreenDark
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Insignia Desbloqueada
+        if (state.insigniaDesbloqueada != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Card(
+                colors = CardDefaults.cardColors(containerColor = NachoYellow.copy(alpha = 0.2f)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(state.insigniaDesbloqueada.emojiIcono, fontSize = 32.sp)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text("¡NUEVA INSIGNIA!", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = Color(0xFFB78103))
+                        Text(state.insigniaDesbloqueada.nombre, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                        Text(state.insigniaDesbloqueada.descripcion, style = MaterialTheme.typography.bodySmall, color = Color.DarkGray, maxLines = 2)
+                    }
+                }
+            }
+        }
+
+        // Coleccionable Desbloqueado
+        if (state.coleccionableDesbloqueado != null) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFEDE7F6)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(state.coleccionableDesbloqueado.emojiIcono, fontSize = 28.sp)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text("COLECCIONABLE DE CAMPUS", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = Color(0xFF512DA8))
+                        Text(state.coleccionableDesbloqueado.nombre, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(28.dp))
 
         Button(
             onClick = onTerminar,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(54.dp)
+                .padding(horizontal = 8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(14.dp)
         ) {
-            Text("Volver al mapa", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(if (aprobado) "Continuar aventura" else "Volver al mapa", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

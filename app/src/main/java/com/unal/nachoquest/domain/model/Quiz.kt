@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.domain.model
+package com.unal.nachoquest.domain.model
 
 data class RetoQuiz(
     val id: String,
@@ -7,7 +7,10 @@ data class RetoQuiz(
     val descripcion: String,
     val preguntas: List<Pregunta>,
     val recompensaXp: Int = 50,
-    val recompensaMonedas: Int = 10
+    val recompensaMonedas: Int = 10,
+    val itemRecompensaId: String? = null,
+    val insigniaRecompensaId: String? = null,
+    val coleccionableRecompensaId: String? = null
 )
 
 data class Pregunta(
