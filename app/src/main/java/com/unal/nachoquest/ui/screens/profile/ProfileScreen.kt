@@ -1,4 +1,4 @@
-﻿package com.unal.nachoquest.ui.screens.profile
+package com.unal.nachoquest.ui.screens.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +48,7 @@ import com.unal.nachoquest.ui.theme.NachoYellow
 
 /**
  * Pantalla de perfil del usuario.
- * Muestra avatar, nivel, XP, estadÃ­sticas y logros.
+ * Muestra avatar, nivel, XP, estadísticas y logros.
  */
 @Composable
 fun ProfileScreen(
@@ -80,8 +80,8 @@ fun ProfileScreen(
                 fontWeight = FontWeight.Bold,
                 color = NachoGreenDark
             )
-            IconButton(onClick = { /* TODO: pantalla de configuraciÃ³n */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "ConfiguraciÃ³n")
+            IconButton(onClick = { /* TODO: pantalla de configuración */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Configuración")
             }
         }
 
@@ -148,7 +148,7 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // EstadÃ­sticas
+        // Estadísticas
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -172,9 +172,9 @@ fun ProfileScreen(
 
         // Logros placeholder
         val logros = listOf(
-            "Primera exploraciÃ³n" to "Visitaste tu primer punto de interÃ©s",
+            "Primera exploración" to "Visitaste tu primer punto de interés",
             "Maestro de biblioteca" to "Completa todos los retos del edificio",
-            "Caminante incansable" to "Visita 10 puntos de interÃ©s"
+            "Caminante incansable" to "Visita 10 puntos de interés"
         )
 
         logros.forEach { (titulo, descripcion) ->
@@ -200,7 +200,7 @@ fun ProfileScreen(
                             .background(Color.LightGray.copy(alpha = 0.5f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("ðŸ”’", fontSize = 16.sp)
+                        Text("🔒", fontSize = 16.sp)
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
@@ -222,13 +222,13 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Cerrar sesiÃ³n
+        // Cerrar sesión
         TextButton(
             onClick = onCerrarSesion,
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
-                text = "Cerrar sesiÃ³n",
+                text = "Cerrar sesión",
                 color = Color.Red.copy(alpha = 0.7f),
                 fontWeight = FontWeight.Bold
             )
@@ -237,7 +237,7 @@ fun ProfileScreen(
 }
 
 /**
- * Componente de estadÃ­stica individual (Retos, Lugares, Insignias).
+ * Componente de estadística individual (Retos, Lugares, Insignias).
  */
 @Composable
 private fun StatItem(value: String, label: String, icon: ImageVector) {

@@ -33,7 +33,7 @@ import com.unal.nachoquest.ui.screens.profile.ProfileScreen
 import com.unal.nachoquest.ui.theme.NachoGreen
 
 /**
- * Elemento de la barra de navegaciÃ³n inferior.
+ * Elemento de la barra de navegación inferior.
  */
 data class BottomNavItem<T : Any>(
     val label: String,
