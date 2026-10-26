@@ -22,9 +22,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class FaseQuiz { INTRO, PREGUNTA, RESULTADO, OUTRO }
+enum class FaseQuiz { INTRO, MINIJUEGO, PREGUNTA, RESULTADO, OUTRO }
 
 const val VIDAS_INICIALES = 3
+// En los capítulos el minijuego es lo principal: después solo hay 3 preguntas y 2 corazones
+private const val PREGUNTAS_CAPITULO = 3
+private const val VIDAS_CAPITULO = 2
+private const val XP_POR_ESTRELLA_MINIJUEGO = 10
 const val TIEMPO_POR_PREGUNTA_MS = 20_000L
 private const val TICK_MS = 100L
 private const val BONO_PERFECTO = 25
@@ -41,6 +45,8 @@ data class QuizUiState(
     val seAcaboElTiempo: Boolean = false,
     val respuestasCorrectas: Int = 0,
     val vidas: Int = VIDAS_INICIALES,
+    val vidasMax: Int = VIDAS_INICIALES,
+    val estrellasMinijuego: Int? = null,
     val racha: Int = 0,
     val mejorRacha: Int = 0,
     val tiempoRestanteMs: Long = TIEMPO_POR_PREGUNTA_MS,
@@ -87,8 +93,10 @@ class QuizViewModel @Inject constructor(
         val nombre = perfil.primerNombre()
         val retoBase = BancoRetos.retoParaPunto(puntoId)
         // Se mezclan las opciones para que la respuesta correcta no esté siempre en el mismo lugar
-        val reto = retoBase.copy(preguntas = retoBase.preguntas.map { it.conOpcionesMezcladas() })
-        val capitulo = Historia.capituloPorReto(reto.id)
+        val capitulo = Historia.capituloPorReto(retoBase.id)
+        val preguntas = if (capitulo != null) retoBase.preguntas.shuffled().take(PREGUNTAS_CAPITULO) else retoBase.preguntas
+        val reto = retoBase.copy(preguntas = preguntas.map { it.conOpcionesMezcladas() })
+        val vidas = if (capitulo != null) VIDAS_CAPITULO else VIDAS_INICIALES
 
         // La intro solo se muestra la primera vez; al repetir se va directo a las preguntas
         val intro = capitulo
@@ -101,22 +109,39 @@ class QuizViewModel @Inject constructor(
             if (it.numero == Historia.capitulos.size) lineas + Historia.escena(Historia.ESCENA_EPILOGO, nombre) else lineas
         }.orEmpty()
 
+        val fase = when {
+            intro.isNotEmpty() -> FaseQuiz.INTRO
+            capitulo != null -> FaseQuiz.MINIJUEGO
+            else -> FaseQuiz.PREGUNTA
+        }
         _uiState.value = QuizUiState(
-            fase = if (intro.isEmpty()) FaseQuiz.PREGUNTA else FaseQuiz.INTRO,
+            fase = fase,
             reto = reto,
             capitulo = capitulo,
             escenaIntro = intro,
             escenaOutro = outro,
+            vidas = vidas,
+            vidasMax = vidas,
             esRepeticion = reto.id in perfil.retosCompletados
         )
-        if (intro.isEmpty()) iniciarTemporizador()
+        if (fase == FaseQuiz.PREGUNTA) iniciarTemporizador()
     }
 
     fun terminarIntro() {
         val state = _uiState.value
         if (state.fase != FaseQuiz.INTRO) return
         state.capitulo?.let { cap -> viewModelScope.launch { userRepository.marcarEscenaVista(cap.escenaIntro) } }
-        _uiState.update { it.copy(fase = FaseQuiz.PREGUNTA) }
+        if (state.capitulo != null) {
+            _uiState.update { it.copy(fase = FaseQuiz.MINIJUEGO) }
+        } else {
+            _uiState.update { it.copy(fase = FaseQuiz.PREGUNTA) }
+            iniciarTemporizador()
+        }
+    }
+
+    fun completarMinijuego(estrellas: Int) {
+        if (_uiState.value.fase != FaseQuiz.MINIJUEGO) return
+        _uiState.update { it.copy(fase = FaseQuiz.PREGUNTA, estrellasMinijuego = estrellas) }
         iniciarTemporizador()
     }
 
@@ -182,6 +207,10 @@ class QuizViewModel @Inject constructor(
                 reto = reto.copy(preguntas = reto.preguntas.map { p -> p.conOpcionesMezcladas() }),
                 capitulo = it.capitulo,
                 escenaOutro = it.escenaOutro,
+                vidas = it.vidasMax,
+                vidasMax = it.vidasMax,
+                // El minijuego ya está superado: al reintentar solo se repiten las preguntas
+                estrellasMinijuego = it.estrellasMinijuego,
                 esRepeticion = it.esRepeticion
             )
         }
@@ -233,16 +262,19 @@ class QuizViewModel @Inject constructor(
         val state = _uiState.value
         val reto = state.reto ?: return
 
-        // Se aprueba si se termina con al menos un corazón (equivale a acertar 3 de 5)
+        // Se aprueba si se termina con al menos un corazón
         val aprobado = !state.sinVidas
         val errores = state.totalPreguntas - state.respuestasCorrectas
-        val estrellas = if (aprobado) (3 - errores).coerceIn(1, 3) else 0
-        val perfecto = errores == 0
+        val estrellasPreguntas = (3 - errores).coerceIn(1, 3)
+        // En los capítulos cuenta lo peor entre el minijuego y las preguntas
+        val estrellas = if (!aprobado) 0 else minOf(estrellasPreguntas, state.estrellasMinijuego ?: 3)
+        val perfecto = errores == 0 && (state.estrellasMinijuego ?: 3) == 3
+        val bonoMinijuego = (state.estrellasMinijuego ?: 0) * XP_POR_ESTRELLA_MINIJUEGO
 
         // La XP solo se gana la primera vez que se aprueba; repetir sirve para mejorar estrellas
         val xp = when {
             !aprobado || state.esRepeticion -> 0
-            else -> reto.recompensaXp + state.bonoVelocidad + if (perfecto) BONO_PERFECTO else 0
+            else -> reto.recompensaXp + state.bonoVelocidad + bonoMinijuego + if (perfecto) BONO_PERFECTO else 0
         }
 
         val primeraVez = aprobado && !state.esRepeticion

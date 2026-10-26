@@ -5,19 +5,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.CatalogoItems
+import com.unal.nachoquest.domain.model.CategoriaLugar
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.PointOfInterest
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.Road
+import org.osmdroid.util.GeoPoint
+import java.text.Normalizer
 import javax.inject.Inject
+
+private const val RADIO_RETO_METROS = 75.0
+private const val RADIO_LLEGADA_METROS = 25.0
+private const val DESVIO_PARA_RECALCULAR_METROS = 45.0
+private const val MS_ENTRE_RECALCULOS = 20_000L
+// Velocidad media caminando, para estimar el tiempo si no hay servicio de rutas
+private const val VELOCIDAD_PEATON_MS = 1.3
 
 enum class EstadoEdificioReto {
     BLOQUEADO_HISTORIA, // Falta ítem requerido
@@ -27,18 +42,37 @@ enum class EstadoEdificioReto {
     SIN_RETO            // Edificio informativo del campus
 }
 
+/** Ruta a pie hacia un lugar del campus. */
+data class Ruta(
+    val destino: PointOfInterest,
+    val puntos: List<GeoPoint>,
+    val distanciaTotalMetros: Double,
+    val duracionSegundos: Double,
+    val distanciaRestanteMetros: Double,
+    // true si no hubo conexión con el servicio de rutas y se muestra una línea recta
+    val aproximada: Boolean
+) {
+    val minutosRestantes: Int
+        get() {
+            val velocidad = if (duracionSegundos > 0) distanciaTotalMetros / duracionSegundos else VELOCIDAD_PEATON_MS
+            return maxOf(1, (distanciaRestanteMetros / velocidad / 60).toInt())
+        }
+}
+
 data class MapUiState(
     val puntosDeInteres: List<PointOfInterest> = emptyList(),
     val puntoSeleccionado: PointOfInterest? = null,
-    val nivelUsuario: Int = 1,
-    val xpUsuario: Int = 0,
-    val estrellasUsuario: Int = 0,
     val itemsUsuario: Set<String> = emptySet(),
     val retosCompletados: Set<String> = emptySet(),
     val ubicacionUsuario: Pair<Double, Double>? = null,
     val modoSimulacionGps: Boolean = false,
     val searchQuery: String = "",
-    val resultadosBusqueda: List<PointOfInterest> = emptyList()
+    val filtroCategoria: CategoriaLugar? = null,
+    val resultadosBusqueda: List<PointOfInterest> = emptyList(),
+    val ruta: Ruta? = null,
+    val calculandoRuta: Boolean = false,
+    val llegadaA: PointOfInterest? = null,
+    val aviso: String? = null
 ) {
     /** Capítulo de la historia que el jugador debe jugar ahora (null si ya terminó). */
     val capituloObjetivo: Capitulo?
@@ -50,22 +84,13 @@ data class MapUiState(
     fun calcularDistanciaMetros(punto: PointOfInterest): Double? {
         if (modoSimulacionGps) return 0.0
         val ubi = ubicacionUsuario ?: return null
-        val r = 6371000.0
-        val dLat = Math.toRadians(punto.latitud - ubi.first)
-        val dLon = Math.toRadians(punto.longitud - ubi.second)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(ubi.first)) * Math.cos(Math.toRadians(punto.latitud)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return r * c
+        return distanciaMetros(ubi.first, ubi.second, punto.latitud, punto.longitud)
     }
 
     fun obtenerEstadoReto(punto: PointOfInterest): EstadoEdificioReto {
         if (!punto.tieneRetoDisponible) return EstadoEdificioReto.SIN_RETO
 
-        val retoId = Historia.retoIdParaPunto(punto.id)
-
-        if (retosCompletados.contains(retoId)) {
+        if (Historia.retoIdParaPunto(punto.id) in retosCompletados) {
             return EstadoEdificioReto.YA_COMPLETADO
         }
 
@@ -75,12 +100,8 @@ data class MapUiState(
             return EstadoEdificioReto.BLOQUEADO_HISTORIA
         }
 
-        if (modoSimulacionGps) {
-            return EstadoEdificioReto.LISTO_PARA_JUGAR
-        }
-
         val dist = calcularDistanciaMetros(punto)
-        return if (dist == null || dist > 75.0) {
+        return if (dist == null || dist > RADIO_RETO_METROS) {
             EstadoEdificioReto.FUERA_DE_RANGO
         } else {
             EstadoEdificioReto.LISTO_PARA_JUGAR
@@ -104,46 +125,30 @@ class MapViewModel @Inject constructor(
     )
     val mapState: StateFlow<MapUiState> = _mapState.asStateFlow()
 
-    init {
-        observarPerfilUsuario()
+    private val roadManager by lazy {
+        OSRMRoadManager(context, context.packageName).apply { setMean(OSRMRoadManager.MEAN_BY_FOOT) }
     }
+    private var trabajoRuta: Job? = null
+    private var ultimoCalculoRuta = 0L
 
-    private fun observarPerfilUsuario() {
+    init {
         viewModelScope.launch {
             userRepository.userProfileFlow.collect { perfil ->
                 _mapState.update {
                     it.copy(
-                        nivelUsuario = perfil.nivel,
-                        xpUsuario = perfil.xp,
-                        estrellasUsuario = perfil.estrellas,
                         itemsUsuario = perfil.itemsDesbloqueados.toSet(),
                         retosCompletados = perfil.retosCompletados.toSet()
                     )
                 }
             }
         }
-        cargarDatosUsuario()
-    }
-
-    fun cargarDatosUsuario() {
-        viewModelScope.launch {
-            val perfil = userRepository.getUserProfile()
-            if (perfil != null) {
-                _mapState.update {
-                    it.copy(
-                        nivelUsuario = perfil.nivel,
-                        xpUsuario = perfil.xp,
-                        estrellasUsuario = perfil.estrellas,
-                        itemsUsuario = perfil.itemsDesbloqueados.toSet(),
-                        retosCompletados = perfil.retosCompletados.toSet()
-                    )
-                }
-            }
-        }
+        viewModelScope.launch { userRepository.getUserProfile() }
     }
 
     fun actualizarUbicacionUsuario(lat: Double, lon: Double) {
-        _mapState.update { it.copy(ubicacionUsuario = Pair(lat, lon)) }
+        if (_mapState.value.modoSimulacionGps) return
+        _mapState.update { it.copy(ubicacionUsuario = lat to lon) }
+        seguirRuta(lat, lon)
     }
 
     fun toggleModoSimulacion() {
@@ -160,19 +165,32 @@ class MapViewModel @Inject constructor(
     }
 
     fun actualizarBusqueda(query: String) {
-        _mapState.update { state ->
-            val puntos = if (query.isBlank()) {
-                emptyList()
-            } else {
-                state.puntosDeInteres.filter { punto ->
-                    val q = query.lowercase()
-                    punto.nombre.lowercase().contains(q) ||
-                    punto.edificio.lowercase().contains(q) ||
-                    punto.alias.any { it.lowercase().contains(q) }
-                }
-            }
-            state.copy(searchQuery = query, resultadosBusqueda = puntos)
+        _mapState.update { it.copy(searchQuery = query, filtroCategoria = null).conResultados() }
+    }
+
+    fun alternarFiltro(categoria: CategoriaLugar) {
+        _mapState.update {
+            val nuevo = if (it.filtroCategoria == categoria) null else categoria
+            it.copy(filtroCategoria = nuevo, searchQuery = "").conResultados()
         }
+    }
+
+    fun limpiarBusqueda() {
+        _mapState.update { it.copy(searchQuery = "", filtroCategoria = null, resultadosBusqueda = emptyList()) }
+    }
+
+    private fun MapUiState.conResultados(): MapUiState {
+        val q = normalizar(searchQuery)
+        val resultados = when {
+            filtroCategoria != null -> puntosDeInteres.filter { it.categoria == filtroCategoria }
+            q.isBlank() -> emptyList()
+            else -> puntosDeInteres.filter { punto ->
+                normalizar(punto.nombre).contains(q) ||
+                    normalizar(punto.edificio).contains(q) ||
+                    punto.alias.any { normalizar(it).contains(q) }
+            }
+        }
+        return copy(resultadosBusqueda = resultados.sortedBy { p -> calcularDistanciaMetros(p) ?: Double.MAX_VALUE })
     }
 
     fun seleccionarPunto(punto: PointOfInterest) {
@@ -184,39 +202,118 @@ class MapViewModel @Inject constructor(
         _mapState.update { it.copy(puntoSeleccionado = null) }
     }
 
+    fun descartarAviso() {
+        _mapState.update { it.copy(aviso = null) }
+    }
+
+    fun cerrarLlegada() {
+        _mapState.update { it.copy(llegadaA = null) }
+    }
+
+    // ---------- Rutas a pie ----------
+
+    fun trazarRuta(destino: PointOfInterest) {
+        val origen = _mapState.value.ubicacionUsuario
+        if (origen == null) {
+            _mapState.update { it.copy(aviso = "Aún no tenemos tu ubicación. Activa el GPS y espera unos segundos.") }
+            return
+        }
+        _mapState.update { it.copy(puntoSeleccionado = null, llegadaA = null, calculandoRuta = true) }
+        calcularRuta(origen, destino)
+    }
+
+    fun cancelarRuta() {
+        trabajoRuta?.cancel()
+        _mapState.update { it.copy(ruta = null, calculandoRuta = false) }
+    }
+
+    private fun calcularRuta(origen: Pair<Double, Double>, destino: PointOfInterest) {
+        trabajoRuta?.cancel()
+        ultimoCalculoRuta = System.currentTimeMillis()
+        trabajoRuta = viewModelScope.launch {
+            val desde = GeoPoint(origen.first, origen.second)
+            val hasta = GeoPoint(destino.latitud, destino.longitud)
+            val road = withContext(Dispatchers.IO) {
+                try {
+                    roadManager.getRoad(arrayListOf(desde, hasta))
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            val ruta = if (road != null && road.mStatus == Road.STATUS_OK && road.mRouteHigh.size >= 2) {
+                Ruta(
+                    destino = destino,
+                    puntos = road.mRouteHigh,
+                    distanciaTotalMetros = road.mLength * 1000,
+                    duracionSegundos = road.mDuration,
+                    distanciaRestanteMetros = road.mLength * 1000,
+                    aproximada = false
+                )
+            } else {
+                val metros = distanciaMetros(desde.latitude, desde.longitude, hasta.latitude, hasta.longitude)
+                Ruta(destino, listOf(desde, hasta), metros, metros / VELOCIDAD_PEATON_MS, metros, aproximada = true)
+            }
+            _mapState.update { it.copy(ruta = ruta, calculandoRuta = false) }
+        }
+    }
+
+    /** Actualiza la distancia restante, detecta la llegada y recalcula si el jugador se desvía. */
+    private fun seguirRuta(lat: Double, lon: Double) {
+        val ruta = _mapState.value.ruta ?: return
+        val destino = ruta.destino
+
+        if (distanciaMetros(lat, lon, destino.latitud, destino.longitud) <= RADIO_LLEGADA_METROS) {
+            _mapState.update { it.copy(ruta = null, llegadaA = destino, puntoSeleccionado = null) }
+            return
+        }
+
+        // Punto de la ruta más cercano al jugador
+        val (indice, desvio) = ruta.puntos.withIndex()
+            .map { (i, p) -> i to distanciaMetros(lat, lon, p.latitude, p.longitude) }
+            .minBy { it.second }
+
+        if (!ruta.aproximada && desvio > DESVIO_PARA_RECALCULAR_METROS &&
+            System.currentTimeMillis() - ultimoCalculoRuta > MS_ENTRE_RECALCULOS
+        ) {
+            calcularRuta(lat to lon, destino)
+            return
+        }
+
+        var restante = desvio
+        for (i in indice until ruta.puntos.lastIndex) {
+            val a = ruta.puntos[i]
+            val b = ruta.puntos[i + 1]
+            restante += distanciaMetros(a.latitude, a.longitude, b.latitude, b.longitude)
+        }
+        if (ruta.aproximada) restante = distanciaMetros(lat, lon, destino.latitud, destino.longitud)
+        _mapState.update { it.copy(ruta = ruta.copy(distanciaRestanteMetros = restante)) }
+    }
+
+    // ---------- Datos ----------
+
     private fun puntosIniciales(): List<PointOfInterest> {
         val puntos = mutableListOf<PointOfInterest>()
         try {
-            val inputStream = context.assets.open("edificios_unal.json")
-            val size = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-
-            val jsonString = String(buffer, Charsets.UTF_8)
-            val jsonObject = JSONObject(jsonString)
-            val jsonArray = jsonObject.getJSONArray("puntos")
+            val jsonString = context.assets.open("edificios_unal.json").bufferedReader(Charsets.UTF_8).use { it.readText() }
+            val jsonArray = JSONObject(jsonString).getJSONArray("puntos")
 
             for (i in 0 until jsonArray.length()) {
                 val item = jsonArray.getJSONObject(i)
 
                 val aliasArray = item.getJSONArray("alias")
-                val aliasList = mutableListOf<String>()
-                for (j in 0 until aliasArray.length()) {
-                    aliasList.add(aliasArray.getString(j))
-                }
+                val aliasList = List(aliasArray.length()) { j -> aliasArray.getString(j) }
 
                 puntos.add(
                     PointOfInterest(
                         id = item.getString("id"),
                         nombre = item.getString("nombre"),
                         edificio = item.getString("edificio"),
-                        descripcion = item.getString("descripcion"),
+                        descripcion = item.optString("descripcion"),
                         latitud = item.getDouble("latitud"),
                         longitud = item.getDouble("longitud"),
-                        tieneRetoDisponible = if (item.has("tieneRetoDisponible")) item.getBoolean("tieneRetoDisponible") else false,
-                        alias = aliasList,
-                        imagenUrl = if (item.has("imagenUrl") && !item.isNull("imagenUrl")) item.getString("imagenUrl") else null
+                        categoria = CategoriaLugar.desde(item.optString("categoria")),
+                        tieneRetoDisponible = item.optBoolean("tieneRetoDisponible", false),
+                        alias = aliasList
                     )
                 )
             }
@@ -229,7 +326,8 @@ class MapViewModel @Inject constructor(
                     edificio = "Plaza Central",
                     descripcion = "El corazón neurálgico y punto de encuentro más icónico de la UNAL.",
                     latitud = 4.63545,
-                    longitud = -74.08274
+                    longitud = -74.08274,
+                    categoria = CategoriaLugar.PLAZA
                 )
             )
         }
@@ -245,3 +343,19 @@ class MapViewModel @Inject constructor(
         }
     }
 }
+
+fun distanciaMetros(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val r = 6371000.0
+    val dLat = Math.toRadians(lat2 - lat1)
+    val dLon = Math.toRadians(lon2 - lon1)
+    val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    return r * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+fun formatearDistancia(metros: Double): String =
+    if (metros >= 1000) String.format("%.1f km", metros / 1000) else "${metros.toInt()} m"
+
+private fun normalizar(texto: String): String =
+    Normalizer.normalize(texto.lowercase(), Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "").trim()

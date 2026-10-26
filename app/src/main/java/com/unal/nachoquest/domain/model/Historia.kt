@@ -12,6 +12,26 @@ enum class Hablante { NACHO, OLVIDO, NARRADOR }
 
 enum class Expresion { NORMAL, FELIZ, SORPRENDIDO, PREOCUPADO, DECIDIDO }
 
+/** Minijuego con el que se recupera el Fragmento de Memoria de cada capítulo. */
+enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
+    MURAL(
+        "Reconstruye el recuerdo",
+        "El Olvido desordenó el recuerdo de la plaza. Toca dos piezas para intercambiarlas hasta armar la imagen."
+    ),
+    LETRAS(
+        "Letras borradas",
+        "La bruma borró las letras de los libros. Adivina cada palabra antes de que se acabe la tinta."
+    ),
+    CIRCUITO(
+        "Reconecta el laboratorio",
+        "Gira las piezas para que la energía llegue del generador al tablero."
+    ),
+    SINFONIA(
+        "La última sinfonía",
+        "Escucha la melodía y repítela en el mismo orden. Cada ronda suma una nota."
+    )
+}
+
 data class LineaDialogo(
     val hablante: Hablante,
     val texto: String,
@@ -29,7 +49,8 @@ data class Capitulo(
     val sinopsis: String,
     val itemRequeridoId: String?,
     val itemRecompensaId: String,
-    val xpRecompensa: Int
+    val xpRecompensa: Int,
+    val minijuego: TipoMinijuego
 ) {
     val escenaIntro: String get() = "cap${numero}_intro"
     val escenaOutro: String get() = "cap${numero}_outro"
@@ -52,7 +73,8 @@ object Historia {
             sinopsis = "La bruma llegó primero al corazón del campus. Recupera la memoria de la plaza donde todo empieza.",
             itemRequeridoId = null,
             itemRecompensaId = "carnet_antiguo",
-            xpRecompensa = 100
+            xpRecompensa = 100,
+            minijuego = TipoMinijuego.MURAL
         ),
         Capitulo(
             numero = 2,
@@ -63,19 +85,20 @@ object Historia {
             sinopsis = "El Olvido está borrando la tinta de los libros. Usa el Carné Histórico para entrar antes de que no quede ni una letra.",
             itemRequeridoId = "carnet_antiguo",
             itemRecompensaId = "regla_takeuchi",
-            xpRecompensa = 120
+            xpRecompensa = 120,
+            minijuego = TipoMinijuego.LETRAS
         ),
         Capitulo(
             numero = 3,
             puntoId = "edif_401",
-            puntoIdsAlternos = listOf("edif_454"),
             retoId = "reto_cyt",
             titulo = "La Ecuación Perdida",
-            lugar = "Ciencia y Tecnología (CYT)",
-            sinopsis = "Los tableros se quedaron en silencio. Con la Regla de Takeuchi puedes devolverles sus fórmulas.",
+            lugar = "Edificio Julio Garavito (Ingeniería)",
+            sinopsis = "Los laboratorios se quedaron sin energía. Con la Regla de Takeuchi puedes volver a encenderlos.",
             itemRequeridoId = "regla_takeuchi",
             itemRecompensaId = "partitura_maestra",
-            xpRecompensa = 150
+            xpRecompensa = 150,
+            minijuego = TipoMinijuego.CIRCUITO
         ),
         Capitulo(
             numero = 4,
@@ -86,7 +109,8 @@ object Historia {
             sinopsis = "El Olvido se esconde donde antes sonaba la música. Es la batalla final: haz que el auditorio vuelva a sonar.",
             itemRequeridoId = "partitura_maestra",
             itemRecompensaId = "brujula_unal",
-            xpRecompensa = 200
+            xpRecompensa = 200,
+            minijuego = TipoMinijuego.SINFONIA
         )
     )
 
@@ -120,7 +144,7 @@ object Historia {
         "cap1_intro" to listOf(
             LineaDialogo(Hablante.NACHO, "Aquí estamos: la Plaza Che. Marchas, conciertos, debates y almuerzos en el pasto... aquí ha pasado de todo."),
             LineaDialogo(Hablante.OLVIDO, "Solo es cemento... nadie recuerda nada..."),
-            LineaDialogo(Hablante.NACHO, "¡Mentira! Demuéstrale que conoces esta plaza. Tienes 3 corazones: cada error te cuesta uno. ¡Y ojo con el tiempo!", Expresion.DECIDIDO)
+            LineaDialogo(Hablante.NACHO, "¡Mentira! Desordenó el recuerdo de la plaza como un rompecabezas. Ármalo y luego demuéstrale cuánto sabes de este lugar.", Expresion.DECIDIDO)
         ),
         "cap1_outro" to listOf(
             LineaDialogo(Hablante.NARRADOR, "La bruma se disipa. Los colores vuelven a la plaza y, entre las baldosas, algo brilla..."),
@@ -130,28 +154,28 @@ object Historia {
         "cap2_intro" to listOf(
             LineaDialogo(Hablante.NACHO, "La Biblioteca Central. Aquí se ha estudiado para más parciales de los que puedo contar."),
             LineaDialogo(Hablante.OLVIDO, "Millones de páginas... y ni una palabra... ya no quedan palabras..."),
-            LineaDialogo(Hablante.NACHO, "¡Está borrando las letras de los libros! Usa tu carné, entra y recuérdale a este lugar quién es.", Expresion.SORPRENDIDO)
+            LineaDialogo(Hablante.NACHO, "¡Está borrando las letras de los libros! Usa tu carné, entra y recupera las palabras antes de que se acabe la tinta.", Expresion.SORPRENDIDO)
         ),
         "cap2_outro" to listOf(
             LineaDialogo(Hablante.NARRADOR, "Las páginas recuperan su tinta, una por una. En un estante, algo hace clic."),
             LineaDialogo(Hablante.NACHO, "¡La Regla de Takeuchi! En honor al profe Yu Takeuchi, que enseñó matemáticas a generaciones enteras. Con esto abrimos los laboratorios.", Expresion.FELIZ),
             LineaDialogo(Hablante.OLVIDO, "Tú... ¿quién eres para resistirte...? Me iré... a donde están los números..."),
-            LineaDialogo(Hablante.NACHO, "¡Va hacia Ciencia y Tecnología! Allá nos vemos.", Expresion.DECIDIDO)
+            LineaDialogo(Hablante.NACHO, "¡Va hacia el edificio de Ingeniería! Allá nos vemos.", Expresion.DECIDIDO)
         ),
         "cap3_intro" to listOf(
-            LineaDialogo(Hablante.NACHO, "Ciencia y Tecnología. Aquí se calcula, se construye y se inventa. Huele a café y a entrega de última hora."),
-            LineaDialogo(Hablante.OLVIDO, "Fórmulas... ecuaciones... tanto ruido... El silencio es mejor..."),
-            LineaDialogo(Hablante.NACHO, "Cuando la cosa se pone difícil, aquí nadie se rinde. ¡Resuelve el enigma!", Expresion.DECIDIDO)
+            LineaDialogo(Hablante.NACHO, "El edificio Julio Garavito, casa de la Ingeniería. Aquí se calcula, se construye y se inventa. Huele a café y a entrega de última hora."),
+            LineaDialogo(Hablante.OLVIDO, "Fórmulas... máquinas... tanto ruido... Apagué todo. El silencio es mejor..."),
+            LineaDialogo(Hablante.NACHO, "¡Dejó los laboratorios sin energía! Reconecta el circuito y devuélveles la vida.", Expresion.DECIDIDO)
         ),
         "cap3_outro" to listOf(
-            LineaDialogo(Hablante.NARRADOR, "Los tableros se iluminan con ecuaciones. De un casillero sale volando una hoja de papel pautado."),
+            LineaDialogo(Hablante.NARRADOR, "Las luces vuelven, los tableros se iluminan con ecuaciones y de un casillero sale volando una hoja de papel pautado."),
             LineaDialogo(Hablante.NACHO, "¿Una partitura? ¡Es la Partitura Maestra! Esto solo puede ir a un lugar...", Expresion.SORPRENDIDO),
             LineaDialogo(Hablante.NACHO, "El León de Greiff. Si el Olvido apaga la música del auditorio, se queda con todo. Es la batalla final, {jugador}.", Expresion.PREOCUPADO)
         ),
         "cap4_intro" to listOf(
             LineaDialogo(Hablante.NACHO, "El Auditorio León de Greiff. Aquí ha sonado la Filarmónica de Bogotá y han vibrado generaciones enteras."),
             LineaDialogo(Hablante.OLVIDO, "Sin música... sin memoria... sin nombre. Este es mi hogar ahora."),
-            LineaDialogo(Hablante.NACHO, "No mientras estemos aquí. Pon la partitura en el atril... y haz que este lugar vuelva a sonar.", Expresion.DECIDIDO)
+            LineaDialogo(Hablante.NACHO, "No mientras estemos aquí. Pon la partitura en el atril, escucha bien la melodía... y haz que este lugar vuelva a sonar.", Expresion.DECIDIDO)
         ),
         "cap4_outro" to listOf(
             LineaDialogo(Hablante.NARRADOR, "Una nota. Luego otra. El auditorio entero estalla en música y la bruma se deshace en mil pedazos de luz."),

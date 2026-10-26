@@ -77,6 +77,7 @@ import com.unal.nachoquest.ui.components.LluviaConfeti
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.Olvido
 import com.unal.nachoquest.ui.components.sacudir
+import com.unal.nachoquest.ui.screens.quiz.minijuegos.PantallaMinijuego
 import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
@@ -122,6 +123,9 @@ fun QuizScreen(
     ) { fase ->
         when (fase) {
             FaseQuiz.INTRO -> EscenaDialogo(lineas = state.escenaIntro, onTerminar = viewModel::terminarIntro)
+            FaseQuiz.MINIJUEGO -> state.capitulo?.let { cap ->
+                PantallaMinijuego(capitulo = cap, onCompletado = viewModel::completarMinijuego, onSalir = cerrar)
+            }
             FaseQuiz.PREGUNTA -> PantallaPregunta(state, viewModel, onSalir = cerrar)
             FaseQuiz.RESULTADO -> PantallaResultados(
                 state = state,
@@ -178,7 +182,7 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = state.capitulo?.let { "CAPÍTULO ${it.numero}" } ?: "RETO DEL CAMPUS",
+                    text = state.capitulo?.let { "CAPÍTULO ${it.numero} · PREGUNTAS DEL GUARDIÁN" } ?: "RETO DEL CAMPUS",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = NachoGreen,
@@ -192,7 +196,7 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                     maxLines = 1
                 )
             }
-            Corazones(vidas = state.vidas)
+            Corazones(vidas = state.vidas, maximo = state.vidasMax)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -347,9 +351,9 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
 }
 
 @Composable
-private fun Corazones(vidas: Int) {
+private fun Corazones(vidas: Int, maximo: Int) {
     Row {
-        repeat(VIDAS_INICIALES) { i ->
+        repeat(maximo) { i ->
             val lleno = i < vidas
             val escala by animateFloatAsState(
                 targetValue = if (lleno) 1f else 0.75f,

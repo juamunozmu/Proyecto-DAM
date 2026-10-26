@@ -97,8 +97,8 @@ object BancoRetos {
             "reto_cyt" -> RetoQuiz(
                 id = "reto_cyt",
                 puntoInteresId = puntoId,
-                titulo = "Capítulo 3: Desafío de Ciencia y Tecnología",
-                descripcion = "Demuestra tu ingenio en el centro neurálgico de la ingeniería y las ciencias.",
+                titulo = "Capítulo 3: La Ecuación Perdida",
+                descripcion = "Demuestra tu ingenio en la casa de la Ingeniería.",
                 preguntas = listOf(
                     Pregunta(
                         id = "cyt_1",
@@ -110,12 +110,6 @@ object BancoRetos {
                         id = "cyt_2",
                         enunciado = "¿En qué cuerpo celeste existe un cráter bautizado en honor a Julio Garavito?",
                         opciones = listOf("La Luna", "Marte", "Mercurio", "Júpiter"),
-                        indiceCorrecta = 0
-                    ),
-                    Pregunta(
-                        id = "cyt_3",
-                        enunciado = "¿Qué elemento estructural moderno destaca en la arquitectura del CYT?",
-                        opciones = listOf("Gran atrio con estructura espacial de acero y vidrio", "Cúpula de madera", "Torre barroca", "Muros de piedra inca"),
                         indiceCorrecta = 0
                     ),
                     Pregunta(
