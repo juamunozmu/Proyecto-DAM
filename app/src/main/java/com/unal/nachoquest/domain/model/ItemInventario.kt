@@ -37,14 +37,14 @@ object CatalogoItems {
         ItemInventario(
             id = "regla_takeuchi",
             nombre = "Regla de Takeuchi",
-            descripcion = "Mítica regla de cálculo inspirada en el gran maestro Yu Takeuchi. Sus escalas logarítmicas dan paso a los laboratorios de Ciencia y Tecnología.",
+            descripcion = "Mítica regla de cálculo inspirada en el gran maestro Yu Takeuchi. Sus escalas logarítmicas devuelven la energía a los laboratorios de Ingeniería.",
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "📐",
             puntoOrigenId = "edif_102",
             nombreLugarOrigen = "Biblioteca Central",
             desbloqueaPuntoId = "edif_401",
-            nombrePuntoDesbloqueado = "Ciencia y Tecnología (CYT)",
-            requisitoTexto = "Supera las trivias de la Biblioteca Central"
+            nombrePuntoDesbloqueado = "Edificio Julio Garavito (Ingeniería)",
+            requisitoTexto = "Recupera las letras borradas de la Biblioteca Central"
         ),
         ItemInventario(
             id = "partitura_maestra",
@@ -53,10 +53,10 @@ object CatalogoItems {
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "🎼",
             puntoOrigenId = "edif_401",
-            nombreLugarOrigen = "Ciencia y Tecnología (CYT)",
+            nombreLugarOrigen = "Edificio Julio Garavito (Ingeniería)",
             desbloqueaPuntoId = "edif_104",
             nombrePuntoDesbloqueado = "Auditorio León de Greiff",
-            requisitoTexto = "Resuelve el desafío de ingeniería y ciencia en CYT"
+            requisitoTexto = "Reconecta los laboratorios del edificio de Ingeniería"
         ),
         ItemInventario(
             id = "brujula_unal",
@@ -68,7 +68,7 @@ object CatalogoItems {
             nombreLugarOrigen = "Auditorio León de Greiff",
             desbloqueaPuntoId = "poi_estadio",
             nombrePuntoDesbloqueado = "Estadio Alfonso López",
-            requisitoTexto = "Completa el enigma acústico del León de Greiff"
+            requisitoTexto = "Repite la sinfonía en el León de Greiff"
         )
     )
 
@@ -100,8 +100,8 @@ object CatalogoItems {
             categoria = CategoriaItem.INSIGNIA,
             emojiIcono = "🔬",
             puntoOrigenId = "edif_401",
-            nombreLugarOrigen = "Ciencia y Tecnología",
-            requisitoTexto = "Supera el reto en Ciencia y Tecnología"
+            nombreLugarOrigen = "Edificio Julio Garavito (Ingeniería)",
+            requisitoTexto = "Supera el reto en el edificio de Ingeniería"
         ),
         ItemInventario(
             id = "insignia_arte",
@@ -143,8 +143,8 @@ object CatalogoItems {
             categoria = CategoriaItem.COLECCIONABLE,
             emojiIcono = "🔍",
             puntoOrigenId = "edif_401",
-            nombreLugarOrigen = "Ciencia y Tecnología",
-            requisitoTexto = "Coleccionable rescatado en CYT"
+            nombreLugarOrigen = "Edificio Julio Garavito (Ingeniería)",
+            requisitoTexto = "Coleccionable rescatado en Ingeniería"
         ),
         ItemInventario(
             id = "col_vinilo",
