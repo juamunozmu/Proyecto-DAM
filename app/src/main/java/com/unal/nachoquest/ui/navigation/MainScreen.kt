@@ -1,5 +1,9 @@
 package com.unal.nachoquest.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -17,6 +21,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,6 +32,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.unal.nachoquest.ui.components.EscenaDialogo
 import com.unal.nachoquest.ui.screens.challenges.ChallengesScreen
 import com.unal.nachoquest.ui.screens.inventory.InventoryScreen
 import com.unal.nachoquest.ui.screens.map.MapScreen
@@ -49,9 +57,11 @@ data class BottomNavItem<T : Any>(
 @Composable
 fun MainScreen(
     onCerrarSesion: () -> Unit,
-    onIniciarReto: (String) -> Unit = {}
+    onIniciarReto: (String) -> Unit = {},
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
+    val escenaActiva by viewModel.escenaActiva.collectAsState()
 
     val items = listOf(
         BottomNavItem("Mapa", Icons.Filled.Map, Icons.Outlined.Map, MapRoute),
@@ -60,63 +70,74 @@ fun MainScreen(
         BottomNavItem("Perfil", Icons.Filled.Person, Icons.Outlined.Person, ProfileRoute),
     )
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = androidx.compose.ui.graphics.Color.White
-            ) {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+    Box {
+        Scaffold(
+            bottomBar = {
+                NavigationBar(
+                    containerColor = androidx.compose.ui.graphics.Color.White
+                ) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
-                items.forEach { item ->
-                    val selected = currentDestination?.hierarchy?.any {
-                        it.hasRoute(item.route::class)
-                    } == true
+                    items.forEach { item ->
+                        val selected = currentDestination?.hierarchy?.any {
+                            it.hasRoute(item.route::class)
+                        } == true
 
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.label
-                            )
-                        },
-                        label = { Text(item.label) },
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                    contentDescription = item.label
+                                )
+                            },
+                            label = { Text(item.label) },
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = NachoGreen,
-                            selectedTextColor = NachoGreen,
-                            indicatorColor = NachoGreen.copy(alpha = 0.1f)
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = NachoGreen,
+                                selectedTextColor = NachoGreen,
+                                indicatorColor = NachoGreen.copy(alpha = 0.1f)
+                            )
                         )
-                    )
+                    }
+                }
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = MapRoute,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable<MapRoute> {
+                    MapScreen(onIniciarReto = onIniciarReto)
+                }
+                composable<ChallengesRoute> {
+                    ChallengesScreen(onIniciarReto = onIniciarReto, onVerEscena = viewModel::verEscena)
+                }
+                composable<InventoryRoute> {
+                    InventoryScreen()
+                }
+                composable<ProfileRoute> {
+                    ProfileScreen(onCerrarSesion = onCerrarSesion, onVerEscena = viewModel::verEscena)
                 }
             }
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = MapRoute,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable<MapRoute> {
-                MapScreen(onIniciarReto = onIniciarReto)
-            }
-            composable<ChallengesRoute> {
-                ChallengesScreen(onIniciarReto = onIniciarReto)
-            }
-            composable<InventoryRoute> {
-                InventoryScreen()
-            }
-            composable<ProfileRoute> {
-                ProfileScreen(onCerrarSesion = onCerrarSesion)
+
+        // Escenas de historia (prólogo la primera vez, o las que se pidan repetir) por encima de todo
+        AnimatedVisibility(visible = escenaActiva != null, enter = fadeIn(), exit = fadeOut()) {
+            escenaActiva?.let { lineas ->
+                key(lineas) {
+                    EscenaDialogo(lineas = lineas, onTerminar = viewModel::terminarEscena)
+                }
             }
         }
     }

@@ -74,8 +74,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.unal.nachoquest.domain.model.Capitulo
+import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.PointOfInterest
+import com.unal.nachoquest.ui.components.Nacho
+import com.unal.nachoquest.ui.components.pulso
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
 import com.unal.nachoquest.ui.theme.NachoYellow
@@ -200,15 +204,20 @@ fun MapScreen(
                 val pinBloqueado = crearPinDrawable(context, android.graphics.Color.rgb(230, 81, 0), false) // Naranja/Ámbar
                 val pinCompletado = crearPinDrawable(context, android.graphics.Color.rgb(30, 136, 229), false) // Azul
                 val pinGeneral = crearPinDrawable(context, android.graphics.Color.rgb(120, 144, 156), false) // Gris azulado
+                val pinObjetivo = crearPinDrawable(context, android.graphics.Color.rgb(212, 160, 23), true, conEstrella = true) // Dorado
 
                 var marcadorSeleccionado: Marker? = null
+                val idObjetivo = state.puntoObjetivo?.id
+                val marcadoresSueltos = mutableListOf<Marker>()
 
                 state.puntosDeInteres.forEach { punto ->
                     val isSelected = state.puntoSeleccionado?.id == punto.id
                     val estado = state.obtenerEstadoReto(punto)
 
+                    val esObjetivo = punto.id == idObjetivo
                     val iconoPin = when {
                         isSelected -> pinRojo
+                        esObjetivo -> pinObjetivo
                         estado == EstadoEdificioReto.BLOQUEADO_HISTORIA -> pinBloqueado
                         estado == EstadoEdificioReto.YA_COMPLETADO -> pinCompletado
                         estado == EstadoEdificioReto.LISTO_PARA_JUGAR || estado == EstadoEdificioReto.FUERA_DE_RANGO -> pinVerde
@@ -226,13 +235,15 @@ fun MapScreen(
                         }
                     }
 
-                    if (isSelected) {
-                        marcadorSeleccionado = marker
-                    } else {
-                        clusterer.add(marker)
+                    when {
+                        isSelected -> marcadorSeleccionado = marker
+                        // El objetivo de la historia nunca se agrupa, para que siempre se vea
+                        esObjetivo -> marcadoresSueltos.add(marker)
+                        else -> clusterer.add(marker)
                     }
                 }
                 mapView.overlays.add(clusterer)
+                mapView.overlays.addAll(marcadoresSueltos)
 
                 marcadorSeleccionado?.let { selectedMarker ->
                     mapView.overlays.add(selectedMarker)
@@ -305,6 +316,19 @@ fun MapScreen(
                         }
                     }
                 }
+            }
+
+            // Banner con el objetivo actual de la historia
+            AnimatedVisibility(visible = state.searchQuery.isBlank() && state.puntoSeleccionado == null) {
+                BannerObjetivo(
+                    capitulo = state.capituloObjetivo,
+                    onIr = {
+                        state.puntoObjetivo?.let { punto ->
+                            viewModel.seleccionarPunto(punto)
+                            mapViewReference?.controller?.animateTo(GeoPoint(punto.latitud, punto.longitud), 18.5, 1200)
+                        }
+                    }
+                )
             }
         }
 
@@ -705,7 +729,7 @@ private fun PointOfInterestCard(
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text("⚡ Simular y jugar", fontWeight = FontWeight.Bold)
+                                    Text("⚡ Simular", fontWeight = FontWeight.Bold, maxLines = 1)
                                 }
                             }
                             EstadoEdificioReto.SIN_RETO -> {}
@@ -726,7 +750,7 @@ private fun PointOfInterestCard(
     }
 }
 
-private fun crearPinDrawable(context: Context, color: Int, isSelected: Boolean): Drawable {
+private fun crearPinDrawable(context: Context, color: Int, isSelected: Boolean, conEstrella: Boolean = false): Drawable {
     val density = context.resources.displayMetrics.density
     val width = if (isSelected) (36 * density).toInt() else (26 * density).toInt()
     val height = if (isSelected) (48 * density).toInt() else (36 * density).toInt()
@@ -759,7 +783,21 @@ private fun crearPinDrawable(context: Context, color: Int, isSelected: Boolean):
     }
     canvas.drawCircle(radius, radius, radius * 0.42f, innerPaint)
 
-    if (isSelected) {
+    if (conEstrella) {
+        // Estrella de 5 puntas en el centro del pin
+        val estrella = Path()
+        val exterior = radius * 0.36f
+        val interior = exterior * 0.45f
+        for (i in 0 until 10) {
+            val r = if (i % 2 == 0) exterior else interior
+            val angulo = Math.toRadians(-90.0 + i * 36.0)
+            val x = radius + (r * Math.cos(angulo)).toFloat()
+            val y = radius + (r * Math.sin(angulo)).toFloat()
+            if (i == 0) estrella.moveTo(x, y) else estrella.lineTo(x, y)
+        }
+        estrella.close()
+        canvas.drawPath(estrella, Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color })
+    } else if (isSelected) {
         val centerDot = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
             style = Paint.Style.FILL
@@ -768,4 +806,50 @@ private fun crearPinDrawable(context: Context, color: Int, isSelected: Boolean):
     }
 
     return BitmapDrawable(context.resources, bitmap)
+}
+@Composable
+private fun BannerObjetivo(capitulo: Capitulo?, onIr: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (capitulo == null) NachoYellow else NachoGreenDark)
+            .clickable(enabled = capitulo != null, onClick = onIr)
+            .padding(start = 6.dp, end = 12.dp, top = 6.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Nacho(
+            modifier = Modifier.size(44.dp),
+            expresion = if (capitulo == null) Expresion.FELIZ else Expresion.DECIDIDO
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        if (capitulo == null) {
+            Column {
+                Text("👑 ¡Historia completada!", fontWeight = FontWeight.ExtraBold, color = NachoGreenDark)
+                Text("Sigue explorando el campus y mejorando tus estrellas.", fontSize = 12.sp, color = NachoGreenDark)
+            }
+        } else {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "MISIÓN · CAPÍTULO ${capitulo.numero}",
+                    color = NachoYellow,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
+                Text(capitulo.titulo, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text("Ve a: ${capitulo.lugar}", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp, maxLines = 1)
+            }
+            Box(
+                modifier = Modifier
+                    .pulso()
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(NachoYellow)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                Text("Ir ➜", color = NachoGreenDark, fontWeight = FontWeight.ExtraBold)
+            }
+        }
+    }
 }

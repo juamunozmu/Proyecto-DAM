@@ -29,8 +29,9 @@ fun NachoQuestNavHost() {
     ) {
         composable<SplashRoute> {
             SplashScreen(
+                sesionActiva = authState.isAuthenticated,
                 onComenzar = {
-                    navController.navigate(RegisterRoute) {
+                    navController.navigate(if (authState.isAuthenticated) MainRoute else RegisterRoute) {
                         popUpTo(SplashRoute) { inclusive = true }
                     }
                 },

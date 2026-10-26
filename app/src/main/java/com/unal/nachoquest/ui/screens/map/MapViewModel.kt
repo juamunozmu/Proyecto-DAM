@@ -3,7 +3,9 @@ package com.unal.nachoquest.ui.screens.map
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.CatalogoItems
+import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.PointOfInterest
 import com.unal.nachoquest.domain.repository.UserRepository
@@ -38,6 +40,13 @@ data class MapUiState(
     val searchQuery: String = "",
     val resultadosBusqueda: List<PointOfInterest> = emptyList()
 ) {
+    /** Capítulo de la historia que el jugador debe jugar ahora (null si ya terminó). */
+    val capituloObjetivo: Capitulo?
+        get() = Historia.capituloActual(retosCompletados)
+
+    val puntoObjetivo: PointOfInterest?
+        get() = capituloObjetivo?.let { cap -> puntosDeInteres.find { it.id == cap.puntoId } }
+
     fun calcularDistanciaMetros(punto: PointOfInterest): Double? {
         if (modoSimulacionGps) return 0.0
         val ubi = ubicacionUsuario ?: return null
@@ -54,13 +63,7 @@ data class MapUiState(
     fun obtenerEstadoReto(punto: PointOfInterest): EstadoEdificioReto {
         if (!punto.tieneRetoDisponible) return EstadoEdificioReto.SIN_RETO
 
-        val retoId = when {
-            punto.id == "poi_plaza_che" || punto.id.contains("che") -> "reto_plaza_che"
-            punto.id == "edif_102" || punto.id.contains("biblio") -> "reto_biblio"
-            punto.id == "edif_401" || punto.id == "edif_454" || punto.id.contains("cyt") -> "reto_cyt"
-            punto.id == "edif_104" || punto.id.contains("greiff") -> "reto_greiff"
-            else -> "reto_campus_${punto.id}"
-        }
+        val retoId = Historia.retoIdParaPunto(punto.id)
 
         if (retosCompletados.contains(retoId)) {
             return EstadoEdificioReto.YA_COMPLETADO
@@ -174,6 +177,7 @@ class MapViewModel @Inject constructor(
 
     fun seleccionarPunto(punto: PointOfInterest) {
         _mapState.update { it.copy(puntoSeleccionado = punto) }
+        viewModelScope.launch { userRepository.registrarLugarDescubierto(punto.id) }
     }
 
     fun cerrarDetalle() {
@@ -230,43 +234,14 @@ class MapViewModel @Inject constructor(
             )
         }
 
-        // Configurar los hitos de la historia y sus dependencias de ítems (Cadena de Capítulos)
+        // Marcar los puntos que son capítulos de la historia y el ítem que exige cada uno
         return puntos.map { punto ->
-            when {
-                // Capítulo 1: Plaza Che (Punto de partida - Siempre abierto)
-                punto.id == "poi_plaza_che" || punto.nombre.contains("Che") -> {
-                    punto.copy(
-                        tieneRetoDisponible = true,
-                        capituloHistoria = 1,
-                        itemRequeridoId = null
-                    )
-                }
-                // Capítulo 2: Biblioteca Central (Requiere Carné Histórico de Plaza Che)
-                punto.id == "edif_102" || punto.nombre.contains("Biblioteca Central") -> {
-                    punto.copy(
-                        tieneRetoDisponible = true,
-                        capituloHistoria = 2,
-                        itemRequeridoId = "carnet_antiguo"
-                    )
-                }
-                // Capítulo 3: Ciencia y Tecnología (Requiere Regla de Takeuchi de la Biblioteca)
-                punto.id == "edif_401" || punto.id == "edif_454" || punto.nombre.contains("Ciencia y Tecnología") -> {
-                    punto.copy(
-                        tieneRetoDisponible = true,
-                        capituloHistoria = 3,
-                        itemRequeridoId = "regla_takeuchi"
-                    )
-                }
-                // Capítulo 4: Auditorio León de Greiff (Requiere Partitura Maestra de CYT)
-                punto.id == "edif_104" || punto.nombre.contains("León de Greiff") -> {
-                    punto.copy(
-                        tieneRetoDisponible = true,
-                        capituloHistoria = 4,
-                        itemRequeridoId = "partitura_maestra"
-                    )
-                }
-                else -> punto
-            }
+            val capitulo = Historia.capituloPorPunto(punto.id) ?: return@map punto
+            punto.copy(
+                tieneRetoDisponible = true,
+                capituloHistoria = capitulo.numero,
+                itemRequeridoId = capitulo.itemRequeridoId
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.unal.nachoquest.ui.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -35,7 +34,9 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun NachoQuestTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Las pantallas usan fondos claros fijos (crema/blanco) como en los mockups; con el tema
+    // oscuro del sistema el texto quedaba blanco sobre blanco. Se fuerza el tema claro.
+    darkTheme: Boolean = false,
     // No usamos colores dinámicos para mantener la marca de NachoQuest de manera estricta
     content: @Composable () -> Unit
 ) {
@@ -51,7 +52,7 @@ fun NachoQuestTheme(
             try {
                 val activity = view.context as? Activity
                 if (activity != null) {
-                    WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = !darkTheme
+                    WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = false // barra verde oscura: iconos claros
                 }
             } catch (_: Exception) {
                 // Proteccion para capas de personalizacion de fabricantes (Motorola/Xiaomi)

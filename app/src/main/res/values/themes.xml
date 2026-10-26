@@ -3,5 +3,7 @@
     <!-- Tema base para la aplicación, compatible con la pantalla de inicio (splash screen) -->
     <style name="Theme.NachoQuest" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- El tema de Compose manejará la mayoría de los colores de la aplicación -->
+        <item name="android:statusBarColor">#FF1A3009</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
