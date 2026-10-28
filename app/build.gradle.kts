@@ -65,13 +65,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
 
-    // Firebase y AutenticaciÃƒÂ³n con Google
+    // Firebase y Autenticación con Google
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
 
-    // InyecciÃƒÂ³n de dependencias
+    // Inyección de dependencias
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -81,11 +81,11 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // ImÃƒÂ¡genes
+    // Imágenes
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
-    // SerializaciÃƒÂ³n
+    // Serialización
     implementation(libs.kotlinx.serialization.json)
 
     // Testing
