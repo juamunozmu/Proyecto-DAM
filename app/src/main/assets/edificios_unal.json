@@ -1357,6 +1357,180 @@
                 "Cristo Maestro",
                 "Iglesia"
             ]
+        },
+        {
+            "id": "edif_225",
+            "nombre": "Edificio Rogelio Salmona - Posgrados en Ciencias Humanas",
+            "edificio": "225",
+            "descripcion": "Edificio de Posgrados de la Facultad de Ciencias Humanas, obra emblemática diseñada por el arquitecto Rogelio Salmona con ladrillo a la vista, espejos de agua y patios circulares.",
+            "latitud": 4.6341679,
+            "longitud": -74.0865186,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "225",
+                "Rogelio Salmona",
+                "Edificio Rogelio Salmona",
+                "Posgrados de Ciencias Humanas",
+                "Posgrados Humanas"
+            ]
+        },
+        {
+            "id": "edif_224",
+            "nombre": "Edificio Manuel Ancízar",
+            "edificio": "224",
+            "descripcion": "Edificio 224 de la Universidad Nacional de Colombia, sede de departamentos de Ciencias Humanas, Geociencias, Geología, Meteorología y Antropología.",
+            "latitud": 4.6335216,
+            "longitud": -74.0854696,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "224",
+                "Manuel Ancizar",
+                "Manuel Ancízar",
+                "Geologia",
+                "Meteorologia",
+                "Antropologia",
+                "Gegema"
+            ]
+        },
+        {
+            "id": "edif_ica",
+            "nombre": "ICA - Laboratorio Nacional de Diagnóstico Veterinario",
+            "edificio": "ICA",
+            "descripcion": "Complejo del Laboratorio Nacional de Diagnóstico Veterinario del Instituto Colombiano Agropecuario (ICA) ubicado en el sector suroccidental del campus.",
+            "latitud": 4.634321,
+            "longitud": -74.087365,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "ICA",
+                "Laboratorio Nacional de Diagnostico Veterinario",
+                "Diagnostico Veterinario",
+                "LNDV"
+            ]
+        },
+        {
+            "id": "edif_564",
+            "nombre": "Edificio Gloria Amparo Galeano Garcés",
+            "edificio": "564",
+            "descripcion": "Edificio 564 del sector de Ciencias Agrarias, nombrado en homenaje a la destacada botánica y agrónoma colombiana Gloria Amparo Galeano Garcés.",
+            "latitud": 4.6364678,
+            "longitud": -74.0869435,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "564",
+                "Gloria Amparo Galeano",
+                "Gloria Amparo Galeano Garces"
+            ]
+        },
+        {
+            "id": "edif_481",
+            "nombre": "Facultad de Medicina Veterinaria y de Zootecnia (Decanatura)",
+            "edificio": "481",
+            "descripcion": "Edificio 481 de Decanatura, laboratorios y aulas de la Facultad de Medicina Veterinaria y de Zootecnia.",
+            "latitud": 4.6360892,
+            "longitud": -74.0853792,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "481",
+                "Veterinaria",
+                "Zootecnia",
+                "Decanatura Veterinaria"
+            ]
+        },
+        {
+            "id": "edif_426",
+            "nombre": "Instituto de Genética (IGUN)",
+            "edificio": "426",
+            "descripcion": "Edificio 426 sede del Instituto de Genética de la Universidad Nacional de Colombia.",
+            "latitud": 4.6429609,
+            "longitud": -74.0829623,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "426",
+                "Instituto de Genetica",
+                "Genetica",
+                "IGUN"
+            ]
+        },
+        {
+            "id": "edif_434",
+            "nombre": "IPARM - Instituto Pedagógico Arturo Ramírez Montúfar",
+            "edificio": "434",
+            "descripcion": "Edificio 434 sede del colegio e Instituto Pedagógico Arturo Ramírez Montúfar (IPARM) de la UNAL.",
+            "latitud": 4.6407503,
+            "longitud": -74.0831209,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "434",
+                "IPARM",
+                "Colegio IPARM",
+                "Arturo Ramirez Montufar"
+            ]
+        },
+        {
+            "id": "edif_861",
+            "nombre": "Edificio Uriel Gutiérrez",
+            "edificio": "861",
+            "descripcion": "Edificio 861 sede administrativa de la Universidad Nacional de Colombia ubicada en el sector occidental (Transversal 38 / CAN).",
+            "latitud": 4.6397474,
+            "longitud": -74.090123,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "861",
+                "Uriel Gutierrez",
+                "Uriel Gutiérrez",
+                "Administracion Uriel"
+            ]
+        },
+        {
+            "id": "edif_862",
+            "nombre": "Unidad Camilo Torres",
+            "edificio": "862",
+            "descripcion": "Complejo de edificios 862 de la Unidad Camilo Torres en el costado occidental.",
+            "latitud": 4.6405211,
+            "longitud": -74.0909212,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "862",
+                "Unidad Camilo Torres",
+                "Camilo Torres"
+            ]
+        },
+        {
+            "id": "edif_500L",
+            "nombre": "Centro de Compostaje",
+            "edificio": "500L",
+            "descripcion": "Edificio 500L ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6361886,
+            "longitud": -74.0899041,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500L",
+                "Centro de Compostaje"
+            ]
+        },
+        {
+            "id": "edif_500N",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500N",
+            "descripcion": "Edificio 500N ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6357859,
+            "longitud": -74.0902789,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500N"
+            ]
+        },
+        {
+            "id": "edif_500O",
+            "nombre": "Invernadero de Crecimiento",
+            "edificio": "500O",
+            "descripcion": "Edificio 500O ubicado en el campus de la Universidad Nacional de Colombia Sede Bogotá.",
+            "latitud": 4.6354725,
+            "longitud": -74.0899191,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "500O"
+            ]
         }
     ]
 }
