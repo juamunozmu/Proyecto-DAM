@@ -24,6 +24,7 @@ Thumbs.db
 
 # Kotlin
 *.class
+.kotlin/
 
 # Ignorar el plan de trabajo
 plan_nachoquest.md

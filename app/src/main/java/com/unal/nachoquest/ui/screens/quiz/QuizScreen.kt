@@ -43,12 +43,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,26 +59,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.Expresion
+import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
+import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.components.EscenaDialogo
+import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.LluviaConfeti
+import com.unal.nachoquest.ui.components.Efecto
 import com.unal.nachoquest.ui.components.Nacho
+import com.unal.nachoquest.ui.components.Sonidos
 import com.unal.nachoquest.ui.components.Olvido
 import com.unal.nachoquest.ui.components.sacudir
+import com.unal.nachoquest.ui.components.tarjetaJuego
 import com.unal.nachoquest.ui.screens.quiz.minijuegos.PantallaMinijuego
+import com.unal.nachoquest.ui.theme.CantoCrema
+import com.unal.nachoquest.ui.theme.EstiloEtiqueta
 import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
+import com.unal.nachoquest.ui.theme.NachoNaranja
 import com.unal.nachoquest.ui.theme.NachoYellow
+import com.unal.nachoquest.ui.theme.Papel
+import com.unal.nachoquest.ui.theme.Tinta
 import kotlinx.coroutines.delay
 
 private val Rojo = Color(0xFFD32F2F)
@@ -151,10 +162,16 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
     val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(state.erroresAnimados) {
-        if (state.erroresAnimados > 0) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (state.erroresAnimados > 0) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            Sonidos.reproducir(Efecto.ERROR)
+        }
     }
     LaunchedEffect(state.aciertosAnimados) {
-        if (state.aciertosAnimados > 0) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        if (state.aciertosAnimados > 0) {
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            Sonidos.reproducir(Efecto.ACIERTO)
+        }
     }
 
     val fraccionTiempo = state.tiempoRestanteMs.toFloat() / TIEMPO_POR_PREGUNTA_MS
@@ -181,19 +198,20 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                 Icon(Icons.Default.Close, contentDescription = "Salir del reto", tint = Color.DarkGray)
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = state.capitulo?.let { "CAPÍTULO ${it.numero} · PREGUNTAS DEL GUARDIÁN" } ?: "RETO DEL CAMPUS",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = NachoGreen,
-                    letterSpacing = 1.sp
+                Etiqueta(
+                    texto = when {
+                        state.esTriviaDiaria -> "PREGUNTA ${state.indicePreguntaActual + 1} DE ${state.totalPreguntas}"
+                        state.capitulo != null -> "CAPÍTULO ${state.capitulo.numero} · EL GUARDIÁN PREGUNTA"
+                        else -> "RETO DEL CAMPUS"
+                    },
+                    color = NachoGreen
                 )
                 Text(
                     text = state.capitulo?.titulo ?: reto.titulo,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,
                     color = NachoGreenDark,
-                    maxLines = 1
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Corazones(vidas = state.vidas, maximo = state.vidasMax)
@@ -263,7 +281,18 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
             }
         }
 
-        Box(modifier = Modifier.height(28.dp).fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BotonComodin(
+                disponible = state.comodinDisponible,
+                habilitado = !state.mostrarResultadoPregunta,
+                onClick = viewModel::usarComodin
+            )
+            Spacer(modifier = Modifier.weight(1f))
             androidx.compose.animation.AnimatedVisibility(
                 visible = state.racha >= 2,
                 enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn(),
@@ -271,9 +300,9 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
             ) {
                 Text(
                     text = "🔥 Racha x${state.racha}",
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFFE65100),
-                    fontSize = 14.sp
+                    style = EstiloEtiqueta,
+                    color = NachoNaranja,
+                    fontSize = 19.sp
                 )
             }
         }
@@ -290,6 +319,7 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                     estaSeleccionada = state.respuestaSeleccionada == index,
                     mostrarResultado = state.mostrarResultadoPregunta,
                     esCorrecta = index == pregunta.indiceCorrecta,
+                    descartada = index in state.opcionesDescartadas,
                     onClick = { viewModel.responder(index) }
                 )
             }
@@ -321,8 +351,7 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                         state.seAcaboElTiempo -> "⏰ ¡Se acabó el tiempo!"
                         else -> "No era esa..."
                     },
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.titleLarge,
                     color = if (acerto) NachoGreenDark else Rojo
                 )
                 if (!acerto) {
@@ -333,18 +362,12 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Button(
+                BotonJuego(
+                    texto = if (esUltima) "Ver resultado" else "Continuar",
                     onClick = viewModel::avanzarSiguientePregunta,
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (acerto) NachoGreen else Rojo),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text(
-                        text = if (esUltima) "Ver resultado" else "Continuar",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                    color = if (acerto) NachoGreen else Rojo,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -415,6 +438,28 @@ private fun BarraTiempo(fraccion: Float, pausado: Boolean) {
     }
 }
 
+/** Comodín 50:50: Nacho descarta dos opciones incorrectas. Se gasta al usarlo. */
+@Composable
+private fun BotonComodin(disponible: Boolean, habilitado: Boolean, onClick: () -> Unit) {
+    val color = if (disponible) Color(0xFF8D6E00) else Color.Gray
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (disponible) NachoYellow.copy(alpha = 0.22f) else Color.LightGray.copy(alpha = 0.3f))
+            .border(1.5.dp, if (disponible) NachoYellow else Color.LightGray, RoundedCornerShape(12.dp))
+            .clickable(enabled = disponible && habilitado) {
+                Sonidos.reproducir(Efecto.TOQUE)
+                onClick()
+            }
+            .padding(horizontal = 10.dp, vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("💡", fontSize = 14.sp)
+        Spacer(modifier = Modifier.width(5.dp))
+        Text(text = if (disponible) "COMODÍN 50:50" else "COMODÍN USADO", style = EstiloEtiqueta, color = color)
+    }
+}
+
 @Composable
 private fun OpcionPregunta(
     letra: Char,
@@ -422,6 +467,7 @@ private fun OpcionPregunta(
     estaSeleccionada: Boolean,
     mostrarResultado: Boolean,
     esCorrecta: Boolean,
+    descartada: Boolean,
     onClick: () -> Unit
 ) {
     val interaccion = remember { MutableInteractionSource() }
@@ -429,6 +475,8 @@ private fun OpcionPregunta(
 
     val resaltarCorrecta = mostrarResultado && esCorrecta
     val marcarError = mostrarResultado && estaSeleccionada && !esCorrecta
+    // Una opción descartada por el comodín se atenúa hasta que se revela la respuesta
+    val atenuada = descartada && !mostrarResultado
 
     val escala by animateFloatAsState(
         targetValue = when {
@@ -439,12 +487,14 @@ private fun OpcionPregunta(
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "escalaOpcion"
     )
+    val opacidad by animateFloatAsState(if (atenuada) 0.35f else 1f, label = "opacidadOpcion")
+    // Colores opacos: el canto de la tarjeta se dibuja detrás y no debe transparentarse
     val fondo by animateColorAsState(
         when {
-            resaltarCorrecta -> NachoGreen.copy(alpha = 0.15f)
-            marcarError -> Rojo.copy(alpha = 0.1f)
-            mostrarResultado -> Color.White.copy(alpha = 0.6f)
-            else -> Color.White
+            resaltarCorrecta -> Color(0xFFE1EDD6)
+            marcarError -> Color(0xFFFBE3E1)
+            mostrarResultado -> Color(0xFFF6F2E6)
+            else -> Papel
         },
         label = "fondoOpcion"
     )
@@ -452,7 +502,7 @@ private fun OpcionPregunta(
         when {
             resaltarCorrecta -> NachoGreen
             marcarError -> Rojo
-            else -> Color(0xFFDDDDDD)
+            else -> CantoCrema
         },
         label = "bordeOpcion"
     )
@@ -463,17 +513,21 @@ private fun OpcionPregunta(
             .graphicsLayer {
                 scaleX = escala
                 scaleY = escala
+                alpha = opacidad
             }
-            .clip(RoundedCornerShape(14.dp))
-            .background(fondo)
-            .border(2.dp, borde, RoundedCornerShape(14.dp))
-            .clickable(interactionSource = interaccion, indication = null, enabled = !mostrarResultado, onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+            .tarjetaJuego(fondo = fondo, borde = borde, radio = 14.dp, canto = 3.dp)
+            .clickable(
+                interactionSource = interaccion,
+                indication = null,
+                enabled = !mostrarResultado && !descartada,
+                onClick = onClick
+            )
+            .padding(horizontal = 14.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(30.dp)
+                .size(32.dp)
                 .clip(CircleShape)
                 .background(
                     when {
@@ -486,7 +540,9 @@ private fun OpcionPregunta(
         ) {
             Text(
                 text = letra.toString(),
-                fontWeight = FontWeight.Bold,
+                style = EstiloEtiqueta,
+                fontSize = 20.sp,
+                letterSpacing = 0.sp,
                 color = if (resaltarCorrecta || marcarError) Color.White else NachoGreenDark
             )
         }
@@ -496,7 +552,8 @@ private fun OpcionPregunta(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
             fontWeight = if (resaltarCorrecta) FontWeight.Bold else FontWeight.Normal,
-            color = if (mostrarResultado && !resaltarCorrecta && !marcarError) Color.Gray else Color(0xFF1E1E1E)
+            textDecoration = if (atenuada) TextDecoration.LineThrough else null,
+            color = if (mostrarResultado && !resaltarCorrecta && !marcarError) Color.Gray else Tinta
         )
         if (resaltarCorrecta) {
             Icon(Icons.Default.CheckCircle, contentDescription = "Correcto", tint = NachoGreen)
@@ -514,6 +571,9 @@ private fun PantallaResultados(
     onSalir: () -> Unit
 ) {
     val aprobado = state.retoAprobado
+    LaunchedEffect(Unit) {
+        Sonidos.reproducir(if (aprobado) Efecto.VICTORIA else Efecto.DERROTA)
+    }
 
     Box(
         modifier = Modifier
@@ -555,7 +615,9 @@ private fun PantallaResultados(
 
             TextoEntrada(
                 texto = when {
+                    aprobado && state.esTriviaDiaria && !state.esRepeticion -> "¡Trivia superada!"
                     aprobado && state.esRepeticion -> "¡Repaso superado!"
+                    aprobado && state.capitulo?.numero == Historia.capitulos.size -> "¡Venciste al Olvido!"
                     aprobado -> "¡Fragmento recuperado!"
                     else -> "La bruma te alcanzó"
                 },
@@ -574,6 +636,7 @@ private fun PantallaResultados(
                 Spacer(modifier = Modifier.height(16.dp))
                 ResumenPartida(state)
                 RecompensasAnimadas(state)
+                AvancesDelJugador(state)
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
                 state.fraseDerrota?.let {
@@ -589,32 +652,28 @@ private fun PantallaResultados(
             Spacer(modifier = Modifier.height(28.dp))
 
             if (aprobado) {
-                Button(
+                BotonJuego(
+                    texto = if (state.esTriviaDiaria) "Continuar" else "Continuar aventura",
                     onClick = onContinuar,
-                    modifier = Modifier.fillMaxWidth().height(54.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text("Continuar aventura", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                    alto = 54.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
             } else {
-                Button(
+                BotonJuego(
+                    texto = "Reintentar",
                     onClick = onReintentar,
-                    modifier = Modifier.fillMaxWidth().height(54.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = NachoYellow, contentColor = NachoGreenDark),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text("Reintentar", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
+                    color = NachoYellow,
+                    colorTexto = NachoGreenDark,
+                    alto = 54.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
                 Spacer(modifier = Modifier.height(10.dp))
-                OutlinedButton(
+                BotonJuego(
+                    texto = "Salir",
                     onClick = onSalir,
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text("Volver al mapa", fontWeight = FontWeight.Bold)
-                }
+                    color = Color(0xFF6B6E76),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -674,8 +733,7 @@ private fun ResumenPartida(state: QuizUiState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
+            .tarjetaJuego(radio = 16.dp)
             .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -683,10 +741,21 @@ private fun ResumenPartida(state: QuizUiState) {
         DatoResumen(valor = "x${state.mejorRacha}", etiqueta = "Mejor racha", emoji = "🔥")
         DatoResumen(valor = "${state.vidas}", etiqueta = "Corazones", emoji = "❤️")
     }
+    if (state.esTriviaDiaria && state.rachaDias > 0) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = if (state.rachaDias == 1) "🔥 Racha: 1 día. ¡Vuelve mañana para alargarla!"
+            else "🔥 Racha: ${state.rachaDias} días seguidos",
+            fontWeight = FontWeight.ExtraBold,
+            color = NachoNaranja,
+            textAlign = TextAlign.Center
+        )
+    }
     if (state.esRepeticion) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Modo repaso: ya tenías este fragmento. ¡Sirve para mejorar tus estrellas!",
+            text = if (state.esTriviaDiaria) "Ya jugaste la trivia de hoy, así que esta vez fue solo práctica. Mañana hay preguntas nuevas."
+            else "Modo repaso: ya tenías este fragmento. ¡Sirve para mejorar tus estrellas!",
             style = MaterialTheme.typography.bodySmall,
             color = Color.DarkGray,
             textAlign = TextAlign.Center
@@ -698,7 +767,7 @@ private fun ResumenPartida(state: QuizUiState) {
 private fun DatoResumen(valor: String, etiqueta: String, emoji: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(emoji, fontSize = 20.sp)
-        Text(valor, fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, color = NachoGreenDark)
+        Text(valor, style = MaterialTheme.typography.titleLarge, color = NachoGreenDark)
         Text(etiqueta, fontSize = 11.sp, color = Color.Gray)
     }
 }
@@ -725,22 +794,63 @@ private fun ColumnScope.RecompensasAnimadas(state: QuizUiState) {
     }
 }
 
+/** Subida de nivel y logros desbloqueados con este reto. */
+@Composable
+private fun ColumnScope.AvancesDelJugador(state: QuizUiState) {
+    val avances = buildList {
+        state.nivelAlcanzado?.let { add(Triple("⬆️", "¡SUBISTE DE NIVEL!", "Ahora eres nivel $it")) }
+        state.logrosNuevos.forEach { add(Triple(it.emoji, "LOGRO DESBLOQUEADO", it.titulo)) }
+    }
+    avances.forEachIndexed { i, (emoji, etiqueta, texto) ->
+        var visible by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            delay(2300L + i * 350L)
+            visible = true
+            if (i == 0) Sonidos.reproducir(Efecto.LOGRO)
+        }
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically { it / 2 } + fadeIn() + scaleIn(initialScale = 0.8f)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()
+                    .tarjetaJuego(fondo = NachoGreenDark, borde = NachoYellow, radio = 16.dp)
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(emoji, fontSize = 30.sp)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Etiqueta(etiqueta, color = NachoYellow)
+                    Text(texto, color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun TarjetaRecompensa(item: ItemInventario, etiqueta: String, color: Color) {
     Row(
         modifier = Modifier
             .padding(top = 10.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(color.copy(alpha = 0.12f))
-            .border(1.5.dp, color.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+            // Tonos opacos del color de la recompensa: el canto va detrás y no debe transparentarse
+            .tarjetaJuego(
+                fondo = color.copy(alpha = 0.12f).compositeOver(Papel),
+                borde = color.copy(alpha = 0.5f).compositeOver(Papel),
+                radio = 16.dp,
+                canto = 3.dp
+            )
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(item.emojiIcono, fontSize = 32.sp)
         Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(etiqueta, fontSize = 11.sp, fontWeight = FontWeight.ExtraBold, color = color)
+            Etiqueta(etiqueta, color = color)
             Text(item.nombre, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             item.nombrePuntoDesbloqueado?.let {
                 Text("🔓 Abre acceso a: $it", style = MaterialTheme.typography.bodySmall, color = NachoGreenDark)

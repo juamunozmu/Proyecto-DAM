@@ -1,0 +1,22 @@
+rules_version = '2';
+
+// Reglas de seguridad de Cloud Firestore para NachoQuest.
+// Para publicarlas: firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Progreso privado: cada jugador solo puede leer y escribir su propio documento
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Tabla de posiciones: cualquier jugador con sesión la lee, pero cada uno solo escribe su fila,
+    // que únicamente puede llevar nombre, XP, nivel y estrellas (nunca el correo)
+    match /ranking/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['nombre', 'xp', 'nivel', 'estrellas'])
+        && request.resource.data.nombre is string && request.resource.data.nombre.size() <= 60
+        && request.resource.data.xp is int && request.resource.data.xp >= 0;
+    }
+  }
+}

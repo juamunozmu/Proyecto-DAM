@@ -6,7 +6,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -24,11 +25,28 @@ private val DarkColorScheme = darkColorScheme(
 // Esquema de colores para el tema claro
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryColor,
-    secondary = SecondaryColor,
-    background = BackgroundLight,
-    surface = SurfaceLight,
     onPrimary = OnPrimaryLight,
+    primaryContainer = NachoGreen.copy(alpha = 0.14f).compositeOver(Papel),
+    onPrimaryContainer = NachoGreenDark,
+    secondary = SecondaryColor,
     onSecondary = OnSecondaryLight,
+    secondaryContainer = NachoYellow.copy(alpha = 0.25f).compositeOver(Papel),
+    onSecondaryContainer = Tinta,
+    tertiary = NachoAzul,
+    background = BackgroundLight,
+    onBackground = Tinta,
+    surface = SurfaceLight,
+    onSurface = Tinta,
+    // Los componentes de Material (diálogos, menús, campos de texto) toman de aquí sus fondos
+    surfaceVariant = Color(0xFFECE6D4),
+    onSurfaceVariant = TintaSuave,
+    surfaceContainerLowest = Papel,
+    surfaceContainerLow = Papel,
+    surfaceContainer = Papel,
+    surfaceContainerHigh = Papel,
+    surfaceContainerHighest = Color(0xFFECE6D4),
+    outline = Color(0xFF8C8A7A),
+    outlineVariant = CantoCrema,
     error = ErrorColor
 )
 

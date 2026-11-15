@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -41,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unal.nachoquest.ui.components.Efecto
+import com.unal.nachoquest.ui.components.Sonidos
 import com.unal.nachoquest.ui.components.sacudir
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
@@ -63,6 +66,7 @@ private val BANCO_PALABRAS = listOf(
 )
 
 private val TECLADO = listOf("QWERTYUIOP", "ASDFGHJKLÑ", "ZXCVBNM")
+private val TECLAS_POR_FILA = TECLADO.maxOf { it.length }
 
 private fun sinTilde(c: Char): Char =
     if (c == 'Ñ') c else Normalizer.normalize(c.toString(), Normalizer.Form.NFD)[0]
@@ -90,6 +94,7 @@ fun MinijuegoLetras(alTerminar: (Int) -> Unit) {
 
     LaunchedEffect(ronda, rondaTerminada) {
         if (!rondaTerminada) return@LaunchedEffect
+        if (completa) Sonidos.reproducir(Efecto.ACIERTO)
         mensaje = if (completa) "¡Palabra recuperada!" else "Se acabó la tinta... era «${actual.palabra}»"
         delay(1600)
         mensaje = null
@@ -174,45 +179,51 @@ fun MinijuegoLetras(alTerminar: (Int) -> Unit) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Teclado
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            TECLADO.forEach { fila ->
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    fila.forEach { tecla ->
-                        val usada = tecla in usadas
-                        val acierto = usada && tecla in letrasNecesarias
-                        val fondo by animateColorAsState(
-                            when {
-                                acierto -> NachoGreen
-                                usada -> Color(0xFFBDBDBD)
-                                else -> Color.White
-                            },
-                            label = "tecla"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(31.dp)
-                                .height(44.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(fondo)
-                                .clickable(enabled = !usada && !rondaTerminada) {
-                                    usadas = usadas + tecla
-                                    if (tecla !in letrasNecesarias) {
-                                        tinta--
-                                        erroresTotales++
-                                        fallos++
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    } else {
-                                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                    }
+        // Teclado: el ancho de las teclas se ajusta para que quepan 10 por fila en pantallas angostas
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            val espacioTeclas = 4.dp
+            val anchoTecla = ((maxWidth - espacioTeclas * (TECLAS_POR_FILA - 1)) / TECLAS_POR_FILA).coerceAtMost(34.dp)
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                TECLADO.forEach { fila ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(espacioTeclas)) {
+                        fila.forEach { tecla ->
+                            val usada = tecla in usadas
+                            val acierto = usada && tecla in letrasNecesarias
+                            val fondo by animateColorAsState(
+                                when {
+                                    acierto -> NachoGreen
+                                    usada -> Color(0xFFBDBDBD)
+                                    else -> Color.White
                                 },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                tecla.toString(),
-                                fontWeight = FontWeight.Bold,
-                                color = if (acierto) Color.White else if (usada) Color.Gray else Color(0xFF333333)
+                                label = "tecla"
                             )
+                            Box(
+                                modifier = Modifier
+                                    .width(anchoTecla)
+                                    .height(44.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(fondo)
+                                    .clickable(enabled = !usada && !rondaTerminada) {
+                                        usadas = usadas + tecla
+                                        if (tecla !in letrasNecesarias) {
+                                            tinta--
+                                            erroresTotales++
+                                            fallos++
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            Sonidos.reproducir(Efecto.ERROR)
+                                        } else {
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            Sonidos.reproducir(Efecto.TOQUE)
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    tecla.toString(),
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (acierto) Color.White else if (usada) Color.Gray else Color(0xFF333333)
+                                )
+                            }
                         }
                     }
                 }

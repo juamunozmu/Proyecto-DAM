@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,11 +24,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,18 +37,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.Historia
+import com.unal.nachoquest.domain.model.JugadorRanking
+import com.unal.nachoquest.domain.model.TriviaDiaria
+import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.Olvido
 import com.unal.nachoquest.ui.components.pulso
+import com.unal.nachoquest.ui.components.tarjetaJuego
+import com.unal.nachoquest.ui.theme.CantoCrema
+import com.unal.nachoquest.ui.theme.EstiloEtiqueta
+import com.unal.nachoquest.ui.theme.NachoAzul
 import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
+import com.unal.nachoquest.ui.theme.NachoNaranja
 import com.unal.nachoquest.ui.theme.NachoYellow
+import com.unal.nachoquest.ui.theme.Papel
+import com.unal.nachoquest.ui.theme.Tinta
 
 @Composable
 fun ChallengesScreen(
@@ -58,6 +71,11 @@ fun ChallengesScreen(
     onVerEscena: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
+    val ranking by viewModel.ranking.collectAsState()
+
+    if (ranking.visible) {
+        DialogoRanking(ranking = ranking, onCerrar = viewModel::cerrarRanking)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -66,6 +84,23 @@ fun ChallengesScreen(
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item { Encabezado(state, onVerEscena) }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                TarjetaTrivia(
+                    trivia = state.trivia,
+                    onJugar = { onIniciarReto(TriviaDiaria.PUNTO_ID) },
+                    modifier = Modifier.weight(1.5f).fillMaxHeight()
+                )
+                TarjetaRanking(onAbrir = viewModel::abrirRanking, modifier = Modifier.weight(1f).fillMaxHeight())
+            }
+        }
 
         itemsIndexed(state.capitulos) { indice, cap ->
             NodoCapitulo(
@@ -82,24 +117,206 @@ fun ChallengesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(NachoYellow.copy(alpha = 0.25f))
+                        .tarjetaJuego(fondo = Color(0xFFF7E9B8), borde = NachoYellow)
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("👑 ¡Eres una Leyenda de la Ciudad Blanca!", fontWeight = FontWeight.ExtraBold, color = NachoGreenDark)
+                    Text("👑", fontSize = 34.sp)
                     Text(
-                        "La brújula apunta al Estadio Alfonso López... Próximamente: Temporada 2.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.DarkGray
+                        "¡Leyenda de la Ciudad Blanca!",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = NachoGreenDark,
+                        textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedButton(onClick = { onVerEscena(Historia.ESCENA_EPILOGO) }) {
-                        Text("Ver epílogo", color = NachoGreenDark)
-                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "Derrotaste al Olvido. Repite los capítulos para conseguir todas las estrellas, " +
+                            "juega la trivia cada día y sube en el ranking.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    BotonJuego(
+                        texto = "Ver el epílogo",
+                        onClick = { onVerEscena(Historia.ESCENA_EPILOGO) },
+                        color = NachoYellow,
+                        colorTexto = NachoGreenDark,
+                        alto = 44.dp,
+                        tamanoTexto = 14.sp
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun TarjetaTrivia(trivia: TriviaUi, onJugar: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .pulso(activo = !trivia.jugadaHoy, intensidad = 0.015f)
+            .tarjetaJuego(
+                pincel = Brush.linearGradient(listOf(Color(0xFFFFB300), Color(0xFFF57C00))),
+                borde = Color(0xFFB85C00)
+            )
+            .clickable(onClick = onJugar)
+            .padding(14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Etiqueta("TRIVIA DEL DÍA", color = Color.White, modifier = Modifier.weight(1f))
+            if (trivia.rachaDias > 0) {
+                Text(
+                    "🔥 ${trivia.rachaDias}",
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Black.copy(alpha = 0.18f))
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = if (trivia.jugadaHoy) "¡Hecha por hoy!" else "5 preguntas nuevas",
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 23.sp,
+            lineHeight = 24.sp,
+            color = Color.White
+        )
+        Text(
+            text = if (trivia.jugadaHoy) "Vuelve mañana para alargar tu racha. Puedes practicar otra vez."
+            else "+${trivia.xpDisponible} XP, más bonos por rapidez y por no fallar.",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.95f)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = if (trivia.jugadaHoy) "Practicar ▶" else "Jugar ▶",
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 13.sp,
+            color = Color(0xFFE65100),
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+                .padding(horizontal = 12.dp, vertical = 6.dp)
+        )
+    }
+}
+
+@Composable
+private fun TarjetaRanking(onAbrir: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .tarjetaJuego(
+                pincel = Brush.linearGradient(listOf(NachoGreen, NachoGreenDark)),
+                borde = Color(0xFF0E1B05)
+            )
+            .clickable(onClick = onAbrir)
+            .padding(14.dp)
+    ) {
+        Etiqueta("RANKING", color = NachoYellow)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text("🏆", fontSize = 30.sp)
+        Text(
+            "Compite con otros exploradores",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.9f)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Ver tabla ▶", fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = NachoYellow)
+    }
+}
+
+@Composable
+private fun DialogoRanking(ranking: RankingUiState, onCerrar: () -> Unit) {
+    Dialog(onDismissRequest = onCerrar) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(22.dp))
+                .background(NachoCream)
+                .padding(18.dp)
+        ) {
+            Text(
+                "🏆 Ranking de exploradores",
+                style = MaterialTheme.typography.titleLarge,
+                color = NachoGreenDark
+            )
+            Text("Los jugadores con más XP", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            when {
+                ranking.cargando -> Box(
+                    modifier = Modifier.fillMaxWidth().height(160.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = NachoGreen)
+                }
+                ranking.error -> Text(
+                    "No pudimos cargar el ranking. Revisa tu conexión a internet e inténtalo de nuevo.",
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(vertical = 24.dp)
+                )
+                ranking.jugadores.isEmpty() -> Text(
+                    "Todavía no hay nadie en la tabla. ¡Gana XP y sé el primero!",
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(vertical = 24.dp)
+                )
+                else -> LazyColumn(
+                    modifier = Modifier.heightIn(max = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    itemsIndexed(ranking.jugadores) { indice, jugador -> FilaRanking(indice + 1, jugador) }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            BotonJuego(texto = "Cerrar", onClick = onCerrar, modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+private fun FilaRanking(puesto: Int, jugador: JugadorRanking) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (jugador.esJugadorActual) NachoYellow.copy(alpha = 0.3f) else Color.White)
+            .then(
+                if (jugador.esJugadorActual) Modifier.border(1.5.dp, NachoYellow, RoundedCornerShape(12.dp))
+                else Modifier
+            )
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = when (puesto) {
+                1 -> "🥇"
+                2 -> "🥈"
+                3 -> "🥉"
+                else -> "$puesto"
+            },
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = if (puesto <= 3) 20.sp else 15.sp,
+            color = Color.Gray,
+            modifier = Modifier.width(34.dp)
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = if (jugador.esJugadorActual) "${jugador.nombre} (tú)" else jugador.nombre,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color(0xFF1E1E1E)
+            )
+            Text("Nivel ${jugador.nivel} · ⭐ ${jugador.estrellas}", fontSize = 12.sp, color = Color.Gray)
+        }
+        Text("${jugador.xp} XP", style = EstiloEtiqueta, fontSize = 19.sp, color = NachoGreenDark)
     }
 }
 
@@ -118,7 +335,7 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("LA HISTORIA", color = NachoYellow, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
+                Etiqueta("LA HISTORIA", color = NachoYellow)
                 Text(
                     "El Olvido de la\nCiudad Blanca",
                     color = Color.White,
@@ -218,21 +435,20 @@ private fun NodoCapitulo(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(vertical = 10.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(if (cap.estado == EstadoCapitulo.BLOQUEADO) Color(0xFFF0EEE8) else Color.White)
-                .then(
-                    if (cap.estado == EstadoCapitulo.ACTUAL) Modifier.border(2.dp, NachoYellow, RoundedCornerShape(18.dp))
-                    else Modifier
+                .padding(vertical = 8.dp)
+                .tarjetaJuego(
+                    fondo = if (cap.estado == EstadoCapitulo.BLOQUEADO) Color(0xFFECE7D8) else Papel,
+                    borde = when (cap.estado) {
+                        EstadoCapitulo.ACTUAL -> NachoYellow
+                        EstadoCapitulo.BLOQUEADO -> Color(0xFFD3CCB8)
+                        EstadoCapitulo.COMPLETADO -> CantoCrema
+                    }
                 )
                 .padding(16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    "CAPÍTULO ${c.numero}",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
+                Etiqueta(
+                    texto = "CAPÍTULO ${c.numero}",
                     color = if (cap.estado == EstadoCapitulo.BLOQUEADO) Color.Gray else NachoGreen,
                     modifier = Modifier.weight(1f)
                 )
@@ -242,9 +458,8 @@ private fun NodoCapitulo(
             }
             Text(
                 text = c.titulo,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = if (cap.estado == EstadoCapitulo.BLOQUEADO) Color.Gray else Color(0xFF1E1E1E)
+                style = MaterialTheme.typography.titleLarge,
+                color = if (cap.estado == EstadoCapitulo.BLOQUEADO) Color.Gray else Tinta
             )
             Text(
                 text = "📍 ${c.lugar}",
@@ -287,7 +502,7 @@ private fun NodoCapitulo(
                 Text(
                     text = "🔒 Necesitas: ${cap.itemRequerido.nombre} (Capítulo ${c.numero - 1})",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFFE65100),
+                    color = NachoNaranja,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -295,32 +510,26 @@ private fun NodoCapitulo(
             if (cap.estado != EstadoCapitulo.BLOQUEADO) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
+                    BotonJuego(
+                        texto = if (cap.estado == EstadoCapitulo.COMPLETADO) "Repetir" else "Jugar",
                         onClick = { onIniciarReto(c.puntoId) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (cap.estado == EstadoCapitulo.COMPLETADO) Color(0xFF1E88E5) else NachoGreen
-                        ),
-                        shape = RoundedCornerShape(10.dp),
+                        color = if (cap.estado == EstadoCapitulo.COMPLETADO) NachoAzul else NachoGreen,
+                        icono = Icons.Default.PlayArrow,
+                        alto = 46.dp,
                         modifier = Modifier
                             .weight(1f)
-                            .height(44.dp)
                             .pulso(activo = cap.estado == EstadoCapitulo.ACTUAL, intensidad = 0.015f)
-                    ) {
-                        Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            if (cap.estado == EstadoCapitulo.COMPLETADO) "Repetir" else "Jugar",
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    )
                     if (cap.estado == EstadoCapitulo.COMPLETADO && c.escenaOutro in cap.escenasVistas) {
-                        OutlinedButton(
+                        BotonJuego(
+                            texto = "🎬 Escena",
                             onClick = { onVerEscena(c.escenaOutro) },
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.height(44.dp)
-                        ) {
-                            Text("🎬 Escena", color = NachoGreenDark, fontWeight = FontWeight.Bold)
-                        }
+                            color = Color.White,
+                            colorTexto = NachoGreenDark,
+                            borde = CantoCrema,
+                            alto = 46.dp,
+                            tamanoTexto = 14.sp
+                        )
                     }
                 }
             }

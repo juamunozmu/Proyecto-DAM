@@ -29,6 +29,10 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     SINFONIA(
         "La última sinfonía",
         "Escucha la melodía y repítela en el mismo orden. Cada ronda suma una nota."
+    ),
+    PENALES(
+        "La tanda final",
+        "El Olvido se plantó de arquero. Patea cuando la mira esté lejos de él y mete tres goles."
     )
 }
 
@@ -106,11 +110,23 @@ object Historia {
             retoId = "reto_greiff",
             titulo = "La Última Sinfonía",
             lugar = "Auditorio León de Greiff",
-            sinopsis = "El Olvido se esconde donde antes sonaba la música. Es la batalla final: haz que el auditorio vuelva a sonar.",
+            sinopsis = "El Olvido se esconde donde antes sonaba la música. Pon la partitura en el atril y haz que el auditorio vuelva a sonar.",
             itemRequeridoId = "partitura_maestra",
             itemRecompensaId = "brujula_unal",
             xpRecompensa = 200,
             minijuego = TipoMinijuego.SINFONIA
+        ),
+        Capitulo(
+            numero = 5,
+            puntoId = "poi_estadio",
+            retoId = "reto_estadio",
+            titulo = "El Último Rastro",
+            lugar = "Estadio Alfonso López Pumarejo",
+            sinopsis = "Un último jirón de bruma huyó hacia el estadio. La Brújula de Fritz Karsen te lleva hasta él: esto se define por penales.",
+            itemRequeridoId = "brujula_unal",
+            itemRecompensaId = "copa_memoria",
+            xpRecompensa = 250,
+            minijuego = TipoMinijuego.PENALES
         )
     )
 
@@ -170,7 +186,7 @@ object Historia {
         "cap3_outro" to listOf(
             LineaDialogo(Hablante.NARRADOR, "Las luces vuelven, los tableros se iluminan con ecuaciones y de un casillero sale volando una hoja de papel pautado."),
             LineaDialogo(Hablante.NACHO, "¿Una partitura? ¡Es la Partitura Maestra! Esto solo puede ir a un lugar...", Expresion.SORPRENDIDO),
-            LineaDialogo(Hablante.NACHO, "El León de Greiff. Si el Olvido apaga la música del auditorio, se queda con todo. Es la batalla final, {jugador}.", Expresion.PREOCUPADO)
+            LineaDialogo(Hablante.NACHO, "El León de Greiff. Si el Olvido apaga la música del auditorio, se queda con todo. ¡No lo podemos permitir, {jugador}!", Expresion.PREOCUPADO)
         ),
         "cap4_intro" to listOf(
             LineaDialogo(Hablante.NACHO, "El Auditorio León de Greiff. Aquí ha sonado la Filarmónica de Bogotá y han vibrado generaciones enteras."),
@@ -178,15 +194,27 @@ object Historia {
             LineaDialogo(Hablante.NACHO, "No mientras estemos aquí. Pon la partitura en el atril, escucha bien la melodía... y haz que este lugar vuelva a sonar.", Expresion.DECIDIDO)
         ),
         "cap4_outro" to listOf(
-            LineaDialogo(Hablante.NARRADOR, "Una nota. Luego otra. El auditorio entero estalla en música y la bruma se deshace en mil pedazos de luz."),
+            LineaDialogo(Hablante.NARRADOR, "Una nota. Luego otra. El auditorio entero estalla en música y la bruma se rompe en mil pedazos de luz."),
             LineaDialogo(Hablante.OLVIDO, "Imposible... recuerdan... todos recuerdan..."),
-            LineaDialogo(Hablante.NACHO, "¡LO LOGRASTE, {jugador}! ¡La Ciudad Blanca recuerda otra vez!", Expresion.FELIZ)
+            LineaDialogo(Hablante.NACHO, "¡Eso, {jugador}! ¡El León de Greiff volvió a sonar! Y mira lo que dejó caer la bruma: la Brújula de Fritz Karsen. Dicen que con ella se trazó el campus.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NACHO, "Un momento... la aguja no se queda quieta. Apunta al Estadio Alfonso López. ¡Un pedazo de bruma se nos escapó para allá!", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.NACHO, "Esto todavía no se acaba. ¡Al estadio!", Expresion.DECIDIDO)
+        ),
+        "cap5_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Estadio Alfonso López. Aquí se jugaron los primeros Juegos Bolivarianos, en 1938. Si estas graderías hablaran..."),
+            LineaDialogo(Hablante.OLVIDO, "Ya no me queda nada... solo este arco. Aquí nadie me hace un gol... nadie se acuerda de cómo..."),
+            LineaDialogo(Hablante.NACHO, "¡Se plantó de arquero! Bueno, {jugador}, esto se define como las mejores finales: por penales. Métele tres goles y la bruma se va para siempre.", Expresion.DECIDIDO)
+        ),
+        "cap5_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El balón infla la red. La última nube de bruma se deshace sobre la gramilla y el estadio entero parece rugir."),
+            LineaDialogo(Hablante.OLVIDO, "Buen partido... Quizá recordar... no era tan malo..."),
+            LineaDialogo(Hablante.NACHO, "¡GOOOOL! ¡Campeones, {jugador}! Y mira: debajo de la bruma estaba escondida la Copa de la Memoria.", Expresion.FELIZ)
         ),
         ESCENA_EPILOGO to listOf(
             LineaDialogo(Hablante.NARRADOR, "Esa noche, los edificios del campus brillaron un poco más. Nadie supo explicar por qué."),
-            LineaDialogo(Hablante.NACHO, "Toma, te la ganaste: la Brújula de Fritz Karsen. Dicen que con ella se trazó el campus.", Expresion.FELIZ),
-            LineaDialogo(Hablante.NACHO, "Un momento... la aguja apunta al Estadio Alfonso López. ¿Quedó algo de bruma por allá?", Expresion.SORPRENDIDO),
-            LineaDialogo(Hablante.NACHO, "Eso es historia para otro día. Por ahora eres oficialmente una Leyenda de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
+            LineaDialogo(Hablante.NACHO, "Lo logramos. La Ciudad Blanca recuerda otra vez, y fue gracias a ti.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NACHO, "El Olvido siempre va a rondar por ahí. Por eso vuelve cada día: la trivia mantiene viva la memoria del campus."),
+            LineaDialogo(Hablante.NACHO, "Desde hoy eres oficialmente una Leyenda de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
         )
     )
 

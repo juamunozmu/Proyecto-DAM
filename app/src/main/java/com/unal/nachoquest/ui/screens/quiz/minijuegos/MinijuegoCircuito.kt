@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unal.nachoquest.ui.components.Efecto
+import com.unal.nachoquest.ui.components.Sonidos
 import com.unal.nachoquest.ui.theme.NachoGreenDark
 import com.unal.nachoquest.ui.theme.NachoYellow
 import kotlinx.coroutines.delay
@@ -225,6 +227,7 @@ fun MinijuegoCircuito(alTerminar: (Int) -> Unit) {
                                     giros[i] = giros[i] + 1
                                     toques++
                                     haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                    Sonidos.reproducir(Efecto.TOQUE)
                                 }
                             }
                         }

@@ -8,8 +8,13 @@ import com.unal.nachoquest.domain.model.CatalogoItems
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.LineaDialogo
+import com.unal.nachoquest.domain.model.Logro
+import com.unal.nachoquest.domain.model.Logros
 import com.unal.nachoquest.domain.model.Pregunta
+import com.unal.nachoquest.domain.model.Puntuacion
 import com.unal.nachoquest.domain.model.RetoQuiz
+import com.unal.nachoquest.domain.model.TriviaDiaria
+import com.unal.nachoquest.domain.model.UserProfile
 import com.unal.nachoquest.domain.model.primerNombre
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +23,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 enum class FaseQuiz { INTRO, MINIJUEGO, PREGUNTA, RESULTADO, OUTRO }
@@ -28,10 +35,11 @@ const val VIDAS_INICIALES = 3
 // En los capítulos el minijuego es lo principal: después solo hay 3 preguntas y 2 corazones
 private const val PREGUNTAS_CAPITULO = 3
 private const val VIDAS_CAPITULO = 2
-private const val XP_POR_ESTRELLA_MINIJUEGO = 10
+private const val OPCIONES_QUE_QUITA_EL_COMODIN = 2
 const val TIEMPO_POR_PREGUNTA_MS = 20_000L
 private const val TICK_MS = 100L
-private const val BONO_PERFECTO = 25
+// Tiempo máximo que se espera al perfil antes de armar el reto (sin conexión puede no llegar)
+private const val ESPERA_PERFIL_MS = 3_000L
 
 data class QuizUiState(
     val fase: FaseQuiz = FaseQuiz.INTRO,
@@ -62,7 +70,16 @@ data class QuizUiState(
     val itemDesbloqueado: ItemInventario? = null,
     val insigniaDesbloqueada: ItemInventario? = null,
     val coleccionableDesbloqueado: ItemInventario? = null,
-    val fraseDerrota: LineaDialogo? = null
+    val fraseDerrota: LineaDialogo? = null,
+    // Trivia del día: racha de días con la que queda el jugador al superarla
+    val esTriviaDiaria: Boolean = false,
+    val rachaDias: Int = 0,
+    // Comodín 50:50: una vez por reto, Nacho descarta dos opciones incorrectas
+    val comodinDisponible: Boolean = true,
+    val opcionesDescartadas: Set<Int> = emptySet(),
+    // Lo que el reto le dejó al jugador además de la XP
+    val nivelAlcanzado: Int? = null,
+    val logrosNuevos: List<Logro> = emptyList()
 ) {
     val preguntaActual: Pregunta?
         get() = reto?.preguntas?.getOrNull(indicePreguntaActual)
@@ -84,12 +101,24 @@ class QuizViewModel @Inject constructor(
 
     private var temporizador: Job? = null
     private var puntoIdCargado: String? = null
+    private var diaTrivia: Long = 0
 
     fun cargarRetoParaPunto(puntoId: String) {
         if (puntoIdCargado == puntoId) return
         puntoIdCargado = puntoId
 
-        val perfil = userRepository.userProfileFlow.value
+        viewModelScope.launch {
+            // El perfil dice si es una repetición y qué escenas ya se vieron
+            withTimeoutOrNull(ESPERA_PERFIL_MS) { userRepository.perfilCargado.first { it } }
+            prepararReto(puntoId, userRepository.userProfileFlow.value)
+        }
+    }
+
+    private fun prepararReto(puntoId: String, perfil: UserProfile) {
+        if (puntoId == TriviaDiaria.PUNTO_ID) {
+            prepararTriviaDiaria(perfil)
+            return
+        }
         val nombre = perfil.primerNombre()
         val retoBase = BancoRetos.retoParaPunto(puntoId)
         // Se mezclan las opciones para que la respuesta correcta no esté siempre en el mismo lugar
@@ -127,10 +156,26 @@ class QuizViewModel @Inject constructor(
         if (fase == FaseQuiz.PREGUNTA) iniciarTemporizador()
     }
 
+    private fun prepararTriviaDiaria(perfil: UserProfile) {
+        val hoy = TriviaDiaria.diaActual()
+        val yaJugada = TriviaDiaria.yaJugoHoy(perfil, hoy)
+        // El bono de XP sale de la racha con la que se quedará al superarla
+        val reto = TriviaDiaria.retoDelDia(hoy, TriviaDiaria.rachaTrasJugar(perfil, hoy))
+        diaTrivia = hoy
+        _uiState.value = QuizUiState(
+            fase = FaseQuiz.PREGUNTA,
+            reto = reto.copy(preguntas = reto.preguntas.map { it.conOpcionesMezcladas() }),
+            esRepeticion = yaJugada,
+            esTriviaDiaria = true,
+            rachaDias = TriviaDiaria.rachaVigente(perfil, hoy)
+        )
+        iniciarTemporizador()
+    }
+
     fun terminarIntro() {
         val state = _uiState.value
         if (state.fase != FaseQuiz.INTRO) return
-        state.capitulo?.let { cap -> viewModelScope.launch { userRepository.marcarEscenaVista(cap.escenaIntro) } }
+        state.capitulo?.let { cap -> userRepository.marcarEscenaVista(cap.escenaIntro) }
         if (state.capitulo != null) {
             _uiState.update { it.copy(fase = FaseQuiz.MINIJUEGO) }
         } else {
@@ -145,10 +190,24 @@ class QuizViewModel @Inject constructor(
         iniciarTemporizador()
     }
 
+    /** Descarta dos opciones incorrectas de la pregunta actual. Solo se puede usar una vez por reto. */
+    fun usarComodin() {
+        val state = _uiState.value
+        val pregunta = state.preguntaActual ?: return
+        if (state.fase != FaseQuiz.PREGUNTA || state.mostrarResultadoPregunta || !state.comodinDisponible) return
+        val descartadas = pregunta.opciones.indices
+            .filter { it != pregunta.indiceCorrecta }
+            .shuffled()
+            .take(OPCIONES_QUE_QUITA_EL_COMODIN)
+            .toSet()
+        _uiState.update { it.copy(comodinDisponible = false, opcionesDescartadas = descartadas) }
+    }
+
     /** Responder es inmediato: tocar una opción la confirma. */
     fun responder(indiceRespuesta: Int) {
         val state = _uiState.value
         if (state.fase != FaseQuiz.PREGUNTA || state.mostrarResultadoPregunta) return
+        if (indiceRespuesta in state.opcionesDescartadas) return
         temporizador?.cancel()
 
         val esCorrecta = indiceRespuesta == state.preguntaActual?.indiceCorrecta
@@ -188,6 +247,7 @@ class QuizViewModel @Inject constructor(
                     indicePreguntaActual = it.indicePreguntaActual + 1,
                     respuestaSeleccionada = null,
                     mostrarResultadoPregunta = false,
+                    opcionesDescartadas = emptySet(),
                     seAcaboElTiempo = false,
                     tiempoRestanteMs = TIEMPO_POR_PREGUNTA_MS
                 )
@@ -211,7 +271,9 @@ class QuizViewModel @Inject constructor(
                 vidasMax = it.vidasMax,
                 // El minijuego ya está superado: al reintentar solo se repiten las preguntas
                 estrellasMinijuego = it.estrellasMinijuego,
-                esRepeticion = it.esRepeticion
+                esRepeticion = it.esRepeticion,
+                esTriviaDiaria = it.esTriviaDiaria,
+                rachaDias = it.rachaDias
             )
         }
         iniciarTemporizador()
@@ -230,10 +292,8 @@ class QuizViewModel @Inject constructor(
 
     fun terminarOutro() {
         val cap = _uiState.value.capitulo ?: return
-        viewModelScope.launch {
-            userRepository.marcarEscenaVista(cap.escenaOutro)
-            if (cap.numero == Historia.capitulos.size) userRepository.marcarEscenaVista(Historia.ESCENA_EPILOGO)
-        }
+        userRepository.marcarEscenaVista(cap.escenaOutro)
+        if (cap.numero == Historia.capitulos.size) userRepository.marcarEscenaVista(Historia.ESCENA_EPILOGO)
     }
 
     private fun iniciarTemporizador() {
@@ -262,20 +322,16 @@ class QuizViewModel @Inject constructor(
         val state = _uiState.value
         val reto = state.reto ?: return
 
-        // Se aprueba si se termina con al menos un corazón
-        val aprobado = !state.sinVidas
-        val errores = state.totalPreguntas - state.respuestasCorrectas
-        val estrellasPreguntas = (3 - errores).coerceIn(1, 3)
-        // En los capítulos cuenta lo peor entre el minijuego y las preguntas
-        val estrellas = if (!aprobado) 0 else minOf(estrellasPreguntas, state.estrellasMinijuego ?: 3)
-        val perfecto = errores == 0 && (state.estrellasMinijuego ?: 3) == 3
-        val bonoMinijuego = (state.estrellasMinijuego ?: 0) * XP_POR_ESTRELLA_MINIJUEGO
-
-        // La XP solo se gana la primera vez que se aprueba; repetir sirve para mejorar estrellas
-        val xp = when {
-            !aprobado || state.esRepeticion -> 0
-            else -> reto.recompensaXp + state.bonoVelocidad + bonoMinijuego + if (perfecto) BONO_PERFECTO else 0
-        }
+        val resultado = Puntuacion.calcular(
+            totalPreguntas = state.totalPreguntas,
+            respuestasCorrectas = state.respuestasCorrectas,
+            vidasRestantes = state.vidas,
+            estrellasMinijuego = state.estrellasMinijuego,
+            bonoVelocidad = state.bonoVelocidad,
+            recompensaXp = reto.recompensaXp,
+            esRepeticion = state.esRepeticion
+        )
+        val aprobado = resultado.aprobado
 
         val primeraVez = aprobado && !state.esRepeticion
         val item = reto.itemRecompensaId?.takeIf { primeraVez }?.let { CatalogoItems.obtenerPorId(it) }
@@ -286,8 +342,8 @@ class QuizViewModel @Inject constructor(
             it.copy(
                 fase = FaseQuiz.RESULTADO,
                 retoAprobado = aprobado,
-                estrellas = estrellas,
-                xpGanada = xp,
+                estrellas = resultado.estrellas,
+                xpGanada = resultado.xp,
                 itemDesbloqueado = item,
                 insigniaDesbloqueada = insignia,
                 coleccionableDesbloqueado = coleccionable,
@@ -296,14 +352,29 @@ class QuizViewModel @Inject constructor(
         }
 
         if (!aprobado) return
-        viewModelScope.launch {
-            userRepository.registrarResultadoReto(
+        val perfilAntes = userRepository.userProfileFlow.value
+        if (state.esTriviaDiaria) {
+            val racha = userRepository.registrarTriviaDiaria(
+                hoy = diaTrivia,
+                xpGanada = resultado.xp,
+                perfecta = state.respuestasCorrectas == state.totalPreguntas
+            )
+            _uiState.update { it.copy(rachaDias = racha) }
+        } else {
+            userRepository.registrarRetoAprobado(
                 retoId = reto.id,
-                aprobado = true,
-                estrellas = estrellas,
-                xpGanada = xp,
+                estrellas = resultado.estrellas,
+                xpGanada = resultado.xp,
                 itemsGanados = listOfNotNull(item?.id, coleccionable?.id),
                 insigniasGanadas = listOfNotNull(insignia?.id)
+            )
+        }
+        // El repositorio actualiza el perfil al instante, así que ya se puede comparar
+        val perfilDespues = userRepository.userProfileFlow.value
+        _uiState.update {
+            it.copy(
+                nivelAlcanzado = perfilDespues.nivel.takeIf { nivel -> nivel > perfilAntes.nivel },
+                logrosNuevos = Logros.nuevos(perfilAntes, perfilDespues)
             )
         }
     }

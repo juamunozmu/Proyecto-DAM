@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.Logro
 import com.unal.nachoquest.domain.model.Logros
+import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileUiState(
@@ -28,13 +28,18 @@ data class ProfileUiState(
     val capitulosCompletados: Int = 0,
     val totalCapitulos: Int = Historia.capitulos.size,
     val logros: List<Logro> = emptyList(),
-    val historiaCompletada: Boolean = false
+    val historiaCompletada: Boolean = false,
+    val rachaDias: Int = 0,
+    val mejorRachaDias: Int = 0,
+    val triviasSuperadas: Int = 0
 )
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
+
+    fun reiniciarProgreso() = userRepository.reiniciarProgreso()
 
     val profileState: StateFlow<ProfileUiState> = combine(
         userRepository.userProfileFlow,
@@ -53,15 +58,10 @@ class ProfileViewModel @Inject constructor(
             estrellas = perfil.estrellas,
             capitulosCompletados = capitulos,
             logros = Logros.calcular(perfil),
-            historiaCompletada = capitulos == Historia.capitulos.size
+            historiaCompletada = capitulos == Historia.capitulos.size,
+            rachaDias = TriviaDiaria.rachaVigente(perfil, TriviaDiaria.diaActual()),
+            mejorRachaDias = perfil.mejorRachaDias,
+            triviasSuperadas = perfil.triviasSuperadas
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProfileUiState())
-
-    init {
-        viewModelScope.launch { userRepository.getUserProfile() }
-    }
-
-    fun cerrarSesion() {
-        userRepository.limpiarSesion()
-    }
 }

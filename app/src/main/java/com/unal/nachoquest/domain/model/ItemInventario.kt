@@ -61,7 +61,7 @@ object CatalogoItems {
         ItemInventario(
             id = "brujula_unal",
             nombre = "Brújula de Fritz Karsen",
-            descripcion = "Instrumento de topografía usado en 1936 para trazar el campus elíptico. Desbloquea la pista y el legado del Estadio Alfonso López.",
+            descripcion = "Instrumento de topografía con el que, según cuentan, se trazó el campus elíptico. Su aguja señala los lugares donde todavía queda bruma: te guía hasta el Estadio Alfonso López.",
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "🧭",
             puntoOrigenId = "edif_104",
@@ -69,6 +69,16 @@ object CatalogoItems {
             desbloqueaPuntoId = "poi_estadio",
             nombrePuntoDesbloqueado = "Estadio Alfonso López",
             requisitoTexto = "Repite la sinfonía en el León de Greiff"
+        ),
+        ItemInventario(
+            id = "copa_memoria",
+            nombre = "Copa de la Memoria",
+            descripcion = "El trofeo que la bruma tenía escondido en el Estadio Alfonso López. Quien la levanta no olvida nunca la historia de la Ciudad Blanca.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🏆",
+            puntoOrigenId = "poi_estadio",
+            nombreLugarOrigen = "Estadio Alfonso López",
+            requisitoTexto = "Gánale la tanda de penales al Olvido en el estadio"
         )
     )
 
@@ -112,6 +122,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_104",
             nombreLugarOrigen = "Auditorio León de Greiff",
             requisitoTexto = "Supera el reto en el Auditorio León de Greiff"
+        ),
+        ItemInventario(
+            id = "insignia_estadio",
+            nombre = "Crack del Alfonso López",
+            descripcion = "Para quienes definen los partidos difíciles con calma y conocen la historia deportiva de la universidad.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "⚽",
+            puntoOrigenId = "poi_estadio",
+            nombreLugarOrigen = "Estadio Alfonso López",
+            requisitoTexto = "Supera el reto en el Estadio Alfonso López"
         )
     )
 
@@ -155,6 +175,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_104",
             nombreLugarOrigen = "Auditorio León de Greiff",
             requisitoTexto = "Coleccionable hallado en el Auditorio"
+        ),
+        ItemInventario(
+            id = "col_camiseta",
+            nombre = "Camiseta de los Bolivarianos",
+            descripcion = "Una camiseta de competencia como las que se vieron en los primeros Juegos Bolivarianos, estrenados en este estadio en 1938.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎽",
+            puntoOrigenId = "poi_estadio",
+            nombreLugarOrigen = "Estadio Alfonso López",
+            requisitoTexto = "Coleccionable escondido en el estadio"
         )
     )
 

@@ -15,7 +15,13 @@ data class UserProfile(
     // Escenas de historia ya vistas (prólogo, intro/outro de capítulos, epílogo)
     val escenasVistas: List<String> = emptyList(),
     // Puntos de interés cuya ficha abrió el jugador en el mapa
-    val lugaresDescubiertos: List<String> = emptyList()
+    val lugaresDescubiertos: List<String> = emptyList(),
+    // Trivia del día: racha de días seguidos y último día jugado (días desde 1970)
+    val rachaDias: Int = 0,
+    val mejorRachaDias: Int = 0,
+    val ultimoDiaTrivia: Long = 0,
+    val triviasSuperadas: Int = 0,
+    val triviasPerfectas: Int = 0
 )
 
 // Extensión (y no propiedad) para que Firestore no la serialice como campo

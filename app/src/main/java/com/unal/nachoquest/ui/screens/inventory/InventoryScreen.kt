@@ -1,7 +1,6 @@
 package com.unal.nachoquest.ui.screens.inventory
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,21 +19,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,305 +27,317 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.CatalogoItems
 import com.unal.nachoquest.domain.model.CategoriaItem
 import com.unal.nachoquest.domain.model.ItemInventario
+import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.Etiqueta
+import com.unal.nachoquest.ui.components.tarjetaJuego
+import com.unal.nachoquest.ui.theme.Bruma
+import com.unal.nachoquest.ui.theme.CantoCrema
+import com.unal.nachoquest.ui.theme.EstiloEtiqueta
+import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
 import com.unal.nachoquest.ui.theme.NachoYellow
+import com.unal.nachoquest.ui.theme.Papel
+import com.unal.nachoquest.ui.theme.Tinta
+import com.unal.nachoquest.ui.theme.TintaSuave
 
+private data class CategoriaInventario(
+    val nombre: String,
+    val emoji: String,
+    val items: List<ItemInventario>,
+    val conseguidos: Int
+)
+
+private val FondoBloqueado = Color(0xFFECE7D8)
+private val CantoBloqueado = Color(0xFFD3CCB8)
+
+/**
+ * La mochila del jugador: objetos clave de la historia, insignias y coleccionables.
+ * Los que faltan aparecen cubiertos por la bruma, con una pista para conseguirlos.
+ */
 @Composable
 fun InventoryScreen(
     viewModel: InventoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    val tabs = listOf(
-        "Objetos (${state.objetosDesbloqueadosCount}/${state.totalObjetos})",
-        "Insignias (${state.insigniasDesbloqueadasCount}/${state.totalInsignias})",
-        "Colección (${state.coleccionablesDesbloqueadosCount}/${state.totalColeccionables})"
+    val categorias = listOf(
+        CategoriaInventario("Objetos", "🗝️", CatalogoItems.itemsObjetos, state.objetosDesbloqueadosCount),
+        CategoriaInventario("Insignias", "🎖️", CatalogoItems.itemsInsignias, state.insigniasDesbloqueadasCount),
+        CategoriaInventario("Colección", "🎁", CatalogoItems.itemsColeccionables, state.coleccionablesDesbloqueadosCount)
     )
-
-    val currentItems: List<ItemInventario> = when (state.selectedTab) {
-        0 -> CatalogoItems.itemsObjetos
-        1 -> CatalogoItems.itemsInsignias
-        2 -> CatalogoItems.itemsColeccionables
-        else -> emptyList()
-    }
+    val seleccionada = state.selectedTab.coerceIn(categorias.indices)
+    val conseguidos = categorias.sumOf { it.conseguidos }
+    val total = categorias.sumOf { it.items.size }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF9F9F9))
-            .padding(horizontal = 16.dp, vertical = 20.dp)
+            .background(NachoCream)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Brush.verticalGradient(listOf(NachoGreenDark, NachoGreen)))
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
+                Etiqueta("INVENTARIO", color = NachoYellow)
+                Text("Tu mochila", style = MaterialTheme.typography.headlineSmall, color = Color.White)
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Inventario de Misiones",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = NachoGreenDark
-                )
-                Text(
-                    text = "Llaves, medallas y reliquias de la UNAL",
+                    "Llaves, medallas y reliquias que le has quitado al Olvido.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = Color.White.copy(alpha = 0.8f)
                 )
             }
-            Box(
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(NachoGreen.copy(alpha = 0.1f))
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White.copy(alpha = 0.12f))
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
             ) {
-                Text(
-                    text = "Total: ${state.objetosDesbloqueadosCount + state.insigniasDesbloqueadasCount + state.coleccionablesDesbloqueadosCount}",
-                    fontWeight = FontWeight.Bold,
-                    color = NachoGreenDark,
-                    fontSize = 12.sp
-                )
+                Text("$conseguidos/$total", style = MaterialTheme.typography.headlineSmall, color = NachoYellow)
+                Text("conseguidos", fontSize = 11.sp, color = Color.White.copy(alpha = 0.8f))
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Tabs de Categorías
-        TabRow(
-            selectedTabIndex = state.selectedTab,
-            containerColor = Color.White,
-            contentColor = NachoGreen,
-            indicator = { tabPositions ->
-                SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[state.selectedTab]),
-                    color = NachoGreen
-                )
-            },
-            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = state.selectedTab == index,
-                    onClick = { viewModel.seleccionarTab(index) },
-                    text = {
-                        Text(
-                            text = title,
-                            fontWeight = if (state.selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                            color = if (state.selectedTab == index) NachoGreen else Color.Gray,
-                            fontSize = 12.sp
-                        )
-                    }
+            categorias.forEachIndexed { indice, categoria ->
+                PestanaCategoria(
+                    categoria = categoria,
+                    seleccionada = indice == seleccionada,
+                    onClick = { viewModel.seleccionarTab(indice) },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Grid dinámico de ítems
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            contentPadding = PaddingValues(bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(16.dp),
             modifier = Modifier.weight(1f)
         ) {
-            items(currentItems) { item ->
-                val desbloqueado = viewModel.estaDesbloqueado(item)
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable { viewModel.mostrarDetalleItem(item) },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (desbloqueado) Color.White else Color(0xFFF1F1F1)
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = if (desbloqueado) 4.dp else 0.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(14.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if (desbloqueado) NachoGreen.copy(alpha = 0.1f)
-                                    else Color(0xFFE0E0E0)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (desbloqueado) {
-                                Text(item.emojiIcono, fontSize = 32.sp)
-                            } else {
-                                Icon(
-                                    Icons.Default.Lock,
-                                    contentDescription = "Bloqueado",
-                                    tint = Color.Gray,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = item.nombre,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = if (desbloqueado) Color.Black else Color.Gray,
-                            textAlign = TextAlign.Center,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        if (desbloqueado) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    Icons.Default.CheckCircle,
-                                    contentDescription = null,
-                                    tint = NachoGreen,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Desbloqueado",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = NachoGreenDark,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        } else {
-                            Text(
-                                text = "🔒 Bloqueado",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Pista al pie
-        Card(
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.Info, contentDescription = null, tint = NachoGreen, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Toca cualquier ítem para ver su pista de obtención o su historia en la UNAL.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.DarkGray
+            items(categorias[seleccionada].items, key = { it.id }) { item ->
+                CeldaItem(
+                    item = item,
+                    desbloqueado = state.tiene(item),
+                    onClick = { viewModel.mostrarDetalleItem(item) }
                 )
             }
         }
     }
 
-    // Modal de Detalle del Ítem
     state.itemSeleccionadoDetalle?.let { item ->
-        val desbloqueado = viewModel.estaDesbloqueado(item)
-
-        AlertDialog(
-            onDismissRequest = { viewModel.mostrarDetalleItem(null) },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.mostrarDetalleItem(null) },
-                    colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text("Cerrar")
-                }
-            },
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(if (desbloqueado) item.emojiIcono else "🔒", fontSize = 28.sp)
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(item.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                }
-            },
-            text = {
-                Column {
-                    if (desbloqueado) {
-                        Text(
-                            text = item.descripcion,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.DarkGray
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        if (item.nombreLugarOrigen.isNotBlank()) {
-                            Text(
-                                text = "📍 Obtenido en: ${item.nombreLugarOrigen}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = NachoGreenDark,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        if (item.nombrePuntoDesbloqueado != null) {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "🔑 Llave de acceso para: ${item.nombrePuntoDesbloqueado}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFFB78103),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    } else {
-                        Text(
-                            text = "Este ítem aún no ha sido descubierto en tu aventura universitaria.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = NachoYellow.copy(alpha = 0.15f)),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text(
-                                    text = "💡 Pista para desbloquear:",
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = Color(0xFF8D6E00)
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = item.requisitoTexto,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.DarkGray
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            containerColor = Color.White
+        DetalleItem(
+            item = item,
+            desbloqueado = state.tiene(item),
+            onCerrar = { viewModel.mostrarDetalleItem(null) }
         )
+    }
+}
+
+@Composable
+private fun PestanaCategoria(
+    categoria: CategoriaInventario,
+    seleccionada: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .tarjetaJuego(
+                fondo = if (seleccionada) NachoGreen else Papel,
+                borde = if (seleccionada) NachoGreenDark else CantoCrema,
+                radio = 14.dp,
+                canto = 3.dp
+            )
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(categoria.emoji, fontSize = 18.sp)
+        Text(
+            categoria.nombre,
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp,
+            color = if (seleccionada) Color.White else Tinta
+        )
+        Text(
+            "${categoria.conseguidos}/${categoria.items.size}",
+            style = EstiloEtiqueta,
+            color = if (seleccionada) NachoYellow else TintaSuave
+        )
+    }
+}
+
+@Composable
+private fun CeldaItem(item: ItemInventario, desbloqueado: Boolean, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .tarjetaJuego(
+                fondo = if (desbloqueado) Papel else FondoBloqueado,
+                borde = if (desbloqueado) NachoYellow else CantoBloqueado
+            )
+            .clickable(onClick = onClick)
+            .padding(14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(
+                    if (desbloqueado) Brush.radialGradient(listOf(NachoYellow.copy(alpha = 0.4f), NachoYellow.copy(alpha = 0.08f)))
+                    else Brush.radialGradient(listOf(Bruma.copy(alpha = 0.35f), Bruma.copy(alpha = 0.12f)))
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (desbloqueado) {
+                Text(item.emojiIcono, fontSize = 36.sp)
+            } else {
+                Text("?", style = MaterialTheme.typography.headlineLarge, color = Bruma)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Alto fijo para dos renglones, así todas las celdas miden lo mismo
+        Box(modifier = Modifier.height(42.dp), contentAlignment = Alignment.Center) {
+            // Los ítems que faltan no revelan su nombre: se descubren jugando
+            Text(
+                text = if (desbloqueado) item.nombre else "? ? ?",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (desbloqueado) Tinta else TintaSuave,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Etiqueta(
+            texto = if (desbloqueado) "✓ CONSEGUIDO" else "VER PISTA",
+            color = if (desbloqueado) NachoGreen else TintaSuave
+        )
+    }
+}
+
+@Composable
+private fun DetalleItem(item: ItemInventario, desbloqueado: Boolean, onCerrar: () -> Unit) {
+    Dialog(onDismissRequest = onCerrar) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp))
+                .background(NachoCream)
+                .padding(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .clip(CircleShape)
+                    .background(if (desbloqueado) NachoYellow.copy(alpha = 0.3f) else Bruma.copy(alpha = 0.25f)),
+                contentAlignment = Alignment.Center
+            ) {
+                if (desbloqueado) {
+                    Text(item.emojiIcono, fontSize = 50.sp)
+                } else {
+                    Text("?", style = MaterialTheme.typography.headlineLarge, color = Bruma)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Etiqueta(
+                texto = when (item.categoria) {
+                    CategoriaItem.OBJETO -> "OBJETO CLAVE"
+                    CategoriaItem.INSIGNIA -> "INSIGNIA"
+                    CategoriaItem.COLECCIONABLE -> "COLECCIONABLE"
+                },
+                color = NachoGreen
+            )
+            Text(
+                text = if (desbloqueado) item.nombre else "Aún por descubrir",
+                style = MaterialTheme.typography.titleLarge,
+                color = NachoGreenDark,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            if (desbloqueado) {
+                Text(
+                    text = item.descripcion,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.DarkGray,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                if (item.nombreLugarOrigen.isNotBlank()) {
+                    DatoItem(emoji = "📍", titulo = "Lo conseguiste en", valor = item.nombreLugarOrigen)
+                }
+                item.nombrePuntoDesbloqueado?.let {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    DatoItem(emoji = "🔑", titulo = "Abre el paso a", valor = it)
+                }
+            } else {
+                Text(
+                    text = "La bruma todavía lo esconde en algún lugar del campus.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TintaSuave,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                DatoItem(emoji = "💡", titulo = "Pista", valor = item.requisitoTexto)
+            }
+
+            Spacer(modifier = Modifier.height(18.dp))
+            BotonJuego(texto = "Cerrar", onClick = onCerrar, modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+private fun DatoItem(emoji: String, titulo: String, valor: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(NachoYellow.copy(alpha = 0.18f))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(emoji, fontSize = 20.sp)
+        Spacer(modifier = Modifier.width(10.dp))
+        Column {
+            Text(titulo, fontSize = 11.sp, color = TintaSuave)
+            Text(valor, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = Tinta)
+        }
     }
 }

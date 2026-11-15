@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,8 +46,12 @@ import androidx.compose.ui.unit.sp
 import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.TipoMinijuego
+import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.Efecto
+import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.LluviaConfeti
 import com.unal.nachoquest.ui.components.Nacho
+import com.unal.nachoquest.ui.components.Sonidos
 import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
@@ -86,13 +88,7 @@ fun PantallaMinijuego(
                     Icon(Icons.Default.Close, contentDescription = "Salir", tint = Color.DarkGray)
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "CAPÍTULO ${capitulo.numero} · MINIJUEGO",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = NachoGreen,
-                        letterSpacing = 1.sp
-                    )
+                    Etiqueta("CAPÍTULO ${capitulo.numero} · MINIJUEGO", color = NachoGreen)
                     Text(
                         tipo.titulo,
                         style = MaterialTheme.typography.titleLarge,
@@ -132,6 +128,7 @@ fun PantallaMinijuego(
                     TipoMinijuego.LETRAS -> MinijuegoLetras(alTerminar)
                     TipoMinijuego.CIRCUITO -> MinijuegoCircuito(alTerminar)
                     TipoMinijuego.SINFONIA -> MinijuegoSinfonia(alTerminar)
+                    TipoMinijuego.PENALES -> MinijuegoPenales(alTerminar)
                 }
             }
         }
@@ -147,6 +144,7 @@ fun PantallaMinijuego(
                 LluviaConfeti(modifier = Modifier.fillMaxSize())
                 var visible by remember { mutableStateOf(false) }
                 LaunchedEffect(Unit) {
+                    Sonidos.reproducir(Efecto.VICTORIA)
                     delay(250)
                     visible = true
                 }
@@ -163,7 +161,7 @@ fun PantallaMinijuego(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "¡Recuerdo restaurado!",
+                            if (tipo == TipoMinijuego.PENALES) "¡Tanda ganada!" else "¡Recuerdo restaurado!",
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.ExtraBold,
                             color = NachoGreenDark,
@@ -196,14 +194,11 @@ fun PantallaMinijuego(
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(
+                        BotonJuego(
+                            texto = "Continuar",
                             onClick = { onCompletado(estrellas) },
-                            colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-                            shape = RoundedCornerShape(14.dp),
-                            modifier = Modifier.fillMaxWidth().height(50.dp)
-                        ) {
-                            Text("Continuar", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        }
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

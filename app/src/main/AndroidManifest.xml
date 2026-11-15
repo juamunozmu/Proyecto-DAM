@@ -15,9 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NachoQuest">
         
+        <!-- Vertical: los minijuegos y retos están diseñados para usarse con el teléfono en la mano -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.NachoQuest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

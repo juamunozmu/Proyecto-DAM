@@ -7,10 +7,14 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Point
+import android.graphics.RadialGradient
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
+import android.location.LocationManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,24 +48,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,21 +77,36 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.CategoriaLugar
 import com.unal.nachoquest.domain.model.Expresion
+import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.PointOfInterest
+import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.Efecto
+import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.Nacho
+import com.unal.nachoquest.ui.components.Sonidos
+import com.unal.nachoquest.ui.components.oscurecer
 import com.unal.nachoquest.ui.components.pulso
+import com.unal.nachoquest.ui.components.tarjetaJuego
+import com.unal.nachoquest.ui.theme.CantoCrema
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
 import com.unal.nachoquest.ui.theme.NachoYellow
+import com.unal.nachoquest.ui.theme.Tinta
+import kotlinx.coroutines.delay
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -96,7 +115,9 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.TileSystem
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.Projection
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Overlay
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
@@ -116,6 +137,32 @@ private class CapaUbicacion(
     }
 }
 
+private const val RADIO_BRUMA_METROS = 105f
+
+/**
+ * La bruma del Olvido sobre el mapa: cubre los edificios cuyos capítulos siguen sin completarse
+ * y se despeja a medida que el jugador recupera los fragmentos.
+ */
+private class CapaBruma : Overlay() {
+    var centros: List<GeoPoint> = emptyList()
+    private val pincel = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val punto = Point()
+    private val colores = intArrayOf(0xE06E7076.toInt(), 0xA66E7076.toInt(), 0x006E7076)
+    private val paradas = floatArrayOf(0f, 0.55f, 1f)
+
+    override fun draw(canvas: Canvas, projection: Projection) {
+        centros.forEach { centro ->
+            projection.toPixels(centro, punto)
+            val radio = projection.metersToPixels(RADIO_BRUMA_METROS, centro.latitude, projection.zoomLevel)
+            if (radio <= 0f) return@forEach
+            pincel.shader = RadialGradient(
+                punto.x.toFloat(), punto.y.toFloat(), radio, colores, paradas, Shader.TileMode.CLAMP
+            )
+            canvas.drawCircle(punto.x.toFloat(), punto.y.toFloat(), radio, pincel)
+        }
+    }
+}
+
 /** Lo que define cómo se ven los marcadores: solo se redibujan si esto cambia. */
 private data class FirmaMarcadores(
     val seleccionado: String?,
@@ -130,14 +177,29 @@ private class CacheMapa {
     var puntosRuta: List<GeoPoint>? = null
     var lineaRuta: Polyline? = null
     var clusterer: RadiusMarkerClusterer? = null
+    val bruma = CapaBruma()
     val sueltos = mutableListOf<Marker>()
     val pines = mutableMapOf<String, Drawable>()
 }
 
+private val PERMISOS_UBICACION = arrayOf(
+    Manifest.permission.ACCESS_FINE_LOCATION,
+    Manifest.permission.ACCESS_COARSE_LOCATION
+)
+
+private fun tienePermisoUbicacion(context: Context): Boolean = PERMISOS_UBICACION.any {
+    ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+}
+
+/**
+ * @param puedePedirUbicacion false mientras haya una escena de historia encima, para que el
+ * diálogo del permiso no interrumpa el prólogo.
+ */
 @Composable
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel(),
-    onIniciarReto: (String) -> Unit = {}
+    onIniciarReto: (String) -> Unit = {},
+    puedePedirUbicacion: Boolean = true
 ) {
     val state by viewModel.mapState.collectAsState()
     val context = LocalContext.current
@@ -146,28 +208,79 @@ fun MapScreen(
     var locationOverlay by remember { mutableStateOf<MyLocationNewOverlay?>(null) }
     val cache = remember { CacheMapa() }
 
-    // Solicitar permiso de GPS
+    var permisoUbicacion by remember { mutableStateOf(tienePermisoUbicacion(context)) }
+    // Se pide una sola vez por sesión; después, el botón de GPS permite volver a pedirlo
+    var permisoSolicitado by rememberSaveable { mutableStateOf(false) }
+
+    // En Android 12+ el permiso preciso debe pedirse junto con el aproximado
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            locationOverlay?.enableMyLocation()
-        } else {
-            Toast.makeText(context, "Sin GPS no podemos guiarte por el campus", Toast.LENGTH_SHORT).show()
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        permisoUbicacion = resultado.values.any { it }
+        when {
+            resultado[Manifest.permission.ACCESS_FINE_LOCATION] == true -> locationOverlay?.enableMyLocation()
+            permisoUbicacion -> {
+                locationOverlay?.enableMyLocation()
+                Toast.makeText(
+                    context,
+                    "Con la ubicación aproximada no sabremos si llegaste: activa la ubicación precisa",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> Toast.makeText(context, "Sin GPS no podemos guiarte por el campus", Toast.LENGTH_SHORT).show()
+        }
+    }
+    val pedirPermisoUbicacion = {
+        permisoSolicitado = true
+        permissionLauncher.launch(PERMISOS_UBICACION)
+    }
+
+    LaunchedEffect(puedePedirUbicacion) {
+        if (puedePedirUbicacion && !permisoUbicacion && !permisoSolicitado) {
+            pedirPermisoUbicacion()
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    // El GPS solo funciona con la app en primer plano: MapView.onPause apaga la capa de ubicación
+    // y onResume la vuelve a encender. Al salir de la pestaña, osmdroid destruye el mapa y la
+    // apaga por su cuenta (MapView.onDetach).
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, mapViewReference) {
+        val mapa = mapViewReference
+        val observador = LifecycleEventObserver { _, evento ->
+            when (evento) {
+                Lifecycle.Event.ON_RESUME -> {
+                    // El jugador pudo dar el permiso desde los ajustes del sistema
+                    permisoUbicacion = tienePermisoUbicacion(context)
+                    if (permisoUbicacion) mapa?.onResume()
+                }
+                Lifecycle.Event.ON_PAUSE -> mapa?.onPause()
+                else -> Unit
+            }
         }
+        lifecycleOwner.lifecycle.addObserver(observador)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observador) }
     }
 
-    // Avisos puntuales (p. ej. sin GPS)
+    // Avisos puntuales (lugar descubierto, logro, sin GPS): se muestran unos segundos y se van
+    var avisoVisible by remember { mutableStateOf<AvisoMapa?>(null) }
+    // Se conserva el último para que su texto no desaparezca mientras el aviso se desvanece
+    var ultimoAviso by remember { mutableStateOf<AvisoMapa?>(null) }
     LaunchedEffect(state.aviso) {
-        state.aviso?.let {
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-            viewModel.descartarAviso()
+        val aviso = state.aviso ?: return@LaunchedEffect
+        avisoVisible = aviso
+        ultimoAviso = aviso
+        viewModel.descartarAviso()
+        when (aviso.tipo) {
+            TipoAviso.LOGRO -> Sonidos.reproducir(Efecto.LOGRO)
+            TipoAviso.DESCUBRIMIENTO -> Sonidos.reproducir(Efecto.ACIERTO)
+            TipoAviso.INFORMACION -> Unit
+        }
+    }
+    LaunchedEffect(avisoVisible) {
+        if (avisoVisible != null) {
+            delay(3500)
+            avisoVisible = null
         }
     }
 
@@ -211,12 +324,16 @@ fun MapScreen(
                     minZoomLevel = 14.5
                     maxZoomLevel = 20.0
 
-                    val capa = CapaUbicacion(GpsMyLocationProvider(ctx), this) { lat, lon ->
+                    // La red da una primera posición rápida mientras el GPS consigue señal
+                    val proveedor = GpsMyLocationProvider(ctx).apply { addLocationSource(LocationManager.NETWORK_PROVIDER) }
+                    val capa = CapaUbicacion(proveedor, this) { lat, lon ->
                         viewModel.actualizarUbicacionUsuario(lat, lon)
                     }
-                    if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (tienePermisoUbicacion(ctx)) {
                         capa.enableMyLocation()
                     }
+                    // La bruma va debajo de los marcadores y del punto de ubicación
+                    overlays.add(cache.bruma)
                     overlays.add(capa)
                     locationOverlay = capa
                 }
@@ -278,6 +395,13 @@ fun MapScreen(
             AnimatedVisibility(visible = sinPanelesAbiertos && (state.ruta != null || state.calculandoRuta)) {
                 BannerNavegacion(state.ruta, state.calculandoRuta, onCancelar = viewModel::cancelarRuta)
             }
+            AnimatedVisibility(
+                visible = avisoVisible != null,
+                enter = slideInVertically { -it } + fadeIn(),
+                exit = slideOutVertically { -it } + fadeOut()
+            ) {
+                ultimoAviso?.let { TarjetaAviso(it) }
+            }
             AnimatedVisibility(visible = sinPanelesAbiertos && state.ruta == null && !state.calculandoRuta) {
                 BannerObjetivo(
                     capitulo = state.capituloObjetivo,
@@ -295,7 +419,9 @@ fun MapScreen(
         FloatingActionButton(
             onClick = {
                 val myLoc = locationOverlay?.myLocation
-                if (myLoc != null) {
+                if (!permisoUbicacion) {
+                    pedirPermisoUbicacion()
+                } else if (myLoc != null) {
                     viewModel.actualizarUbicacionUsuario(myLoc.latitude, myLoc.longitude)
                     mapViewReference?.controller?.animateTo(myLoc, 18.0, 1000L)
                 } else {
@@ -402,6 +528,11 @@ private fun actualizarMarcadores(
     cache.clusterer?.let { mapView.overlays.remove(it) }
     cache.sueltos.forEach { mapView.overlays.remove(it) }
     cache.sueltos.clear()
+
+    cache.bruma.centros = Historia.capitulos
+        .filter { it.retoId !in state.retosCompletados }
+        .mapNotNull { capitulo -> state.puntosDeInteres.find { it.id == capitulo.puntoId } }
+        .map { GeoPoint(it.latitud, it.longitud) }
 
     val clusterer = RadiusMarkerClusterer(context).apply {
         setIcon(crearBurbujaGrupo(context))
@@ -659,15 +790,17 @@ private fun BannerObjetivo(capitulo: Capitulo?, onIr: () -> Unit) {
         Nacho(modifier = Modifier.size(40.dp), expresion = Expresion.DECIDIDO)
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
+            Etiqueta("MISIÓN · CAPÍTULO ${capitulo.numero}", color = NachoYellow)
             Text(
-                "MISIÓN · CAPÍTULO ${capitulo.numero}",
-                color = NachoYellow,
-                fontSize = 10.sp,
+                capitulo.lugar,
+                color = Color.White,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 14.sp
             )
-            Text(capitulo.lugar, color = Color.White, fontWeight = FontWeight.Bold, maxLines = 1, fontSize = 14.sp)
         }
+        Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier
                 .pulso()
@@ -678,6 +811,28 @@ private fun BannerObjetivo(capitulo: Capitulo?, onIr: () -> Unit) {
             Text("Ver ➜", color = NachoGreenDark, fontWeight = FontWeight.ExtraBold)
         }
     }
+}
+
+@Composable
+private fun TarjetaAviso(aviso: AvisoMapa) {
+    val esLogro = aviso.tipo == TipoAviso.LOGRO
+    Text(
+        text = aviso.texto,
+        color = if (esLogro) NachoGreenDark else Color.White,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .tarjetaJuego(
+                fondo = if (esLogro) NachoYellow else NachoGreenDark,
+                borde = if (esLogro) NachoYellow.oscurecer() else NachoYellow,
+                radio = 14.dp,
+                canto = 3.dp
+            )
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+    )
 }
 
 @Composable
@@ -714,7 +869,7 @@ private fun FichaLugar(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(punto.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color(0xFF1E1E1E))
+                Text(punto.nombre, style = MaterialTheme.typography.titleLarge, fontSize = 24.sp, lineHeight = 25.sp, color = Tinta)
                 val distancia = distanciaMetros?.takeIf { !modoSimulacion }?.let { " · a ${formatearDistancia(it)}" }.orEmpty()
                 Text(textoEdificio(punto) + distancia, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
@@ -767,32 +922,32 @@ private fun FichaLugar(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             val puedeJugar = estadoReto == EstadoEdificioReto.LISTO_PARA_JUGAR || estadoReto == EstadoEdificioReto.YA_COMPLETADO
             if (puedeJugar) {
-                Button(
+                BotonJuego(
+                    texto = if (estadoReto == EstadoEdificioReto.YA_COMPLETADO) "Repetir" else "Jugar",
                     onClick = { onIniciarReto(punto.id) },
-                    modifier = Modifier.weight(1f).height(48.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(if (estadoReto == EstadoEdificioReto.YA_COMPLETADO) "Repetir" else "Jugar", fontWeight = FontWeight.Bold, maxLines = 1)
-                }
-                OutlinedButton(
+                    icono = Icons.Default.PlayArrow,
+                    alto = 48.dp,
+                    modifier = Modifier.weight(1f)
+                )
+                BotonJuego(
+                    texto = "Cómo llegar",
                     onClick = onComoLlegar,
-                    modifier = Modifier.weight(1f).height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Cómo llegar", fontWeight = FontWeight.Bold, color = Azul, maxLines = 1)
-                }
+                    color = Color.White,
+                    colorTexto = Azul,
+                    borde = CantoCrema,
+                    alto = 48.dp,
+                    tamanoTexto = 15.sp,
+                    modifier = Modifier.weight(1f)
+                )
             } else {
-                Button(
+                BotonJuego(
+                    texto = "Cómo llegar",
                     onClick = onComoLlegar,
-                    modifier = Modifier.weight(1f).height(48.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Azul),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.DirectionsWalk, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Cómo llegar", fontWeight = FontWeight.Bold, maxLines = 1)
-                }
+                    color = Azul,
+                    icono = Icons.AutoMirrored.Filled.DirectionsWalk,
+                    alto = 48.dp,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
@@ -831,27 +986,28 @@ private fun TarjetaLlegada(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Nacho(modifier = Modifier.size(80.dp), expresion = Expresion.FELIZ, saltando = true)
-        Text("¡Llegaste!", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold, color = NachoGreenDark)
+        Text("¡Llegaste!", style = MaterialTheme.typography.headlineMedium, color = NachoGreenDark)
         Text(punto.nombre, color = Color.DarkGray, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(14.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (hayReto) {
-                Button(
+                BotonJuego(
+                    texto = "Jugar el capítulo",
                     onClick = onIniciarReto,
-                    colors = ButtonDefaults.buttonColors(containerColor = NachoGreen),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.weight(1f).height(48.dp)
-                ) {
-                    Text("Jugar el capítulo", fontWeight = FontWeight.Bold)
-                }
+                    alto = 48.dp,
+                    tamanoTexto = 15.sp,
+                    modifier = Modifier.weight(1f)
+                )
             }
-            OutlinedButton(
+            BotonJuego(
+                texto = "Listo",
                 onClick = onCerrar,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.weight(1f).height(48.dp)
-            ) {
-                Text("Listo", color = NachoGreenDark, fontWeight = FontWeight.Bold)
-            }
+                color = Color.White,
+                colorTexto = NachoGreenDark,
+                borde = CantoCrema,
+                alto = 48.dp,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }

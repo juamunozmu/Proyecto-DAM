@@ -31,6 +31,12 @@ data class InventoryUiState(
 
     val coleccionablesDesbloqueadosCount: Int
         get() = CatalogoItems.itemsColeccionables.count { itemsDesbloqueadosIds.contains(it.id) }
+
+    /** Las insignias se guardan aparte de los objetos y coleccionables. */
+    fun tiene(item: ItemInventario): Boolean = when (item.categoria) {
+        CategoriaItem.INSIGNIA -> item.id in insigniasIds
+        CategoriaItem.OBJETO, CategoriaItem.COLECCIONABLE -> item.id in itemsDesbloqueadosIds
+    }
 }
 
 @HiltViewModel
@@ -56,9 +62,6 @@ class InventoryViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch {
-            userRepository.getUserProfile()
-        }
     }
 
     fun seleccionarTab(index: Int) {
@@ -67,14 +70,5 @@ class InventoryViewModel @Inject constructor(
 
     fun mostrarDetalleItem(item: ItemInventario?) {
         _uiState.update { it.copy(itemSeleccionadoDetalle = item) }
-    }
-
-    fun estaDesbloqueado(item: ItemInventario): Boolean {
-        val state = _uiState.value
-        return when (item.categoria) {
-            CategoriaItem.OBJETO -> state.itemsDesbloqueadosIds.contains(item.id)
-            CategoriaItem.INSIGNIA -> state.insigniasIds.contains(item.id)
-            CategoriaItem.COLECCIONABLE -> state.itemsDesbloqueadosIds.contains(item.id)
-        }
     }
 }

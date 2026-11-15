@@ -1,6 +1,7 @@
 package com.unal.nachoquest
 
 import android.app.Application
+import com.unal.nachoquest.ui.components.Sonidos
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -11,6 +12,6 @@ import dagger.hilt.android.HiltAndroidApp
 class NachoQuestApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Inicialización de componentes adicionales si es necesario
+        Sonidos.iniciar(this)
     }
 }
