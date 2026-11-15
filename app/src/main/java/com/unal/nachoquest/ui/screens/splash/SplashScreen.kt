@@ -17,11 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,18 +32,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unal.nachoquest.domain.model.Expresion
+import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.ParticulasFlotantes
 import com.unal.nachoquest.ui.components.pulso
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
+import com.unal.nachoquest.ui.theme.NachoGreenLight
 import com.unal.nachoquest.ui.theme.NachoQuestTheme
 import com.unal.nachoquest.ui.theme.NachoYellow
 import kotlinx.coroutines.delay
@@ -112,7 +109,7 @@ fun SplashScreen(
                         withStyle(SpanStyle(color = NachoYellow)) { append("Nacho") }
                         withStyle(SpanStyle(color = Color.White)) { append("Quest") }
                     },
-                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 42.sp, fontWeight = FontWeight.ExtraBold)
+                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 68.sp, lineHeight = 68.sp)
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
@@ -148,43 +145,26 @@ fun SplashScreen(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Button(
+                    BotonJuego(
+                        texto = if (sesionActiva) "Continuar la aventura" else "Comenzar la aventura",
                         onClick = onComenzar,
+                        color = NachoYellow,
+                        colorTexto = NachoGreenDark,
+                        alto = 54.dp,
+                        tamanoTexto = 17.sp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(54.dp)
-                            .pulso(intensidad = 0.03f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = NachoYellow,
-                            contentColor = NachoGreenDark
-                        ),
-                        shape = RoundedCornerShape(14.dp)
-                    ) {
-                        Text(
-                            text = if (sesionActiva) "Continuar la aventura" else "Comenzar la aventura",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 16.sp
-                        )
-                    }
+                            .pulso(intensidad = 0.03f)
+                    )
 
                     if (!sesionActiva) {
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedButton(
-                        onClick = onIniciarSesion,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                    ) {
-                        Text(
-                            text = "Ya tengo cuenta",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold
+                        Spacer(modifier = Modifier.height(12.dp))
+                        BotonJuego(
+                            texto = "Ya tengo cuenta",
+                            onClick = onIniciarSesion,
+                            color = NachoGreenLight,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                    }
                     }
                 }
             }

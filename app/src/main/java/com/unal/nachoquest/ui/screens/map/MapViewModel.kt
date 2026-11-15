@@ -8,6 +8,7 @@ import com.unal.nachoquest.domain.model.CatalogoItems
 import com.unal.nachoquest.domain.model.CategoriaLugar
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
+import com.unal.nachoquest.domain.model.Logros
 import com.unal.nachoquest.domain.model.PointOfInterest
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.Road
 import org.osmdroid.util.GeoPoint
 import java.text.Normalizer
+import java.util.Locale
 import javax.inject.Inject
 
 private const val RADIO_RETO_METROS = 75.0
@@ -41,6 +43,11 @@ enum class EstadoEdificioReto {
     YA_COMPLETADO,      // Reto superado
     SIN_RETO            // Edificio informativo del campus
 }
+
+enum class TipoAviso { INFORMACION, DESCUBRIMIENTO, LOGRO }
+
+/** Mensaje breve que el mapa muestra unos segundos (lugar descubierto, logro, falta de GPS). */
+data class AvisoMapa(val texto: String, val tipo: TipoAviso = TipoAviso.INFORMACION)
 
 /** Ruta a pie hacia un lugar del campus. */
 data class Ruta(
@@ -72,7 +79,7 @@ data class MapUiState(
     val ruta: Ruta? = null,
     val calculandoRuta: Boolean = false,
     val llegadaA: PointOfInterest? = null,
-    val aviso: String? = null
+    val aviso: AvisoMapa? = null
 ) {
     /** Capítulo de la historia que el jugador debe jugar ahora (null si ya terminó). */
     val capituloObjetivo: Capitulo?
@@ -142,7 +149,6 @@ class MapViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch { userRepository.getUserProfile() }
     }
 
     fun actualizarUbicacionUsuario(lat: Double, lon: Double) {
@@ -194,8 +200,19 @@ class MapViewModel @Inject constructor(
     }
 
     fun seleccionarPunto(punto: PointOfInterest) {
-        _mapState.update { it.copy(puntoSeleccionado = punto) }
-        viewModelScope.launch { userRepository.registrarLugarDescubierto(punto.id) }
+        val perfilAntes = userRepository.userProfileFlow.value
+        val esNuevo = userRepository.registrarLugarDescubierto(punto.id)
+        val perfil = userRepository.userProfileFlow.value
+        val logro = Logros.nuevos(perfilAntes, perfil).firstOrNull()
+        val aviso = when {
+            logro != null -> AvisoMapa("${logro.emoji} Logro desbloqueado: ${logro.titulo}", TipoAviso.LOGRO)
+            esNuevo -> AvisoMapa(
+                "📍 ¡Lugar descubierto! +${UserRepository.XP_POR_LUGAR} XP · llevas ${perfil.lugaresDescubiertos.size}",
+                TipoAviso.DESCUBRIMIENTO
+            )
+            else -> null
+        }
+        _mapState.update { it.copy(puntoSeleccionado = punto, aviso = aviso ?: it.aviso) }
     }
 
     fun cerrarDetalle() {
@@ -215,7 +232,7 @@ class MapViewModel @Inject constructor(
     fun trazarRuta(destino: PointOfInterest) {
         val origen = _mapState.value.ubicacionUsuario
         if (origen == null) {
-            _mapState.update { it.copy(aviso = "Aún no tenemos tu ubicación. Activa el GPS y espera unos segundos.") }
+            _mapState.update { it.copy(aviso = AvisoMapa("Aún no tenemos tu ubicación. Activa el GPS y espera unos segundos.")) }
             return
         }
         _mapState.update { it.copy(puntoSeleccionado = null, llegadaA = null, calculandoRuta = true) }
@@ -354,8 +371,10 @@ fun distanciaMetros(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Dou
     return r * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
+private val LOCALE_ES: Locale = Locale.forLanguageTag("es-CO")
+
 fun formatearDistancia(metros: Double): String =
-    if (metros >= 1000) String.format("%.1f km", metros / 1000) else "${metros.toInt()} m"
+    if (metros >= 1000) String.format(LOCALE_ES, "%.1f km", metros / 1000) else "${metros.toInt()} m"
 
 private fun normalizar(texto: String): String =
     Normalizer.normalize(texto.lowercase(), Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "").trim()

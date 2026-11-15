@@ -14,6 +14,8 @@ import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,6 +27,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -38,7 +43,12 @@ import com.unal.nachoquest.ui.screens.challenges.ChallengesScreen
 import com.unal.nachoquest.ui.screens.inventory.InventoryScreen
 import com.unal.nachoquest.ui.screens.map.MapScreen
 import com.unal.nachoquest.ui.screens.profile.ProfileScreen
+import com.unal.nachoquest.ui.theme.CantoCrema
 import com.unal.nachoquest.ui.theme.NachoGreen
+import com.unal.nachoquest.ui.theme.NachoNaranja
+import com.unal.nachoquest.ui.theme.NachoYellow
+import com.unal.nachoquest.ui.theme.Papel
+import com.unal.nachoquest.ui.theme.TintaSuave
 
 /**
  * Elemento de la barra de navegación inferior.
@@ -62,6 +72,8 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val escenaActiva by viewModel.escenaActiva.collectAsState()
+    val listoParaJugar by viewModel.listoParaJugar.collectAsState()
+    val triviaPendiente by viewModel.triviaPendiente.collectAsState()
 
     val items = listOf(
         BottomNavItem("Mapa", Icons.Filled.Map, Icons.Outlined.Map, MapRoute),
@@ -74,7 +86,10 @@ fun MainScreen(
         Scaffold(
             bottomBar = {
                 NavigationBar(
-                    containerColor = androidx.compose.ui.graphics.Color.White
+                    containerColor = Papel,
+                    modifier = Modifier.drawBehind {
+                        drawLine(CantoCrema, Offset.Zero, Offset(size.width, 0f), strokeWidth = 1.5.dp.toPx())
+                    }
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
@@ -86,10 +101,19 @@ fun MainScreen(
 
                         NavigationBarItem(
                             icon = {
-                                Icon(
-                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.label
-                                )
+                                BadgedBox(
+                                    badge = {
+                                        // Punto de aviso: la trivia del día todavía no se ha jugado
+                                        if (item.route == ChallengesRoute && triviaPendiente) {
+                                            Badge(containerColor = NachoNaranja)
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                        contentDescription = item.label
+                                    )
+                                }
                             },
                             label = { Text(item.label) },
                             selected = selected,
@@ -105,7 +129,9 @@ fun MainScreen(
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = NachoGreen,
                                 selectedTextColor = NachoGreen,
-                                indicatorColor = NachoGreen.copy(alpha = 0.1f)
+                                indicatorColor = NachoYellow.copy(alpha = 0.3f),
+                                unselectedIconColor = TintaSuave,
+                                unselectedTextColor = TintaSuave
                             )
                         )
                     }
@@ -118,7 +144,8 @@ fun MainScreen(
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable<MapRoute> {
-                    MapScreen(onIniciarReto = onIniciarReto)
+                    // El permiso de ubicación se pide cuando termina el prólogo, no encima de él
+                    MapScreen(onIniciarReto = onIniciarReto, puedePedirUbicacion = listoParaJugar)
                 }
                 composable<ChallengesRoute> {
                     ChallengesScreen(onIniciarReto = onIniciarReto, onVerEscena = viewModel::verEscena)

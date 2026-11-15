@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,25 +65,18 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
 
-    // Firebase y Autenticación con Google
+    // Firebase y Autenticación con Google (Credential Manager)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.play.services.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     // Inyección de dependencias
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    // Base de datos local
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
-
-    // Imágenes
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
 
     // Serialización
     implementation(libs.kotlinx.serialization.json)

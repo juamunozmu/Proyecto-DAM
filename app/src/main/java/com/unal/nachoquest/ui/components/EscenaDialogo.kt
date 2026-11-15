@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unal.nachoquest.domain.model.Hablante
 import com.unal.nachoquest.domain.model.LineaDialogo
+import com.unal.nachoquest.ui.theme.EstiloEtiqueta
 import com.unal.nachoquest.ui.theme.NachoCream
 import com.unal.nachoquest.ui.theme.NachoGreen
 import com.unal.nachoquest.ui.theme.NachoGreenDark
@@ -181,10 +182,10 @@ fun EscenaDialogo(
                         .padding(horizontal = 14.dp, vertical = 5.dp)
                 ) {
                     Text(
-                        text = if (esOlvido) "El Olvido" else "Nacho",
+                        text = if (esOlvido) "EL OLVIDO" else "NACHO",
                         color = if (esOlvido) Color(0xFFE8F0FF) else NachoGreenDark,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 14.sp
+                        style = EstiloEtiqueta,
+                        fontSize = 19.sp
                     )
                 }
             }

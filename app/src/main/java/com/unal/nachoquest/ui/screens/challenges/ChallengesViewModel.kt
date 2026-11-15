@@ -6,12 +6,18 @@ import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.CatalogoItems
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
+import com.unal.nachoquest.domain.model.JugadorRanking
+import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class EstadoCapitulo { COMPLETADO, ACTUAL, BLOQUEADO }
@@ -25,17 +31,51 @@ data class CapituloUi(
     val escenasVistas: List<String>
 )
 
+data class TriviaUi(
+    val jugadaHoy: Boolean = false,
+    val rachaDias: Int = 0,
+    val xpDisponible: Int = TriviaDiaria.XP_BASE
+)
+
+data class RankingUiState(
+    val visible: Boolean = false,
+    val cargando: Boolean = false,
+    val jugadores: List<JugadorRanking> = emptyList(),
+    val error: Boolean = false
+)
+
 data class ChallengesUiState(
     val capitulos: List<CapituloUi> = emptyList(),
-    val historiaCompletada: Boolean = false
+    val historiaCompletada: Boolean = false,
+    val trivia: TriviaUi = TriviaUi()
 ) {
     val completados: Int get() = capitulos.count { it.estado == EstadoCapitulo.COMPLETADO }
 }
 
 @HiltViewModel
 class ChallengesViewModel @Inject constructor(
-    userRepository: UserRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
+
+    private val _ranking = MutableStateFlow(RankingUiState())
+    val ranking: StateFlow<RankingUiState> = _ranking.asStateFlow()
+
+    fun abrirRanking() {
+        _ranking.value = RankingUiState(visible = true, cargando = true)
+        viewModelScope.launch {
+            _ranking.value = try {
+                RankingUiState(visible = true, jugadores = userRepository.obtenerRanking())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                RankingUiState(visible = true, error = true)
+            }
+        }
+    }
+
+    fun cerrarRanking() {
+        _ranking.value = RankingUiState()
+    }
 
     val uiState: StateFlow<ChallengesUiState> = userRepository.userProfileFlow.map { perfil ->
         val actual = Historia.capituloActual(perfil.retosCompletados)
@@ -55,7 +95,15 @@ class ChallengesViewModel @Inject constructor(
                     escenasVistas = perfil.escenasVistas
                 )
             },
-            historiaCompletada = actual == null
+            historiaCompletada = actual == null,
+            trivia = TriviaDiaria.diaActual().let { hoy ->
+                TriviaUi(
+                    jugadaHoy = TriviaDiaria.yaJugoHoy(perfil, hoy),
+                    rachaDias = TriviaDiaria.rachaVigente(perfil, hoy),
+                    xpDisponible = TriviaDiaria.XP_BASE +
+                        TriviaDiaria.bonoRacha(TriviaDiaria.rachaTrasJugar(perfil, hoy))
+                )
+            }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChallengesUiState())
 }

@@ -16,6 +16,12 @@ data class Logro(
  */
 object Logros {
 
+    /** Logros que el jugador no tenía en [antes] y sí tiene en [despues]. */
+    fun nuevos(antes: UserProfile, despues: UserProfile): List<Logro> {
+        val yaTenia = calcular(antes).filter { it.desbloqueado }.map { it.id }.toSet()
+        return calcular(despues).filter { it.desbloqueado && it.id !in yaTenia }
+    }
+
     fun calcular(perfil: UserProfile): List<Logro> {
         val capitulosHechos = Historia.capitulos.count { it.retoId in perfil.retosCompletados }
         val coleccionables = CatalogoItems.itemsColeccionables.count { it.id in perfil.itemsDesbloqueados }
@@ -51,6 +57,40 @@ object Logros {
                 desbloqueado = perfil.lugaresDescubiertos.size >= 10,
                 progreso = perfil.lugaresDescubiertos.size.coerceAtMost(10),
                 meta = 10
+            ),
+            Logro(
+                id = "cartografo",
+                titulo = "Cartógrafo de la Nacho",
+                descripcion = "Descubre 40 lugares del campus en el mapa",
+                emoji = "🗺️",
+                desbloqueado = perfil.lugaresDescubiertos.size >= 40,
+                progreso = perfil.lugaresDescubiertos.size.coerceAtMost(40),
+                meta = 40
+            ),
+            Logro(
+                id = "sabelotodo",
+                titulo = "Sabelotodo",
+                descripcion = "Supera una trivia del día sin fallar ninguna pregunta",
+                emoji = "🧠",
+                desbloqueado = perfil.triviasPerfectas >= 1
+            ),
+            Logro(
+                id = "en_racha",
+                titulo = "En racha",
+                descripcion = "Juega la trivia del día 3 días seguidos",
+                emoji = "🔥",
+                desbloqueado = perfil.mejorRachaDias >= 3,
+                progreso = perfil.mejorRachaDias.coerceAtMost(3),
+                meta = 3
+            ),
+            Logro(
+                id = "constancia",
+                titulo = "Constancia de hierro",
+                descripcion = "Juega la trivia del día 7 días seguidos",
+                emoji = "📅",
+                desbloqueado = perfil.mejorRachaDias >= 7,
+                progreso = perfil.mejorRachaDias.coerceAtMost(7),
+                meta = 7
             ),
             Logro(
                 id = "coleccionista",

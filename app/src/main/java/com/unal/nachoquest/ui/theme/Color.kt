@@ -10,13 +10,23 @@ val NachoYellow = Color(0xFFD4A017)
 val NachoYellowLight = Color(0xFFE5C04A)
 val NachoCream = Color(0xFFF5F0E1)
 
+// Colores de apoyo
+val NachoRojo = Color(0xFFD32F2F)
+val NachoAzul = Color(0xFF1565C0)
+val NachoNaranja = Color(0xFFE65100)
+val Tinta = Color(0xFF1E1E1E)            // texto principal sobre fondos claros
+val TintaSuave = Color(0xFF6B6B63)       // texto secundario
+val Papel = Color(0xFFFFFDF7)            // superficie de tarjetas
+val CantoCrema = Color(0xFFDDD5BE)       // borde y canto de las tarjetas sobre el fondo crema
+val Bruma = Color(0xFF6E7076)            // el gris del Olvido
+
 // Colores para el esquema claro
 val PrimaryColor = NachoGreen
 val SecondaryColor = NachoYellow
 val BackgroundLight = NachoCream
-val SurfaceLight = Color(0xFFFFFFFF)
+val SurfaceLight = Papel
 val OnPrimaryLight = Color(0xFFFFFFFF)
-val OnSecondaryLight = Color(0xFF1E1E1E)
+val OnSecondaryLight = Tinta
 val ErrorColor = Color(0xFFB3261E)
 
 // Colores para el esquema oscuro

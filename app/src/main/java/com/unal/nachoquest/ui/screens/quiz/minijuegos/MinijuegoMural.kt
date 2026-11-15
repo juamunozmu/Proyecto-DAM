@@ -48,6 +48,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unal.nachoquest.ui.components.Efecto
+import com.unal.nachoquest.ui.components.Sonidos
 import com.unal.nachoquest.ui.theme.NachoGreenDark
 import com.unal.nachoquest.ui.theme.NachoYellow
 import kotlinx.coroutines.delay
@@ -81,11 +83,25 @@ fun MinijuegoMural(alTerminar: (Int) -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Marcador("Movimientos: $movimientos")
-            Marcador("Piezas en su sitio: ${piezas.withIndex().count { it.index == it.value }}/9")
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.weight(1f)) {
+                Marcador("Movimientos: $movimientos")
+                Marcador("Piezas en su sitio: ${piezas.withIndex().count { it.index == it.value }}/9")
+            }
+            // Miniatura del recuerdo completo, para saber cómo debe quedar
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Canvas(
+                    modifier = Modifier
+                        .size(68.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, NachoYellow, RoundedCornerShape(10.dp))
+                ) {
+                    dibujarPlaza(size.width)
+                }
+                Text("Así debe quedar", fontSize = 11.sp, color = Color.Gray)
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         BoxWithConstraints(
             modifier = Modifier
@@ -135,6 +151,7 @@ fun MinijuegoMural(alTerminar: (Int) -> Unit) {
                                                 movimientos++
                                                 seleccion = null
                                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                Sonidos.reproducir(Efecto.TOQUE)
                                                 if (piezas.withIndex().all { it.index == it.value }) resuelto = true
                                             }
                                         }

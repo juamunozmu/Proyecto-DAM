@@ -1,12 +1,22 @@
+<!-- Cara de Nacho en pixel art (el mismo sprite de ui/components/Nacho.kt, expresión feliz) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#D4A017"
-        android:pathData="M54,30 C45,30 38,37 38,46 C38,58 54,78 54,78 C54,78 70,58 70,46 C70,37 63,30 54,30 Z"/>
+        android:fillColor="#8B4A2B"
+        android:pathData="M31.5,42.75h45v31.5h-45z"/>
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,40 A6,6 0 1,0 54,52 A6,6 0 1,0 54,40 Z"/>
+        android:fillColor="#C8742A"
+        android:pathData="M36,33.75h36v5h-36zM31.5,38.25h45v5h-45z"/>
+    <path
+        android:fillColor="#1B1B1B"
+        android:pathData="M40.5,51.75h9v9h-9zM58.5,51.75h9v9h-9z"/>
+    <path
+        android:fillColor="#D9776A"
+        android:pathData="M36,60.75h4.5v4.5h-4.5zM67.5,60.75h4.5v4.5h-4.5z"/>
+    <path
+        android:fillColor="#3B1A0C"
+        android:pathData="M40.5,65.25h4.5v4.5h-4.5zM63,65.25h4.5v4.5h-4.5zM45,69.75h18v4.5h-18z"/>
 </vector>

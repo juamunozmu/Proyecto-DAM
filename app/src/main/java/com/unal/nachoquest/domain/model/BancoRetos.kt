@@ -174,43 +174,60 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_arte",
                 coleccionableRecompensaId = "col_vinilo"
             )
+            "reto_estadio" -> RetoQuiz(
+                id = "reto_estadio",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 5: La tanda final",
+                descripcion = "Demuestra cuánto sabes del estadio y del deporte en la Ciudad Universitaria.",
+                preguntas = listOf(
+                    Pregunta(
+                        id = "est_1",
+                        enunciado = "¿En qué año se inauguró el Estadio Alfonso López?",
+                        opciones = listOf("1938", "1948", "1967", "1925"),
+                        indiceCorrecta = 0
+                    ),
+                    Pregunta(
+                        id = "est_2",
+                        enunciado = "¿Qué evento deportivo estrenó el estadio?",
+                        opciones = listOf("Los primeros Juegos Bolivarianos", "Un Mundial de fútbol", "Los Juegos Olímpicos", "La primera Copa América"),
+                        indiceCorrecta = 0
+                    ),
+                    Pregunta(
+                        id = "est_3",
+                        enunciado = "¿Qué arquitecto diseñó el estadio?",
+                        opciones = listOf("Leopoldo Rother", "Rogelio Salmona", "Fritz Karsen", "Eugenia Mantilla de Cardoso"),
+                        indiceCorrecta = 0
+                    ),
+                    Pregunta(
+                        id = "est_4",
+                        enunciado = "¿A quién rinde homenaje el nombre del estadio?",
+                        opciones = listOf(
+                            "Al presidente que impulsó la Ciudad Universitaria",
+                            "Al primer rector de la universidad",
+                            "A un goleador histórico de la selección",
+                            "Al arquitecto que trazó el campus"
+                        ),
+                        indiceCorrecta = 0
+                    ),
+                    Pregunta(
+                        id = "est_5",
+                        enunciado = "¿Qué celebraba Bogotá el año en que se inauguró el estadio?",
+                        opciones = listOf("Sus 400 años de fundada", "Los 100 años de la independencia", "Sus 200 años de fundada", "Sus 50 años como capital"),
+                        indiceCorrecta = 0
+                    )
+                ),
+                recompensaXp = 250,
+                recompensaMonedas = 50,
+                itemRecompensaId = "copa_memoria",
+                insigniaRecompensaId = "insignia_estadio",
+                coleccionableRecompensaId = "col_camiseta"
+            )
             else -> RetoQuiz(
                 id = Historia.retoIdParaPunto(puntoId),
                 puntoInteresId = puntoId,
                 titulo = "Desafío de Exploración UNAL",
                 descripcion = "Pon a prueba tus conocimientos sobre la Ciudad Blanca.",
-                preguntas = listOf(
-                    Pregunta(
-                        id = "cam_1",
-                        enunciado = "¿En qué año fue fundada la Universidad Nacional de Colombia?",
-                        opciones = listOf("1867", "1810", "1936", "1905"),
-                        indiceCorrecta = 0
-                    ),
-                    Pregunta(
-                        id = "cam_2",
-                        enunciado = "¿Quién fue el arquitecto urbanista alemán que diseñó el plano elíptico del campus Bogotá?",
-                        opciones = listOf("Leopoldo Rother", "Fritz Karsen", "Karl Brunner", "Rogelio Salmona"),
-                        indiceCorrecta = 0
-                    ),
-                    Pregunta(
-                        id = "cam_3",
-                        enunciado = "¿Cuál es el lema en latín presente en el escudo de la UNAL?",
-                        opciones = listOf("Inter cornua quaerere disciplinam", "Veritas liberabit vos", "Sapientia et virtus", "Ad astra per aspera"),
-                        indiceCorrecta = 0
-                    ),
-                    Pregunta(
-                        id = "cam_4",
-                        enunciado = "¿Por qué se le conoce popularmente al campus de Bogotá como la 'Ciudad Blanca'?",
-                        opciones = listOf("Por el color original de la arquitectura moderna de Rother", "Por la nieve en los cerros", "Por las flores de jazmín", "Por los eucaliptos blancos"),
-                        indiceCorrecta = 0
-                    ),
-                    Pregunta(
-                        id = "cam_5",
-                        enunciado = "¿Cuál es el ave mascota representativa de la universidad?",
-                        opciones = listOf("El Búho / Nacho", "El Cóndor", "El Águila", "El Colibrí"),
-                        indiceCorrecta = 0
-                    )
-                ),
+                preguntas = TriviaDiaria.banco.take(5),
                 recompensaXp = 80,
                 recompensaMonedas = 15,
                 itemRecompensaId = null,
