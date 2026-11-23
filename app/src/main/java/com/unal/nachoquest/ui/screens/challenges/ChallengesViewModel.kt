@@ -55,6 +55,8 @@ data class RetoLugarUi(
 data class ChallengesUiState(
     val capitulos: List<CapituloUi> = emptyList(),
     val historiaCompletada: Boolean = false,
+    // Acto del capítulo que toca jugar (el último si la historia ya terminó)
+    val actoActual: Int = 1,
     val trivia: TriviaUi = TriviaUi(),
     val retosLugar: List<RetoLugarUi> = emptyList()
 ) {
@@ -106,6 +108,7 @@ class ChallengesViewModel @Inject constructor(
                 )
             },
             historiaCompletada = actual == null,
+            actoActual = actual?.acto ?: Historia.capitulos.last().acto,
             // Primero los pendientes, para que se vea qué falta por explorar
             retosLugar = RetosLugares.retos
                 .map { reto ->

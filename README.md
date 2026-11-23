@@ -9,11 +9,15 @@ La exploración del campus es, al mismo tiempo, la mecánica principal, el conte
 escenario de la historia: cada lugar emblemático propone un minijuego y unas preguntas sobre su
 historia, y una narrativa por capítulos conecta todo.
 
-## La historia: «El Olvido de la Ciudad Blanca»
+## La historia
+
+La historia tiene dos actos y ocho capítulos. Cada capítulo entrega el ítem que abre el siguiente, y
+el último de cada acto termina con un epílogo.
+
+### Acto I: «El Olvido de la Ciudad Blanca»
 
 Una bruma gris, el Olvido, está borrando la memoria del campus. Nacho, el espíritu guardián de la
-universidad, recluta al jugador para recuperar un Fragmento de Memoria en cada edificio. Cada
-capítulo entrega el ítem que abre el siguiente.
+universidad, recluta al jugador para recuperar un Fragmento de Memoria en cada edificio.
 
 | Capítulo | Lugar | Minijuego | Ítem que entrega |
 |---|---|---|---|
@@ -22,6 +26,23 @@ capítulo entrega el ítem que abre el siguiente.
 | 3. La Ecuación Perdida | Edificio Julio Garavito (Ingeniería, 401) | Circuito de piezas giratorias | Partitura Maestra |
 | 4. La Última Sinfonía | Auditorio León de Greiff | Melodía para repetir (tipo Simon) | Brújula de Fritz Karsen |
 | 5. El Último Rastro | Estadio Alfonso López Pumarejo | Tanda de penales contra el Olvido | Copa de la Memoria |
+
+### Acto II: «Los Ecos del Olvido»
+
+Al final del epílogo del Acto I, la Copa de la Memoria se agrieta. Dentro hay un mensaje: al perder
+en el estadio, el Olvido no desapareció, sino que se partió en tres Ecos que se escondieron «donde la
+gente guarda lo que más quiere». Si no se encuentran, la Copa se rompe y todo vuelve a borrarse. En
+el último capítulo, el Olvido decide quedarse a recordar y se convierte en el Recuerdo.
+
+| Capítulo | Lugar | Minijuego | Ítem que entrega |
+|---|---|---|---|
+| 6. Colores Robados | Museo de Arte UNAL (317) | La copia falsa: encontrar 5 diferencias entre el cuadro y la copia del Eco | Pincel Restaurador |
+| 7. El Rebaño Perdido | Facultad de Medicina Veterinaria y de Zootecnia (501) | Parejas de memoria con 8 animales del potrero | Cencerro de la Memoria |
+| 8. La Voz del Campus | Concha Acústica (761) | Laberinto en la bruma: solo se ve alrededor de Nacho | Copa Restaurada |
+
+Quien ya había terminado el Acto I sigue directo con el capítulo 6: la Copa de la Memoria que tiene
+en el inventario es la que lo abre. El Acto II suma tres insignias, tres coleccionables y el logro
+«Guardián de la Memoria».
 
 Tras el minijuego vienen 3 preguntas del guardián con temporizador, corazones y rachas, y un comodín
 50:50 que se puede usar una vez por reto. El resultado da de 1 a 3 estrellas, XP, una insignia y un
@@ -67,6 +88,11 @@ coleccionable, y avisa si el jugador subió de nivel o desbloqueó un logro.
   volver la red.
 - **Modo de pruebas**: el ícono 🛰️ del buscador del mapa (cambia a «DEV») y el enlace «Simular que
   estoy aquí» de cada lugar permiten probar los retos sin ir al campus.
+- **Galería de minijuegos** (solo en la compilación de debug): abre el minijuego de cualquier
+  capítulo sin jugar la historia ni tocar Firebase, con pistas gratis. Con el emulador o el teléfono
+  conectado:
+  `adb shell am start -n com.unal.nachoquest/.GaleriaMinijuegosActivity` (o con `--ei capitulo 8`
+  para ir directo a uno). Está en `app/src/debug/` y no se incluye en el release.
 
 ## Arquitectura
 
@@ -180,6 +206,25 @@ El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la
    ```bash
    firebase deploy --only firestore:rules
    ```
+
+## Pendientes
+
+Trabajo identificado que todavía no se ha hecho, en orden de prioridad:
+
+1. **Pruebas de interfaz (Compose).** Las pruebas actuales cubren la lógica y los datos, pero ninguna
+   la interfaz. Faltan pruebas instrumentadas, sin Firebase real, de: validación del acceso y del
+   registro, el 50:50 y el +10 s en las preguntas, la compra en la tienda (con saldo y sin saldo) y
+   la pista de algún minijuego. Correrlas también en GitHub Actions con un emulador es opcional
+   (gratis en repos públicos, pero suma unos 10 minutos al workflow).
+2. **Revisar los datos de las preguntas.** Algunas preguntas tienen datos que conviene que alguien
+   del equipo confirme: en los retos de lugar (`RetosLugares.kt`) `conservatorio_1`, `icn_2`,
+   `takeuchi_4` y `medicina_1`, y en el capítulo 1 (`BancoRetos.kt`) el año del mural del Che
+   (`che_2`) y el edificio del costado oriental de la plaza (`che_5`).
+3. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
+   Android dibuja las apps de borde a borde, así que hay que revisar que ninguna pantalla quede
+   debajo de las barras del sistema.
+4. **Mapa sin conexión.** Las imágenes del mapa (osmdroid) se descargan en el momento; precargar el
+   área del campus ayudaría donde la señal es mala.
 
 ## Documentos
 

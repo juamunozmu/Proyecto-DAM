@@ -77,6 +77,7 @@ class LogrosTest {
         )
         assertTrue(logro(perfil, "leyenda").desbloqueado)
         assertTrue(logro(perfil, "mente_brillante").desbloqueado)
-        assertEquals(Historia.capitulos.size, logro(perfil, "leyenda").progreso)
+        assertEquals(Historia.capitulosDelActo(1).size, logro(perfil, "leyenda").progreso)
+        assertTrue(logro(perfil, "guardian_memoria").desbloqueado)
     }
 }

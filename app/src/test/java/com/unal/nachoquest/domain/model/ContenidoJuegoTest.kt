@@ -115,6 +115,7 @@ class ContenidoJuegoTest {
         }
         assertTrue(Historia.escena(Historia.ESCENA_PROLOGO, "Ana").isNotEmpty())
         assertTrue(Historia.escena(Historia.ESCENA_EPILOGO, "Ana").isNotEmpty())
+        Historia.capitulos.mapNotNull { it.escenaFinal }.forEach { assertTrue(Historia.escena(it, "Ana").isNotEmpty()) }
     }
 
     @Test

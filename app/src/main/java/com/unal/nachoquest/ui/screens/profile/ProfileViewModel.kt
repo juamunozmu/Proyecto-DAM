@@ -29,6 +29,8 @@ data class ProfileUiState(
     val totalCapitulos: Int = Historia.capitulos.size,
     val logros: List<Logro> = emptyList(),
     val historiaCompletada: Boolean = false,
+    val actoICompletado: Boolean = false,
+    val tituloHistoria: String = "",
     val rachaDias: Int = 0,
     val mejorRachaDias: Int = 0,
     val triviasSuperadas: Int = 0,
@@ -60,6 +62,10 @@ class ProfileViewModel @Inject constructor(
             capitulosCompletados = capitulos,
             logros = Logros.calcular(perfil),
             historiaCompletada = capitulos == Historia.capitulos.size,
+            actoICompletado = Historia.actoCompletado(1, perfil.retosCompletados),
+            tituloHistoria = Historia.capituloActual(perfil.retosCompletados)
+                ?.let { "Acto ${it.acto} · ${Historia.titulosActos[it.acto]}" }
+                ?: "¡Los Ecos se reunieron!",
             rachaDias = TriviaDiaria.rachaVigente(perfil, TriviaDiaria.diaActual()),
             mejorRachaDias = perfil.mejorRachaDias,
             triviasSuperadas = perfil.triviasSuperadas,

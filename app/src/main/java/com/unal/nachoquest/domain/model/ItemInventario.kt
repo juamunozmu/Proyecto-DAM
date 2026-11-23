@@ -73,12 +73,49 @@ object CatalogoItems {
         ItemInventario(
             id = "copa_memoria",
             nombre = "Copa de la Memoria",
-            descripcion = "El trofeo que la bruma tenía escondido en el Estadio Alfonso López. Quien la levanta no olvida nunca la historia de la Ciudad Blanca.",
+            descripcion = "El trofeo que la bruma tenía escondido en el Estadio Alfonso López. Quien la levanta no olvida nunca la historia de la Ciudad Blanca. Tiene una grieta que guarda un mensaje: lleva al Museo de Arte.",
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "🏆",
             puntoOrigenId = "poi_estadio",
             nombreLugarOrigen = "Estadio Alfonso López",
+            desbloqueaPuntoId = "edif_317",
+            nombrePuntoDesbloqueado = "Museo de Arte UNAL",
             requisitoTexto = "Gánale la tanda de penales al Olvido en el estadio"
+        ),
+        // Acto II
+        ItemInventario(
+            id = "pincel_restaurador",
+            nombre = "Pincel Restaurador",
+            descripcion = "Lo dejó caer el Eco del museo. Pinta de vuelta lo que la bruma borra, y con él los animales de Veterinaria pueden volver a reconocerse.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🖌️",
+            puntoOrigenId = "edif_317",
+            nombreLugarOrigen = "Museo de Arte UNAL",
+            desbloqueaPuntoId = "edif_501",
+            nombrePuntoDesbloqueado = "Facultad de Medicina Veterinaria y de Zootecnia",
+            requisitoTexto = "Encuentra las diferencias en el cuadro del Museo de Arte"
+        ),
+        ItemInventario(
+            id = "cencerro_memoria",
+            nombre = "Cencerro de la Memoria",
+            descripcion = "Estaba colgado en la cerca de los potreros. Su sonido atraviesa cualquier bruma: te guía por el laberinto de la Concha Acústica.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🔔",
+            puntoOrigenId = "edif_501",
+            nombreLugarOrigen = "Facultad de Medicina Veterinaria y de Zootecnia",
+            desbloqueaPuntoId = "edif_761",
+            nombrePuntoDesbloqueado = "Concha Acústica",
+            requisitoTexto = "Junta las parejas de animales en Veterinaria"
+        ),
+        ItemInventario(
+            id = "copa_restaurada",
+            nombre = "Copa Restaurada",
+            descripcion = "La Copa de la Memoria sin grietas, después de reunir a los tres Ecos. Brilla con la bruma dorada del Recuerdo.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🌟",
+            puntoOrigenId = "edif_761",
+            nombreLugarOrigen = "Concha Acústica",
+            requisitoTexto = "Encuentra al último Eco en el laberinto de la Concha Acústica"
         )
     )
 
@@ -132,6 +169,36 @@ object CatalogoItems {
             puntoOrigenId = "poi_estadio",
             nombreLugarOrigen = "Estadio Alfonso López",
             requisitoTexto = "Supera el reto en el Estadio Alfonso López"
+        ),
+        ItemInventario(
+            id = "insignia_museo",
+            nombre = "Curador de la Memoria",
+            descripcion = "Para quienes miran con calma y notan los detalles que los demás pasan por alto.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🖼️",
+            puntoOrigenId = "edif_317",
+            nombreLugarOrigen = "Museo de Arte UNAL",
+            requisitoTexto = "Supera el reto del Museo de Arte"
+        ),
+        ItemInventario(
+            id = "insignia_potrero",
+            nombre = "Amigo del Potrero",
+            descripcion = "Reconocimiento a quienes conocen y cuidan a los animales de la Facultad de Veterinaria.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🐄",
+            puntoOrigenId = "edif_501",
+            nombreLugarOrigen = "Facultad de Medicina Veterinaria y de Zootecnia",
+            requisitoTexto = "Supera el reto de Veterinaria"
+        ),
+        ItemInventario(
+            id = "insignia_concha",
+            nombre = "Voz de la Concha",
+            descripcion = "Para quienes encontraron el camino en medio de la bruma y le devolvieron la voz al campus.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🎤",
+            puntoOrigenId = "edif_761",
+            nombreLugarOrigen = "Concha Acústica",
+            requisitoTexto = "Supera el reto de la Concha Acústica"
         )
     )
 
@@ -185,6 +252,36 @@ object CatalogoItems {
             puntoOrigenId = "poi_estadio",
             nombreLugarOrigen = "Estadio Alfonso López",
             requisitoTexto = "Coleccionable escondido en el estadio"
+        ),
+        ItemInventario(
+            id = "col_paleta",
+            nombre = "Paleta de Colores Recuperados",
+            descripcion = "Una paleta de pintor con los colores que el Eco le había robado al cuadro del museo. Todavía huele a óleo.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎨",
+            puntoOrigenId = "edif_317",
+            nombreLugarOrigen = "Museo de Arte UNAL",
+            requisitoTexto = "Coleccionable encontrado en el Museo de Arte"
+        ),
+        ItemInventario(
+            id = "col_leche",
+            nombre = "Botella de la Planta de Leches",
+            descripcion = "Una botella de vidrio como las de la planta de leches de la Facultad de Ciencias Agrarias, vecina de los potreros.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🥛",
+            puntoOrigenId = "edif_501",
+            nombreLugarOrigen = "Facultad de Medicina Veterinaria y de Zootecnia",
+            requisitoTexto = "Coleccionable hallado en Veterinaria"
+        ),
+        ItemInventario(
+            id = "col_afiche",
+            nombre = "Afiche de Concierto",
+            descripcion = "Un afiche desteñido de un concierto al aire libre en la Concha Acústica. Alguien escribió encima: «¡Qué noche!».",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎫",
+            puntoOrigenId = "edif_761",
+            nombreLugarOrigen = "Concha Acústica",
+            requisitoTexto = "Coleccionable escondido en la Concha Acústica"
         )
     )
 

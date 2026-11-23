@@ -24,6 +24,11 @@ object Logros {
 
     fun calcular(perfil: UserProfile): List<Logro> {
         val capitulosHechos = Historia.capitulos.count { it.retoId in perfil.retosCompletados }
+        fun hechosDelActo(acto: Int) = Historia.capitulosDelActo(acto).count { it.retoId in perfil.retosCompletados }
+        val capitulosActo1 = hechosDelActo(1)
+        val totalActo1 = Historia.capitulosDelActo(1).size
+        val capitulosActo2 = hechosDelActo(2)
+        val totalActo2 = Historia.capitulosDelActo(2).size
         val coleccionables = CatalogoItems.itemsColeccionables.count { it.id in perfil.itemsDesbloqueados }
         val perfectos = perfil.estrellasPorReto.values.count { it >= 3 }
         val retosLugar = RetosLugares.retos.count { it.retoId in perfil.retosCompletados }
@@ -124,11 +129,20 @@ object Logros {
             Logro(
                 id = "leyenda",
                 titulo = "Leyenda de la Ciudad Blanca",
-                descripcion = "Derrota al Olvido y termina la historia",
+                descripcion = "Derrota al Olvido y termina el Acto I",
                 emoji = "👑",
-                desbloqueado = capitulosHechos == Historia.capitulos.size,
-                progreso = capitulosHechos,
-                meta = Historia.capitulos.size
+                desbloqueado = capitulosActo1 == totalActo1,
+                progreso = capitulosActo1,
+                meta = totalActo1
+            ),
+            Logro(
+                id = "guardian_memoria",
+                titulo = "Guardián de la Memoria",
+                descripcion = "Reúne a los tres Ecos y termina el Acto II",
+                emoji = "🌟",
+                desbloqueado = capitulosActo2 == totalActo2,
+                progreso = capitulosActo2,
+                meta = totalActo2
             )
         )
     }

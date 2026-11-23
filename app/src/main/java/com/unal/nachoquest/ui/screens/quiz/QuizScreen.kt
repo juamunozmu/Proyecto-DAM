@@ -369,17 +369,33 @@ private fun PantallaPregunta(state: QuizUiState, perfil: UserProfile, viewModel:
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Retroalimentación tras responder
+        // Retroalimentación tras responder. Al tocar "Continuar" el estado ya es el de la pregunta
+        // siguiente (sin responder) mientras el panel se anima hacia afuera, así que el panel se
+        // dibuja con la última retroalimentación guardada; si no, por un instante parecería un error.
+        val celebracion = remember(state.indicePreguntaActual) {
+            listOf("¡Correcto!", "¡Eso es!", "¡Qué nota!", "¡Exacto!").random()
+        }
+        val retroActual = if (state.mostrarResultadoPregunta) {
+            RetroPregunta(
+                acerto = state.respuestaSeleccionada == pregunta.indiceCorrecta,
+                seAcaboElTiempo = state.seAcaboElTiempo,
+                respuestaCorrecta = pregunta.opciones[pregunta.indiceCorrecta],
+                celebracion = celebracion,
+                esUltima = state.sinVidas || state.indicePreguntaActual == state.totalPreguntas - 1
+            )
+        } else null
+        val ultimaRetro = remember { mutableStateOf<RetroPregunta?>(null) }
+        if (retroActual != null && retroActual != ultimaRetro.value) ultimaRetro.value = retroActual
+        val retro = retroActual ?: ultimaRetro.value
+
         AnimatedVisibility(
             visible = state.mostrarResultadoPregunta,
             enter = slideInVertically { it } + fadeIn(),
             exit = slideOutVertically { it } + fadeOut()
         ) {
-            val acerto = state.respuestaSeleccionada == pregunta.indiceCorrecta
-            val celebracion = remember(state.indicePreguntaActual) {
-                listOf("¡Correcto!", "¡Eso es!", "¡Qué nota!", "¡Exacto!").random()
-            }
-            val esUltima = state.sinVidas || state.indicePreguntaActual == state.totalPreguntas - 1
+            if (retro == null) return@AnimatedVisibility
+            val acerto = retro.acerto
+            val esUltima = retro.esUltima
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -389,8 +405,8 @@ private fun PantallaPregunta(state: QuizUiState, perfil: UserProfile, viewModel:
             ) {
                 Text(
                     text = when {
-                        acerto -> celebracion
-                        state.seAcaboElTiempo -> "⏰ ¡Se acabó el tiempo!"
+                        acerto -> retro.celebracion
+                        retro.seAcaboElTiempo -> "⏰ ¡Se acabó el tiempo!"
                         else -> "No era esa..."
                     },
                     style = MaterialTheme.typography.titleLarge,
@@ -398,7 +414,7 @@ private fun PantallaPregunta(state: QuizUiState, perfil: UserProfile, viewModel:
                 )
                 if (!acerto) {
                     Text(
-                        text = "La respuesta correcta era: ${pregunta.opciones[pregunta.indiceCorrecta]}",
+                        text = "La respuesta correcta era: ${retro.respuestaCorrecta}",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.DarkGray
                     )
@@ -414,6 +430,15 @@ private fun PantallaPregunta(state: QuizUiState, perfil: UserProfile, viewModel:
         }
     }
 }
+
+/** Lo que muestra el panel de retroalimentación de una pregunta ya respondida. */
+private data class RetroPregunta(
+    val acerto: Boolean,
+    val seAcaboElTiempo: Boolean,
+    val respuestaCorrecta: String,
+    val celebracion: String,
+    val esUltima: Boolean
+)
 
 @Composable
 private fun Corazones(vidas: Int, maximo: Int) {
@@ -638,7 +663,8 @@ private fun PantallaResultados(
                 texto = when {
                     aprobado && state.esTriviaDiaria && !state.esRepeticion -> "¡Trivia superada!"
                     aprobado && state.esRepeticion -> "¡Repaso superado!"
-                    aprobado && state.capitulo?.numero == Historia.capitulos.size -> "¡Venciste al Olvido!"
+                    aprobado && state.capitulo?.escenaFinal == Historia.ESCENA_EPILOGO -> "¡Venciste al Olvido!"
+                    aprobado && state.capitulo?.escenaFinal == Historia.ESCENA_EPILOGO_FINAL -> "¡Los Ecos se reunieron!"
                     aprobado -> "¡Fragmento recuperado!"
                     else -> "La bruma te alcanzó"
                 },

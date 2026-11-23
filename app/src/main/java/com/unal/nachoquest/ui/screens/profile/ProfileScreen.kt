@@ -140,12 +140,21 @@ fun ProfileScreen(
                             onVerEscena(Historia.ESCENA_PROLOGO)
                         }
                     )
-                    if (state.historiaCompletada) {
+                    if (state.actoICompletado) {
                         DropdownMenuItem(
-                            text = { Text("👑 Ver el epílogo") },
+                            text = { Text("👑 Ver el epílogo del Acto I") },
                             onClick = {
                                 menuAbierto = false
                                 onVerEscena(Historia.ESCENA_EPILOGO)
+                            }
+                        )
+                    }
+                    if (state.historiaCompletada) {
+                        DropdownMenuItem(
+                            text = { Text("🌟 Ver el epílogo final") },
+                            onClick = {
+                                menuAbierto = false
+                                onVerEscena(Historia.ESCENA_EPILOGO_FINAL)
                             }
                         )
                     }
@@ -198,7 +207,7 @@ fun ProfileScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = tituloPorNivel(state.nivel, state.historiaCompletada),
+                        text = tituloPorNivel(state.nivel, state.actoICompletado, state.historiaCompletada),
                         color = NachoYellow,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp
@@ -299,7 +308,7 @@ fun ProfileScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = if (state.historiaCompletada) "¡El Olvido fue derrotado!" else "El Olvido de la Ciudad Blanca",
+                        text = state.tituloHistoria,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
@@ -353,8 +362,9 @@ fun ProfileScreen(
     }
 }
 
-private fun tituloPorNivel(nivel: Int, historiaCompletada: Boolean): String = when {
-    historiaCompletada -> "👑 Leyenda de la Ciudad Blanca · Nivel $nivel"
+private fun tituloPorNivel(nivel: Int, actoICompletado: Boolean, historiaCompletada: Boolean): String = when {
+    historiaCompletada -> "🌟 Guardián de la Memoria · Nivel $nivel"
+    actoICompletado -> "👑 Leyenda de la Ciudad Blanca · Nivel $nivel"
     nivel >= 6 -> "Guardián del campus · Nivel $nivel"
     nivel >= 3 -> "Explorador · Nivel $nivel"
     else -> "Primíparo · Nivel $nivel"
