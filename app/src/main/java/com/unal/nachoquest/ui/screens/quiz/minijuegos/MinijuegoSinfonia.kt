@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,6 +50,8 @@ import kotlin.math.sin
 private const val LARGO_OBJETIVO = 6
 private const val FRECUENCIA_MUESTREO = 44100
 private const val DURACION_NOTA_MS = 380
+// Ancho / alto de cada botón de nota
+private const val PROPORCION_BOTON = 1.15f
 
 private data class Nota(val nombre: String, val frecuencia: Double, val color: Color)
 
@@ -226,38 +230,45 @@ fun MinijuegoSinfonia(pistas: Int, alTerminar: (Int) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .sacudir(errores)
+        // Los cuatro botones caben a lo ancho y a lo alto (tabletas en horizontal), centrados
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+            contentAlignment = Alignment.Center
         ) {
-            for (fila in 0..1) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    for (col in 0..1) {
-                        val i = fila * 2 + col
-                        val nota = NOTAS[i]
-                        val encendida = iluminada == i
-                        val brillo by animateFloatAsState(if (encendida) 1f else 0f, tween(90), label = "brillo")
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .aspectRatio(1.15f)
-                                .graphicsLayer {
-                                    scaleX = 1f + brillo * 0.05f
-                                    scaleY = 1f + brillo * 0.05f
+            val anchoBoton = minOf((maxWidth - 12.dp) / 2, (maxHeight - 12.dp) / 2 * PROPORCION_BOTON)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .width(anchoBoton * 2 + 12.dp)
+                    .sacudir(errores)
+            ) {
+                for (fila in 0..1) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        for (col in 0..1) {
+                            val i = fila * 2 + col
+                            val nota = NOTAS[i]
+                            val encendida = iluminada == i
+                            val brillo by animateFloatAsState(if (encendida) 1f else 0f, tween(90), label = "brillo")
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(PROPORCION_BOTON)
+                                    .graphicsLayer {
+                                        scaleX = 1f + brillo * 0.05f
+                                        scaleY = 1f + brillo * 0.05f
+                                    }
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(nota.color.copy(alpha = 0.45f + brillo * 0.55f))
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) { tocarNota(i) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("🎵", fontSize = 28.sp, modifier = Modifier.graphicsLayer { alpha = 0.5f + brillo * 0.5f })
+                                    Text(nota.nombre, fontWeight = FontWeight.ExtraBold, fontSize = 22.sp, color = Color.White)
                                 }
-                                .clip(RoundedCornerShape(22.dp))
-                                .background(nota.color.copy(alpha = 0.45f + brillo * 0.55f))
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) { tocarNota(i) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("🎵", fontSize = 28.sp, modifier = Modifier.graphicsLayer { alpha = 0.5f + brillo * 0.5f })
-                                Text(nota.nombre, fontWeight = FontWeight.ExtraBold, fontSize = 22.sp, color = Color.White)
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 # Integración continua de NachoQuest: en cada push a main y en cada pull request corre las
-# pruebas unitarias y compila el APK de debug y el de release (con R8, para detectar a tiempo
-# reglas de ProGuard que falten). Es gratis porque el repositorio es público.
+# pruebas unitarias, compila el APK de debug y el de release (con R8, para detectar a tiempo
+# reglas de ProGuard que falten) y, en otro job, corre las pruebas de interfaz en un emulador.
+# Es gratis porque el repositorio es público.
 name: Android CI
 
 on:
@@ -51,4 +52,47 @@ jobs:
         with:
           name: nachoquest-debug
           path: app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+  # Pruebas de interfaz (app/src/androidTest) en un emulador. Corre en paralelo con el job de
+  # arriba y tarda unos 10 minutos. No necesitan Firebase: el acceso y el repositorio van simulados.
+  pruebas-interfaz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle (con caché)
+        uses: gradle/actions/setup-gradle@v4
+
+      # Sin aceleración por hardware (KVM) el emulador es demasiado lento para las pruebas
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Pruebas de interfaz en el emulador
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: ./gradlew connectedDebugAndroidTest
+
+      - name: Reporte de pruebas de interfaz
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-pruebas-interfaz
+          path: app/build/reports/androidTests/connected/
           retention-days: 14

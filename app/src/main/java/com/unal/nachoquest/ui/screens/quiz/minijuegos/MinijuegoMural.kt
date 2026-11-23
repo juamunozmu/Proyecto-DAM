@@ -116,10 +116,11 @@ fun MinijuegoMural(pistas: Int, alTerminar: (Int) -> Unit) {
         }
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Cuadrado que se encoge si no cabe a lo alto (tabletas en horizontal)
         BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
+                .weight(1f, fill = false)
+                .aspectRatio(1f, matchHeightConstraintsFirst = true)
                 .clip(RoundedCornerShape(16.dp))
         ) {
             val espacio by animateDpAsState(if (resuelto) 0.dp else 4.dp, label = "espacio")
