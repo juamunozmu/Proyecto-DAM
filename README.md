@@ -144,13 +144,30 @@ Android 8.0 (API 26).
 ./gradlew assembleDebug        # APK en app/build/outputs/apk/debug/
 ./gradlew installDebug         # instala en el dispositivo o emulador conectado
 ./gradlew testDebugUnitTest    # pruebas unitarias
+./gradlew connectedDebugAndroidTest   # pruebas de interfaz (con un emulador o teléfono conectado)
 ```
 
 Gradle 8.11 no arranca con un JDK más nuevo que el 21. Si el JDK por defecto del sistema es
-posterior, hay que indicarle el 17: `JAVA_HOME=/ruta/al/jdk-17 ./gradlew assembleDebug`.
+posterior, hay que indicarle el 17 o el 21: `JAVA_HOME=/ruta/al/jdk-17 ./gradlew assembleDebug`.
 
 Las pruebas unitarias también revisan que la historia, el banco de preguntas, el catálogo de ítems y
 `edificios_unal.json` sigan siendo coherentes. Conviene correrlas después de editar el json.
+
+### Pruebas de interfaz
+
+Están en `app/src/androidTest/` y usan las pantallas y los ViewModels reales, con Firebase y el
+repositorio simulados con MockK (no necesitan red ni cuenta). Tardan unos 2 minutos en un emulador.
+
+| Archivo | Qué prueba |
+|---|---|
+| `auth/AccesoUiTest` | Validación del inicio de sesión y del registro: correo, contraseña y nombre inválidos muestran su error y no llegan a Firebase; los datos válidos sí. Recuperar la contraseña sin correo. |
+| `quiz/AyudasPreguntaUiTest` | El 50:50 gratis descarta dos opciones incorrectas, no se repite en la misma pregunta y las descartadas no se pueden responder. El reloj de arena suma 10 s y se cobra; sin monedas no hace nada y avisa. |
+| `shop/TiendaUiTest` | Compras de ayudas y aspectos con saldo (descuenta y guarda) y sin saldo (no cambia nada y avisa). |
+| `quiz/minijuegos/PistaMinijuegoUiTest` | La pista del minijuego cuenta solo si se paga y se desactiva al llegar a 3. |
+
+Se probaron en un emulador Pixel 8 con API 37. Con MockK 1.13 y Espresso 3.6 fallaban al arrancar
+en ese emulador (páginas de memoria de 16 KB y una API de entrada que ya no existe), por eso se usan
+MockK 1.14.5 y Espresso 3.7.0.
 
 ### Compilar el release
 
@@ -219,18 +236,16 @@ El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la
 
 Trabajo identificado que todavía no se ha hecho, en orden de prioridad:
 
-1. **Pruebas de interfaz (Compose).** Las pruebas actuales cubren la lógica y los datos, pero ninguna
-   la interfaz. Faltan pruebas instrumentadas, sin Firebase real, de: validación del acceso y del
-   registro, el 50:50 y el +10 s en las preguntas, la compra en la tienda (con saldo y sin saldo) y
-   la pista de algún minijuego. Correrlas también en GitHub Actions con un emulador es opcional
-   (gratis en repos públicos, pero suma unos 10 minutos al workflow).
-2. **Revisar los datos de las preguntas.** Algunas preguntas tienen datos que conviene que alguien
+1. **Revisar los datos de las preguntas.** Algunas preguntas tienen datos que conviene que alguien
    del equipo confirme: en los retos de lugar (`RetosLugares.kt`) `conservatorio_1`, `icn_2`,
    `takeuchi_4` y `medicina_1`, y en el capítulo 1 (`BancoRetos.kt`) el año del mural del Che
    (`che_2`) y el edificio del costado oriental de la plaza (`che_5`).
-3. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
+2. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
    Android dibuja las apps de borde a borde, así que hay que revisar que ninguna pantalla quede
    debajo de las barras del sistema.
+3. **Pruebas de interfaz en GitHub Actions (opcional).** Las pruebas de interfaz solo se corren en
+   local. Correrlas en la integración continua con un emulador es gratis en repos públicos, pero
+   suma unos 10 minutos al workflow.
 4. **Mapa sin conexión.** Las imágenes del mapa (osmdroid) se descargan en el momento; precargar el
    área del campus ayudaría donde la señal es mala.
 
