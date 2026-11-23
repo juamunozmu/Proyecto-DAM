@@ -118,6 +118,43 @@ posterior, hay que indicarle el 17: `JAVA_HOME=/ruta/al/jdk-17 ./gradlew assembl
 Las pruebas unitarias también revisan que la historia, el banco de preguntas, el catálogo de ítems y
 `edificios_unal.json` sigan siendo coherentes. Conviene correrlas después de editar el json.
 
+### Compilar el release
+
+```bash
+./gradlew assembleRelease      # APK en app/build/outputs/apk/release/
+```
+
+El release pasa por R8, que quita el código y los recursos que no se usan (pesa unos 4,6 MB frente a
+los ~27 MB del debug). Las reglas para que Firebase, la navegación y el acceso con Google sigan
+funcionando están en `app/proguard-rules.pro`. En el release también se probaron el inicio de sesión,
+el mapa, los retos, la tienda y los aspectos de Nacho.
+
+**Firma.** El release se firma con la llave que indique el archivo `keystore.properties` en la raíz
+del proyecto. Ese archivo y la llave (`.jks`) **no se suben a Git** (están en `.gitignore`) y se
+comparten por un canal privado entre los integrantes:
+
+```properties
+storeFile=C:/ruta/a/nachoquest-release.jks
+storePassword=...
+keyAlias=nachoquest
+keyPassword=...
+```
+
+Sin `keystore.properties`, el release se firma con la llave de depuración: sirve para probarlo (y es
+lo que hace la integración continua), pero el APK que se entregue debe salir con la llave del
+proyecto. Si se pierde la llave no se puede publicar una actualización con la misma firma, así que
+hay que guardar una copia.
+
+Huella de la llave del release, para registrarla en Firebase (ver abajo):
+`SHA-1 75:0A:DB:C9:F3:B4:1A:65:6C:52:B0:45:C3:D8:75:3A:A7:13:83:1B`
+
+### Integración continua
+
+`.github/workflows/android.yml` corre en GitHub Actions en cada push a `main` y en cada pull
+request: ejecuta las pruebas unitarias y compila el APK de debug y el de release. El resultado
+aparece en el pull request, y en la pestaña *Actions* se pueden descargar el APK de debug y el
+reporte de pruebas. Es gratis porque el repositorio es público.
+
 ## Configuración de Firebase
 
 El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la consola de Firebase:
@@ -127,7 +164,9 @@ El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la
 1. **Authentication → Sign-in method**: habilitar *Correo electrónico/contraseña* y *Google*.
 2. **Google en cada computador**: registrar la huella SHA-1 de la llave de depuración de cada
    integrante en *Configuración del proyecto → Tus apps* (se obtiene con `./gradlew signingReport`).
-   Después, descargar de nuevo `google-services.json`.
+   Para que Google funcione también en el APK de release, hay que registrar además la huella de la
+   llave del release (está en «Compilar el release»). Después, descargar de nuevo
+   `google-services.json`.
 3. **Apple (opcional)**: requiere una cuenta del Apple Developer Program. Se habilita el proveedor
    *Apple* en Firebase con el Services ID, el Team ID y la llave. Mientras no esté habilitado, el
    botón «Continuar con Apple» muestra un aviso y el jugador puede entrar con correo o Google.
