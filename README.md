@@ -160,7 +160,10 @@ reporte de pruebas. Es gratis porque el repositorio es público.
 El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la consola de Firebase:
 
 0. **Firestore Database → Crear base de datos** (modo de producción). Sin este paso el progreso
-   solo queda en la caché del teléfono y el ranking no se comparte entre jugadores.
+   solo queda en la caché del teléfono y el ranking no se comparte entre jugadores. *Hecho el
+   22 de noviembre de 2026, con las reglas de `firestore.rules` publicadas desde la consola.* Lo
+   que cada jugador había guardado antes en su teléfono se sube solo la próxima vez que abra la
+   app con conexión, siempre que no la haya desinstalado (al desinstalarla se borra esa caché).
 1. **Authentication → Sign-in method**: habilitar *Correo electrónico/contraseña* y *Google*.
 2. **Google en cada computador**: registrar la huella SHA-1 de la llave de depuración de cada
    integrante en *Configuración del proyecto → Tus apps* (se obtiene con `./gradlew signingReport`).
