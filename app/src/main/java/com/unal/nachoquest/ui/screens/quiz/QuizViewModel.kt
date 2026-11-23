@@ -161,7 +161,8 @@ class QuizViewModel @Inject constructor(
 
         val outro = capitulo?.let {
             val lineas = Historia.escena(it.escenaOutro, nombre)
-            if (it.numero == Historia.capitulos.size) lineas + Historia.escena(Historia.ESCENA_EPILOGO, nombre) else lineas
+            // El último capítulo de cada acto encadena su epílogo
+            lineas + it.escenaFinal?.let { final -> Historia.escena(final, nombre) }.orEmpty()
         }.orEmpty()
 
         val fase = when {
@@ -352,7 +353,7 @@ class QuizViewModel @Inject constructor(
     fun terminarOutro() {
         val cap = _uiState.value.capitulo ?: return
         userRepository.marcarEscenaVista(cap.escenaOutro)
-        if (cap.numero == Historia.capitulos.size) userRepository.marcarEscenaVista(Historia.ESCENA_EPILOGO)
+        cap.escenaFinal?.let(userRepository::marcarEscenaVista)
     }
 
     private fun iniciarTemporizador() {

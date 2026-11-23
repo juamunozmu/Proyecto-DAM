@@ -25,14 +25,36 @@ class HistoriaTest {
     }
 
     @Test
-    fun `la historia termina en el estadio con la tanda de penales`() {
-        val ultimo = Historia.capitulos.last()
+    fun `el acto I termina en el estadio con la tanda de penales y su epílogo`() {
+        val ultimo = Historia.capitulosDelActo(1).last()
         assertEquals(5, ultimo.numero)
         assertEquals("poi_estadio", ultimo.puntoId)
         assertEquals(TipoMinijuego.PENALES, ultimo.minijuego)
+        assertEquals(Historia.ESCENA_EPILOGO, ultimo.escenaFinal)
         // La brújula que entrega el auditorio es la que abre el estadio
         assertEquals("brujula_unal", ultimo.itemRequeridoId)
         assertEquals(ultimo.puntoId, CatalogoItems.obtenerPorId("brujula_unal")?.desbloqueaPuntoId)
+    }
+
+    @Test
+    fun `el acto II empieza con la Copa y termina en la Concha Acústica`() {
+        val acto2 = Historia.capitulosDelActo(2)
+        assertEquals(listOf(6, 7, 8), acto2.map { it.numero })
+        assertEquals("copa_memoria", acto2.first().itemRequeridoId)
+        assertEquals(acto2.first().puntoId, CatalogoItems.obtenerPorId("copa_memoria")?.desbloqueaPuntoId)
+        assertEquals("edif_761", acto2.last().puntoId)
+        assertEquals(Historia.ESCENA_EPILOGO_FINAL, acto2.last().escenaFinal)
+        // Solo el último capítulo de cada acto tiene epílogo
+        assertEquals(2, Historia.capitulos.count { it.escenaFinal != null })
+    }
+
+    @Test
+    fun `terminar el acto I no termina la historia`() {
+        val acto1 = Historia.capitulosDelActo(1).map { it.retoId }
+        assertTrue(Historia.actoCompletado(1, acto1))
+        assertFalse(Historia.actoCompletado(2, acto1))
+        assertFalse(Historia.historiaCompletada(acto1))
+        assertEquals(6, Historia.capituloActual(acto1)?.numero)
     }
 
     @Test

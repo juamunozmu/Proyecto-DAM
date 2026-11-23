@@ -153,6 +153,9 @@ fun PantallaMinijuego(
                     TipoMinijuego.CIRCUITO -> MinijuegoCircuito(pistas, alTerminar)
                     TipoMinijuego.SINFONIA -> MinijuegoSinfonia(pistas, alTerminar)
                     TipoMinijuego.PENALES -> MinijuegoPenales(pistas, alTerminar)
+                    TipoMinijuego.DIFERENCIAS -> MinijuegoDiferencias(pistas, alTerminar)
+                    TipoMinijuego.PAREJAS -> MinijuegoParejas(pistas, alTerminar)
+                    TipoMinijuego.LABERINTO -> MinijuegoLaberinto(pistas, alTerminar)
                 }
             }
         }
@@ -185,7 +188,11 @@ fun PantallaMinijuego(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            if (tipo == TipoMinijuego.PENALES) "¡Tanda ganada!" else "¡Recuerdo restaurado!",
+                            when (tipo) {
+                                TipoMinijuego.PENALES -> "¡Tanda ganada!"
+                                TipoMinijuego.LABERINTO -> "¡Encontraste al Eco!"
+                                else -> "¡Recuerdo restaurado!"
+                            },
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.ExtraBold,
                             color = NachoGreenDark,

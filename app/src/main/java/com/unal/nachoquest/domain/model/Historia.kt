@@ -33,6 +33,18 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     PENALES(
         "La tanda final",
         "El Olvido se plantó de arquero. Patea cuando la mira esté lejos de él y mete tres goles."
+    ),
+    DIFERENCIAS(
+        "La copia falsa",
+        "El Eco pintó encima del cuadro. Compara el original con la copia y toca en la copia cada cosa que cambió."
+    ),
+    PAREJAS(
+        "Parejas del potrero",
+        "Los animales olvidaron quién es su compañero. Voltea las cartas de dos en dos hasta juntar todas las parejas."
+    ),
+    LABERINTO(
+        "Laberinto en la bruma",
+        "La bruma no deja ver más allá de un paso. Guía a Nacho hasta el Eco que espera al otro lado del laberinto."
     )
 }
 
@@ -54,7 +66,10 @@ data class Capitulo(
     val itemRequeridoId: String?,
     val itemRecompensaId: String,
     val xpRecompensa: Int,
-    val minijuego: TipoMinijuego
+    val minijuego: TipoMinijuego,
+    val acto: Int = 1,
+    // Escena que se muestra después del cierre del último capítulo de cada acto (los epílogos)
+    val escenaFinal: String? = null
 ) {
     val escenaIntro: String get() = "cap${numero}_intro"
     val escenaOutro: String get() = "cap${numero}_outro"
@@ -65,7 +80,14 @@ data class Capitulo(
 object Historia {
 
     const val ESCENA_PROLOGO = "prologo"
+    // Epílogo del Acto I (después del capítulo 5) y epílogo final (después del capítulo 8)
     const val ESCENA_EPILOGO = "epilogo"
+    const val ESCENA_EPILOGO_FINAL = "epilogo_final"
+
+    val titulosActos = mapOf(
+        1 to "El Olvido de la Ciudad Blanca",
+        2 to "Los Ecos del Olvido"
+    )
 
     val capitulos = listOf(
         Capitulo(
@@ -126,9 +148,56 @@ object Historia {
             itemRequeridoId = "brujula_unal",
             itemRecompensaId = "copa_memoria",
             xpRecompensa = 250,
-            minijuego = TipoMinijuego.PENALES
+            minijuego = TipoMinijuego.PENALES,
+            escenaFinal = ESCENA_EPILOGO
+        ),
+        // ---------- Acto II: Los Ecos del Olvido ----------
+        Capitulo(
+            numero = 6,
+            puntoId = "edif_317",
+            retoId = "reto_museo",
+            titulo = "Colores Robados",
+            lugar = "Museo de Arte UNAL",
+            sinopsis = "La Copa de la Memoria se agrietó: el Olvido se partió en tres Ecos. El primero está borrando los colores de los cuadros del museo.",
+            itemRequeridoId = "copa_memoria",
+            itemRecompensaId = "pincel_restaurador",
+            xpRecompensa = 280,
+            minijuego = TipoMinijuego.DIFERENCIAS,
+            acto = 2
+        ),
+        Capitulo(
+            numero = 7,
+            puntoId = "edif_501",
+            retoId = "reto_potrero",
+            titulo = "El Rebaño Perdido",
+            lugar = "Facultad de Medicina Veterinaria y de Zootecnia",
+            sinopsis = "El segundo Eco hizo que los animales de los potreros olvidaran a sus compañeros. Con el Pincel Restaurador puedes devolverles la memoria.",
+            itemRequeridoId = "pincel_restaurador",
+            itemRecompensaId = "cencerro_memoria",
+            xpRecompensa = 320,
+            minijuego = TipoMinijuego.PAREJAS,
+            acto = 2
+        ),
+        Capitulo(
+            numero = 8,
+            puntoId = "edif_761",
+            retoId = "reto_concha",
+            titulo = "La Voz del Campus",
+            lugar = "Concha Acústica",
+            sinopsis = "El último Eco convirtió la Concha Acústica en un laberinto de bruma. Solo el sonido del Cencerro de la Memoria puede guiarte.",
+            itemRequeridoId = "cencerro_memoria",
+            itemRecompensaId = "copa_restaurada",
+            xpRecompensa = 400,
+            minijuego = TipoMinijuego.LABERINTO,
+            acto = 2,
+            escenaFinal = ESCENA_EPILOGO_FINAL
         )
     )
+
+    fun capitulosDelActo(acto: Int): List<Capitulo> = capitulos.filter { it.acto == acto }
+
+    fun actoCompletado(acto: Int, retosCompletados: Collection<String>): Boolean =
+        capitulosDelActo(acto).all { it.retoId in retosCompletados }
 
     fun capituloPorPunto(puntoId: String): Capitulo? = capitulos.find { it.correspondeAPunto(puntoId) }
 
@@ -214,7 +283,58 @@ object Historia {
             LineaDialogo(Hablante.NARRADOR, "Esa noche, los edificios del campus brillaron un poco más. Nadie supo explicar por qué."),
             LineaDialogo(Hablante.NACHO, "Lo logramos. La Ciudad Blanca recuerda otra vez, y fue gracias a ti.", Expresion.FELIZ),
             LineaDialogo(Hablante.NACHO, "El Olvido siempre va a rondar por ahí. Por eso vuelve cada día: la trivia mantiene viva la memoria del campus."),
-            LineaDialogo(Hablante.NACHO, "Desde hoy eres oficialmente una Leyenda de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
+            LineaDialogo(Hablante.NACHO, "Desde hoy eres oficialmente una Leyenda de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
+            // Gancho del Acto II
+            LineaDialogo(Hablante.NARRADOR, "Pero antes de que Nacho se fuera a descansar, la Copa de la Memoria hizo un ruidito. Crac."),
+            LineaDialogo(Hablante.NACHO, "¿Oíste eso? La Copa... tiene una grieta. Eso no estaba ahí hace un momento.", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.NACHO, "Descansa, {jugador}. Mañana revisamos el mapa: algo me dice que esto no se ha acabado.", Expresion.DECIDIDO)
+        ),
+
+        // ---------- Acto II: Los Ecos del Olvido ----------
+        "cap6_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "{jugador}, la grieta de la Copa se hizo más grande. Mira: por dentro brilla un mensaje.", Expresion.PREOCUPADO),
+            LineaDialogo(Hablante.NARRADOR, "«Cuando la bruma se rinde no desaparece: se parte en ecos. Y los ecos se esconden donde la gente guarda lo que más quiere.»"),
+            LineaDialogo(Hablante.NACHO, "¡El Olvido no se fue! Al perder en el estadio se partió en tres Ecos. Si no los encontramos, la Copa se rompe y todo lo que recuperamos se vuelve a borrar.", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.NACHO, "El primero está aquí, en el Museo de Arte. Donde la gente guarda los colores.", Expresion.DECIDIDO),
+            LineaDialogo(Hablante.OLVIDO, "Colores... tan ruidosos... Pinté encima. Nadie notará la diferencia..."),
+            LineaDialogo(Hablante.NACHO, "¡Cambió el cuadro por una copia falsa! Compara el original con la copia y encuentra todo lo que el Eco alteró.", Expresion.DECIDIDO)
+        ),
+        "cap6_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Cada diferencia que encuentras devuelve un color. Rojo, azul, amarillo... el cuadro vuelve a respirar."),
+            LineaDialogo(Hablante.OLVIDO, "Ustedes... sí miran con cuidado..."),
+            LineaDialogo(Hablante.NACHO, "¡Un Eco menos! Y dejó caer esto: un Pincel Restaurador. Con él se puede pintar de vuelta lo que la bruma borra.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NACHO, "Oye... ¿eso que se oye son vacas? El segundo Eco se fue para los potreros de Veterinaria.", Expresion.SORPRENDIDO)
+        ),
+        "cap7_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "Veterinaria. Aquí hay potreros, establos y una clínica donde atienden desde perros hasta caballos. Y sí: vacas en plena ciudad."),
+            LineaDialogo(Hablante.OLVIDO, "Muuu... ¿quién soy?... ¿quién eres?... Nadie recuerda a su pareja..."),
+            LineaDialogo(Hablante.NACHO, "¡Los animales olvidaron quiénes son sus compañeros! Voltea las cartas de dos en dos y vuelve a juntar cada pareja.", Expresion.PREOCUPADO)
+        ),
+        "cap7_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Las vacas vuelven al corral, los caballos relinchan y un perro de la clínica mueve la cola como si nada."),
+            LineaDialogo(Hablante.NACHO, "¡Lo lograste! Y mira lo que estaba colgado en la cerca: el Cencerro de la Memoria. Dicen que su sonido atraviesa cualquier bruma.", Expresion.FELIZ),
+            LineaDialogo(Hablante.OLVIDO, "La voz... nos queda la voz... la Concha... donde nadie se oirá..."),
+            LineaDialogo(Hablante.NACHO, "¡El último Eco se escondió en la Concha Acústica! Ahí se ha cantado de todo. Vamos, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap8_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Concha Acústica. Su forma devuelve el sonido hacia el público: aquí una sola voz llena todo el lugar."),
+            LineaDialogo(Hablante.NARRADOR, "Pero hoy no se oye nada. La bruma convirtió el escenario en un laberinto gris donde no se ve más allá de un paso."),
+            LineaDialogo(Hablante.OLVIDO, "Aquí todo es mío... Aquí nadie se encuentra... ni se escucha..."),
+            LineaDialogo(Hablante.NACHO, "Tienes el Cencerro, {jugador}. Avanza con calma; si te pierdes, hazlo sonar y te dirá por dónde. ¡Encuentra al último Eco!", Expresion.DECIDIDO)
+        ),
+        "cap8_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Al final del laberinto, el cencerro suena una vez. El eco rebota en la Concha... y por primera vez la bruma escucha."),
+            LineaDialogo(Hablante.OLVIDO, "Tanto tiempo quise que todo quedara en silencio... Pensé que olvidar dolía menos."),
+            LineaDialogo(Hablante.NACHO, "Olvidar no te quita lo que duele, Olvido. Solo te quita lo que vale la pena. ¿Por qué no te quedas a recordar con nosotros?"),
+            LineaDialogo(Hablante.OLVIDO, "¿Recordar... yo?..."),
+            LineaDialogo(Hablante.NARRADOR, "Los tres Ecos se juntan sobre el escenario. La bruma ya no es gris: brilla como una tarde despejada sobre la Ciudad Blanca."),
+            LineaDialogo(Hablante.NACHO, "¡Mira la Copa! Se cerró la grieta. Ahora es la Copa Restaurada... y brilla más que nunca.", Expresion.FELIZ)
+        ),
+        ESCENA_EPILOGO_FINAL to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Desde ese día, cuando cae la tarde, sobre la Concha Acústica flota una bruma suave y dorada."),
+            LineaDialogo(Hablante.NACHO, "Es el Olvido. Bueno, ahora se hace llamar el Recuerdo. Me ayuda a cuidar la memoria del campus.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NACHO, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día."),
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Desde hoy eres Guardián de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
         )
     )
 

@@ -223,6 +223,76 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_estadio",
                 coleccionableRecompensaId = "col_camiseta"
             )
+            // ---------- Acto II (la respuesta correcta va primero; la pantalla mezcla las opciones) ----------
+            "reto_museo" -> RetoQuiz(
+                id = "reto_museo",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 6: Colores Robados",
+                descripcion = "El arte colombiano que el Eco quiso borrar.",
+                preguntas = listOf(
+                    Pregunta("museo_1", "¿Qué artista colombiana abrió una enorme grieta en el piso de la galería Tate Modern de Londres en 2007?",
+                        listOf("Doris Salcedo", "Débora Arango", "Beatriz González", "Ana Mercedes Hoyos"), 0),
+                    Pregunta("museo_2", "¿Qué ave aparece una y otra vez en las pinturas de Alejandro Obregón?",
+                        listOf("El cóndor", "El colibrí", "La guacamaya", "El tucán"), 0),
+                    Pregunta("museo_3", "¿En qué municipio del Valle del Cauca está el museo del pintor Omar Rayo?",
+                        listOf("Roldanillo", "Buga", "Tuluá", "Cartago"), 0),
+                    Pregunta("museo_4", "¿Qué escultor de Popayán es famoso por sus esculturas de metal pintado?",
+                        listOf("Edgar Negret", "Fernando Botero", "Rodrigo Arenas Betancourt", "Eduardo Ramírez Villamizar"), 0),
+                    Pregunta("museo_5", "¿En qué ciudad nació la pintora Débora Arango?",
+                        listOf("Medellín", "Bogotá", "Cali", "Cartagena"), 0)
+                ),
+                recompensaXp = 280,
+                recompensaMonedas = 55,
+                itemRecompensaId = "pincel_restaurador",
+                insigniaRecompensaId = "insignia_museo",
+                coleccionableRecompensaId = "col_paleta"
+            )
+            "reto_potrero" -> RetoQuiz(
+                id = "reto_potrero",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 7: El Rebaño Perdido",
+                descripcion = "Lo que se aprende entre potreros, establos y clínicas.",
+                preguntas = listOf(
+                    Pregunta("potrero_1", "¿Qué estudia la zootecnia?",
+                        listOf("La producción y la cría de animales", "Los fósiles de animales", "El comportamiento de los insectos", "Las plantas medicinales"), 0),
+                    Pregunta("potrero_2", "¿Cómo se le dice a la cría de la vaca?",
+                        listOf("Ternero", "Potro", "Cordero", "Lechón"), 0),
+                    Pregunta("potrero_3", "¿Cuál de estas es una raza de ganado criollo colombiano?",
+                        listOf("Blanco orejinegro", "Holstein", "Angus", "Jersey"), 0),
+                    Pregunta("potrero_4", "¿Contra qué enfermedad desarrolló Louis Pasteur una vacuna en 1885?",
+                        listOf("La rabia", "La viruela", "La fiebre amarilla", "La polio"), 0),
+                    Pregunta("potrero_5", "¿Cuál es el ave nacional de Colombia?",
+                        listOf("El cóndor de los Andes", "El águila arpía", "El gallito de roca", "La guacamaya roja"), 0)
+                ),
+                recompensaXp = 320,
+                recompensaMonedas = 60,
+                itemRecompensaId = "cencerro_memoria",
+                insigniaRecompensaId = "insignia_potrero",
+                coleccionableRecompensaId = "col_leche"
+            )
+            "reto_concha" -> RetoQuiz(
+                id = "reto_concha",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 8: La Voz del Campus",
+                descripcion = "La música que el último Eco quiso callar.",
+                preguntas = listOf(
+                    Pregunta("concha_1", "¿Para qué sirve la forma curva de una concha acústica?",
+                        listOf("Para devolver el sonido hacia el público", "Para proteger del sol", "Para que quepa más gente", "Para apagar el eco"), 0),
+                    Pregunta("concha_2", "¿Qué ritmo de la costa Caribe se toca con acordeón, caja y guacharaca?",
+                        listOf("El vallenato", "El bambuco", "El joropo", "El currulao"), 0),
+                    Pregunta("concha_3", "¿En qué ciudad se celebra el Festival de la Leyenda Vallenata?",
+                        listOf("Valledupar", "Barranquilla", "Santa Marta", "Riohacha"), 0),
+                    Pregunta("concha_4", "¿Qué festival gratuito de rock se celebra cada año en Bogotá?",
+                        listOf("Rock al Parque", "Estéreo Picnic", "Altavoz", "Lollapalooza"), 0),
+                    Pregunta("concha_5", "¿Qué instrumento de viento de origen indígena acompaña a la cumbia?",
+                        listOf("La gaita", "La quena", "El saxofón", "La armónica"), 0)
+                ),
+                recompensaXp = 400,
+                recompensaMonedas = 80,
+                itemRecompensaId = "copa_restaurada",
+                insigniaRecompensaId = "insignia_concha",
+                coleccionableRecompensaId = "col_afiche"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

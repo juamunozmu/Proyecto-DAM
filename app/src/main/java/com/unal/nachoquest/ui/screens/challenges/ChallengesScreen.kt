@@ -105,9 +105,14 @@ fun ChallengesScreen(
         }
 
         itemsIndexed(state.capitulos) { indice, cap ->
+            val acto = cap.capitulo.acto
+            // Separador al empezar cada acto; la línea de tiempo se corta al final de cada uno
+            if (indice == 0 || state.capitulos[indice - 1].capitulo.acto != acto) {
+                SeparadorActo(acto)
+            }
             NodoCapitulo(
                 cap = cap,
-                esUltimo = indice == state.capitulos.lastIndex,
+                esUltimo = state.capitulos.getOrNull(indice + 1)?.capitulo?.acto != acto,
                 onIniciarReto = onIniciarReto,
                 onVerEscena = onVerEscena
             )
@@ -123,25 +128,25 @@ fun ChallengesScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("👑", fontSize = 34.sp)
+                    Text("🌟", fontSize = 34.sp)
                     Text(
-                        "¡Leyenda de la Ciudad Blanca!",
+                        "¡Guardián de la Memoria!",
                         style = MaterialTheme.typography.titleLarge,
                         color = NachoGreenDark,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "Derrotaste al Olvido. Repite los capítulos para conseguir todas las estrellas, " +
-                            "juega la trivia cada día y sube en el ranking.",
+                        "Reuniste a los tres Ecos y el Olvido ahora es el Recuerdo. Repite los capítulos " +
+                            "para conseguir todas las estrellas, juega la trivia cada día y sube en el ranking.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.DarkGray,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     BotonJuego(
-                        texto = "Ver el epílogo",
-                        onClick = { onVerEscena(Historia.ESCENA_EPILOGO) },
+                        texto = "Ver el epílogo final",
+                        onClick = { onVerEscena(Historia.ESCENA_EPILOGO_FINAL) },
                         color = NachoYellow,
                         colorTexto = NachoGreenDark,
                         alto = 44.dp,
@@ -410,9 +415,9 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Etiqueta("LA HISTORIA", color = NachoYellow)
+                Etiqueta(if (state.actoActual == 1) "LA HISTORIA · ACTO I" else "LA HISTORIA · ACTO II", color = NachoYellow)
                 Text(
-                    "El Olvido de la\nCiudad Blanca",
+                    Historia.titulosActos[state.actoActual].orEmpty(),
                     color = Color.White,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.ExtraBold
@@ -446,6 +451,25 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SeparadorActo(acto: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Etiqueta(if (acto == 1) "ACTO I" else "ACTO II", color = NachoGreen)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            Historia.titulosActos[acto].orEmpty(),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = Tinta
+        )
     }
 }
 

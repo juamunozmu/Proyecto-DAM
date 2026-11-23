@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Solo en la compilación de debug: galería para probar los minijuegos sin jugar la historia -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".GaleriaMinijuegosActivity"
+            android:exported="true"
+            android:label="NachoQuest · Minijuegos"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.NachoQuest" />
+    </application>
+
+</manifest>
