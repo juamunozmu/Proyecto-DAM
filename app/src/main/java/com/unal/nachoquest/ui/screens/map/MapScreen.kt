@@ -15,6 +15,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -208,6 +211,7 @@ fun MapScreen(
     var mapViewReference by remember { mutableStateOf<MapView?>(null) }
     var locationOverlay by remember { mutableStateOf<MyLocationNewOverlay?>(null) }
     val cache = remember { CacheMapa() }
+    val sinConexion = rememberSinConexion()
 
     var permisoUbicacion by remember { mutableStateOf(tienePermisoUbicacion(context)) }
     // Se pide una sola vez por sesión; después, el botón de GPS permite volver a pedirlo
@@ -312,18 +316,26 @@ fun MapScreen(
     ) {
         AndroidView(
             factory = { ctx ->
-                Configuration.getInstance().load(ctx, ctx.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
-                Configuration.getInstance().userAgentValue = ctx.packageName
+                configurarCacheMapa(ctx)
                 MapView(ctx).apply {
                     mapViewReference = this
                     setTileSource(TileSourceFactory.MAPNIK)
                     zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
                     setMultiTouchControls(true)
-                    controller.setZoom(17.0)
-                    controller.setCenter(GeoPoint(4.636, -74.083))
-                    setScrollableAreaLimitDouble(BoundingBox(4.650, -74.070, 4.620, -74.100))
-                    minZoomLevel = 14.5
-                    maxZoomLevel = 20.0
+                    controller.setZoom(LimitesMapa.ZOOM_INICIAL)
+                    controller.setCenter(GeoPoint(LimitesMapa.CENTRO_LAT, LimitesMapa.CENTRO_LON))
+                    setScrollableAreaLimitDouble(
+                        BoundingBox(LimitesMapa.NORTE, LimitesMapa.ESTE, LimitesMapa.SUR, LimitesMapa.OESTE)
+                    )
+                    minZoomLevel = LimitesMapa.ZOOM_MINIMO_POR_DEFECTO
+                    maxZoomLevel = LimitesMapa.ZOOM_MAXIMO
+                    // Cuando ya se sabe el ancho de la pantalla, el zoom mínimo se ajusta para que el
+                    // campus quepa de lado a lado sin que sobre ciudad alrededor
+                    addOnFirstLayoutListener { vista, _, _, _, _ ->
+                        val mapa = vista as MapView
+                        mapa.minZoomLevel = LimitesMapa.zoomMinimo(mapa.width, TileSystem.getTileSize())
+                        if (mapa.zoomLevelDouble < mapa.minZoomLevel) mapa.controller.setZoom(mapa.minZoomLevel)
+                    }
 
                     // La red da una primera posición rápida mientras el GPS consigue señal
                     val proveedor = GpsMyLocationProvider(ctx).apply { addLocationSource(LocationManager.NETWORK_PROVIDER) }
@@ -355,6 +367,20 @@ fun MapScreen(
                 onLimpiar = viewModel::limpiarBusqueda,
                 onToggleSimulacion = viewModel::toggleModoSimulacion
             )
+
+            AnimatedVisibility(visible = sinConexion) {
+                Text(
+                    text = "📴 Sin conexión · se muestra el mapa guardado",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(start = 16.dp, bottom = 6.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF455A64))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                )
+            }
 
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 2.dp),
@@ -595,6 +621,44 @@ private fun actualizarMarcadores(
     mapView.overlays.addAll(cache.sueltos)
     cache.clusterer = clusterer
     mapView.invalidate()
+}
+
+/** true mientras el teléfono no tenga una red con internet; se actualiza al cambiar la conexión. */
+@Composable
+private fun rememberSinConexion(): Boolean {
+    val context = LocalContext.current
+    val conectividad = remember { context.getSystemService(ConnectivityManager::class.java) }
+    fun hayInternet(): Boolean = conectividad?.getNetworkCapabilities(conectividad.activeNetwork)
+        ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    var sinConexion by remember { mutableStateOf(!hayInternet()) }
+    DisposableEffect(conectividad) {
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) { sinConexion = false }
+            override fun onLost(network: Network) { sinConexion = !hayInternet() }
+        }
+        conectividad?.registerDefaultNetworkCallback(callback)
+        onDispose { conectividad?.unregisterNetworkCallback(callback) }
+    }
+    return sinConexion
+}
+
+/**
+ * Caché de las imágenes del mapa: cada tesela que se descarga queda guardada en el teléfono y se
+ * muestra aunque no haya red. No se descarga nada por adelantado (las reglas del servidor de
+ * OpenStreetMap no lo permiten): el campus queda disponible sin conexión a medida que se recorre.
+ */
+private fun configurarCacheMapa(contexto: Context) {
+    val config = Configuration.getInstance()
+    config.load(contexto, contexto.getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+    config.userAgentValue = contexto.packageName
+    // Carpeta propia de la app (no necesita permisos y se borra al desinstalar)
+    config.osmdroidBasePath = java.io.File(contexto.filesDir, "osmdroid")
+    config.osmdroidTileCache = java.io.File(config.osmdroidBasePath, "teselas")
+    // Hasta ~200 MB; el campus completo en todos los zoom ocupa mucho menos
+    config.tileFileSystemCacheMaxBytes = 200L * 1024 * 1024
+    config.tileFileSystemCacheTrimBytes = 180L * 1024 * 1024
+    // Una tesela guardada se da por buena durante 30 días antes de volver a pedirla
+    config.expirationOverrideDuration = 30L * 24 * 60 * 60 * 1000
 }
 
 /** Pin con forma de gota y un emoji en el centro. */

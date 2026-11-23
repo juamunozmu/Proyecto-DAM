@@ -3,6 +3,8 @@
 
     <!-- Permiso para acceder a internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Para saber si hay red: el mapa avisa cuando muestra las imágenes guardadas -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 

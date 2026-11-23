@@ -53,6 +53,14 @@ coleccionable, y avisa si el jugador subió de nivel o desbloqueó un logro.
 - **Mapa del campus** (OpenStreetMap con osmdroid): 117 lugares, buscador por nombre, número de
   edificio o alias, filtros por categoría y agrupación de marcadores al alejar el zoom. La bruma
   del Olvido cubre los edificios de los capítulos pendientes y se despeja al completarlos.
+  - *Límites*: el mapa solo se mueve dentro del campus con unos 250 m de margen, y el zoom mínimo se
+    calcula según el ancho de la pantalla para que al alejarse se vea el campus de lado a lado sin
+    que sobre ciudad (`ui/screens/map/LimitesMapa.kt`).
+  - *Sin conexión*: cada imagen del mapa que se descarga queda guardada en el teléfono (hasta
+    ~200 MB, válida por 30 días) y se muestra aunque no haya red; en ese caso aparece el aviso
+    «Sin conexión · se muestra el mapa guardado». No se descarga nada por adelantado, porque las
+    reglas del servidor de OpenStreetMap no permiten bajar zonas con zoom 17 o más para usarlas sin
+    conexión: el campus queda disponible a medida que se recorre con red.
 - **GPS**: los capítulos se juegan a menos de 75 m del edificio. «Cómo llegar» traza una ruta a pie
   (OSRM) con distancia y tiempo, la recalcula si el jugador se desvía y avisa al llegar.
 - **Retos**: línea de tiempo de los capítulos, que también se pueden jugar sin estar en el campus.
