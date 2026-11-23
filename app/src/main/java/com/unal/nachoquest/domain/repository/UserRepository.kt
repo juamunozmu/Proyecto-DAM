@@ -9,8 +9,12 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Query
 import com.unal.nachoquest.domain.model.JugadorRanking
+import com.unal.nachoquest.domain.model.PagoAyuda
+import com.unal.nachoquest.domain.model.Tienda
+import com.unal.nachoquest.domain.model.TipoAyuda
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.domain.model.UserProfile
+import com.unal.nachoquest.domain.model.estrellasPorRetoReparadas
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -116,7 +120,8 @@ class UserRepository @Inject constructor(
         estrellas: Int,
         xpGanada: Int,
         itemsGanados: List<String> = emptyList(),
-        insigniasGanadas: List<String> = emptyList()
+        insigniasGanadas: List<String> = emptyList(),
+        monedasGanadas: Int = 0
     ) {
         val uid = uidActual ?: return
         val actual = _userProfileFlow.value
@@ -128,6 +133,7 @@ class UserRepository @Inject constructor(
             it.copy(
                 xp = nuevaXp,
                 nivel = nivelParaXp(nuevaXp),
+                monedas = it.monedas + monedasGanadas,
                 estrellasPorReto = estrellasPorReto,
                 estrellas = estrellasPorReto.values.sum(),
                 retosCompletados = (it.retosCompletados + retoId).distinct(),
@@ -145,6 +151,7 @@ class UserRepository @Inject constructor(
             cambios["xp"] = FieldValue.increment(xpGanada.toLong())
             cambios["nivel"] = nivelParaXp(nuevaXp)
         }
+        if (monedasGanadas > 0) cambios["monedas"] = FieldValue.increment(monedasGanadas.toLong())
         if (itemsGanados.isNotEmpty()) cambios["itemsDesbloqueados"] = FieldValue.arrayUnion(*itemsGanados.toTypedArray())
         if (insigniasGanadas.isNotEmpty()) cambios["insignias"] = FieldValue.arrayUnion(*insigniasGanadas.toTypedArray())
         guardar(uid, cambios)
@@ -156,7 +163,7 @@ class UserRepository @Inject constructor(
      * Si ya se había jugado hoy no cambia nada (es solo práctica).
      * @return la racha de días con la que queda el jugador
      */
-    fun registrarTriviaDiaria(hoy: Long, xpGanada: Int, perfecta: Boolean): Int {
+    fun registrarTriviaDiaria(hoy: Long, xpGanada: Int, perfecta: Boolean, monedasGanadas: Int = 0): Int {
         val uid = uidActual ?: return 0
         val actual = _userProfileFlow.value
         if (TriviaDiaria.yaJugoHoy(actual, hoy)) return actual.rachaDias
@@ -168,6 +175,7 @@ class UserRepository @Inject constructor(
             it.copy(
                 xp = nuevaXp,
                 nivel = nivelParaXp(nuevaXp),
+                monedas = it.monedas + monedasGanadas,
                 rachaDias = racha,
                 mejorRachaDias = mejorRacha,
                 ultimoDiaTrivia = hoy,
@@ -185,9 +193,83 @@ class UserRepository @Inject constructor(
             "nivel" to nivelParaXp(nuevaXp)
         )
         if (perfecta) cambios["triviasPerfectas"] = FieldValue.increment(1)
+        if (monedasGanadas > 0) cambios["monedas"] = FieldValue.increment(monedasGanadas.toLong())
         guardar(uid, cambios)
         publicarEnRanking()
         return racha
+    }
+
+    // ---------- Tienda ----------
+
+    /**
+     * Usa una ayuda: gasta una de la reserva o, si no hay, la paga con monedas.
+     * @return cómo se pagó; con [PagoAyuda.SIN_SALDO] no cambia nada y la ayuda no se aplica
+     */
+    fun usarAyuda(tipo: TipoAyuda): PagoAyuda {
+        val uid = uidActual ?: return PagoAyuda.SIN_SALDO
+        val pago = Tienda.formaDePago(_userProfileFlow.value, tipo)
+        when (pago) {
+            PagoAyuda.DE_RESERVA -> {
+                _userProfileFlow.update { it.copy(ayudas = it.ayudas + (tipo.id to Tienda.reserva(it, tipo) - 1)) }
+                guardar(uid, mapOf("ayudas" to mapOf(tipo.id to FieldValue.increment(-1))))
+            }
+            PagoAyuda.CON_MONEDAS -> gastarMonedas(uid, tipo.precio)
+            PagoAyuda.SIN_SALDO -> Unit
+        }
+        return pago
+    }
+
+    /** Compra una ayuda para la reserva. Devuelve false si no alcanzan las monedas. */
+    fun comprarAyuda(tipo: TipoAyuda): Boolean {
+        val uid = uidActual ?: return false
+        if (_userProfileFlow.value.monedas < tipo.precio) return false
+        _userProfileFlow.update {
+            it.copy(monedas = it.monedas - tipo.precio, ayudas = it.ayudas + (tipo.id to Tienda.reserva(it, tipo) + 1))
+        }
+        guardar(
+            uid,
+            mapOf(
+                "monedas" to FieldValue.increment(-tipo.precio.toLong()),
+                "ayudas" to mapOf(tipo.id to FieldValue.increment(1))
+            )
+        )
+        return true
+    }
+
+    /** Compra un aspecto de Nacho y se lo pone. Devuelve false si no alcanzan las monedas o ya lo tenía. */
+    fun comprarAspecto(id: String): Boolean {
+        val uid = uidActual ?: return false
+        val aspecto = Tienda.aspecto(id) ?: return false
+        val actual = _userProfileFlow.value
+        if (id in actual.aspectos || actual.monedas < aspecto.precio) return false
+        val equipados = Tienda.alternarEquipado(actual.aspectosEquipados, id)
+        _userProfileFlow.update {
+            it.copy(monedas = it.monedas - aspecto.precio, aspectos = it.aspectos + id, aspectosEquipados = equipados)
+        }
+        guardar(
+            uid,
+            mapOf(
+                "monedas" to FieldValue.increment(-aspecto.precio.toLong()),
+                "aspectos" to FieldValue.arrayUnion(id),
+                "aspectosEquipados" to equipados
+            )
+        )
+        return true
+    }
+
+    /** Se pone o se quita un aspecto que el jugador ya compró. */
+    fun alternarAspecto(id: String) {
+        val uid = uidActual ?: return
+        val actual = _userProfileFlow.value
+        if (id !in actual.aspectos) return
+        val equipados = Tienda.alternarEquipado(actual.aspectosEquipados, id)
+        _userProfileFlow.update { it.copy(aspectosEquipados = equipados) }
+        guardar(uid, mapOf("aspectosEquipados" to equipados))
+    }
+
+    private fun gastarMonedas(uid: String, cantidad: Int) {
+        _userProfileFlow.update { it.copy(monedas = it.monedas - cantidad) }
+        guardar(uid, mapOf("monedas" to FieldValue.increment(-cantidad.toLong())))
     }
 
     fun marcarEscenaVista(escenaId: String) {
@@ -309,8 +391,13 @@ class UserRepository @Inject constructor(
 }
 
 // El nivel y el total de estrellas se derivan de la XP y de las estrellas por reto
-private fun UserProfile.normalizado(uid: String): UserProfile = copy(
-    id = uid,
-    nivel = UserRepository.nivelParaXp(xp),
-    estrellas = estrellasPorReto.values.sum()
-)
+// (con los retos viejos que no tenían puntuación reparados a 1 estrella)
+private fun UserProfile.normalizado(uid: String): UserProfile {
+    val estrellas = estrellasPorRetoReparadas()
+    return copy(
+        id = uid,
+        nivel = UserRepository.nivelParaXp(xp),
+        estrellasPorReto = estrellas,
+        estrellas = estrellas.values.sum()
+    )
+}

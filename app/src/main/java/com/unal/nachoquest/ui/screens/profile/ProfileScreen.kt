@@ -50,7 +50,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.Logro
+import androidx.compose.foundation.clickable
 import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.ColorMoneda
 import com.unal.nachoquest.ui.components.Efecto
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.Sonidos
@@ -73,7 +75,8 @@ import com.unal.nachoquest.ui.theme.TintaSuave
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onCerrarSesion: () -> Unit,
-    onVerEscena: (String) -> Unit = {}
+    onVerEscena: (String) -> Unit = {},
+    onAbrirTienda: () -> Unit = {}
 ) {
     val state by viewModel.profileState.collectAsState()
     var menuAbierto by remember { mutableStateOf(false) }
@@ -86,7 +89,7 @@ fun ProfileScreen(
             title = { Text("¿Empezar de cero?", style = MaterialTheme.typography.titleLarge, color = NachoGreenDark) },
             text = {
                 Text(
-                    "Se borrarán tu XP, tus ítems, insignias y logros, y el avance de la historia. " +
+                    "Se borrarán tu XP, tus monedas, tus ítems, insignias, ayudas, aspectos y logros, y el avance de la historia. " +
                         "Tu cuenta se conserva. Esto no se puede deshacer."
                 )
             },
@@ -216,6 +219,41 @@ fun ProfileScreen(
                 StatItem(valor = state.lugaresDescubiertos, etiqueta = "Lugares", emoji = "📍", modifier = Modifier.weight(1f))
                 StatItem(valor = state.insigniasObtenidas, etiqueta = "Insignias", emoji = "🎖️", modifier = Modifier.weight(1f))
                 StatItem(valor = state.estrellas, etiqueta = "Estrellas", emoji = "⭐", modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Monedas y acceso a la tienda
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .tarjetaJuego(fondo = Color(0xFFFFF4D6), borde = NachoYellow, radio = 14.dp, canto = 3.dp)
+                    .clickable(onClick = onAbrirTienda)
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("🪙", fontSize = 26.sp)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = if (state.monedas == 1) "1 moneda" else "${state.monedas} monedas",
+                        fontWeight = FontWeight.Bold,
+                        color = ColorMoneda
+                    )
+                    Text(
+                        text = "Compra ayudas y aspectos para Nacho",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray
+                    )
+                }
+                BotonJuego(
+                    texto = "Tienda",
+                    onClick = onAbrirTienda,
+                    color = NachoYellow,
+                    colorTexto = NachoGreenDark,
+                    alto = 40.dp,
+                    tamanoTexto = 14.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))

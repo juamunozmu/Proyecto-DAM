@@ -19,6 +19,7 @@ data class RetoLugar(
 object RetosLugares {
 
     const val XP_RECOMPENSA = 60
+    const val MONEDAS_RECOMPENSA = 15
     const val PREGUNTAS_POR_RETO = 3
 
     val retos: List<RetoLugar> = listOf(

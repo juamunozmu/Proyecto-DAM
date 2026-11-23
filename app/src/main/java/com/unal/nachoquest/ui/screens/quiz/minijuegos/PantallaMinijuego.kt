@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,8 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.Expresion
+import com.unal.nachoquest.domain.model.Tienda
+import com.unal.nachoquest.domain.model.TipoAyuda
 import com.unal.nachoquest.domain.model.TipoMinijuego
+import com.unal.nachoquest.domain.model.UserProfile
+import com.unal.nachoquest.ui.components.BotonAyuda
 import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.SaldoMonedas
 import com.unal.nachoquest.ui.components.Efecto
 import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.LluviaConfeti
@@ -59,16 +65,22 @@ import com.unal.nachoquest.ui.theme.NachoYellow
 import kotlinx.coroutines.delay
 
 /**
- * Marco común de los minijuegos: título, consejo de Nacho y celebración al terminar.
- * Cada minijuego llama a `alTerminar(estrellas)` cuando el jugador lo resuelve.
+ * Marco común de los minijuegos: título, consejo de Nacho, botón de pista y celebración al terminar.
+ * Cada minijuego llama a `alTerminar(estrellas)` cuando el jugador lo resuelve, y recibe `pistas`
+ * (cuántas ha pagado el jugador) para aplicar una ayuda cada vez que el número sube.
+ *
+ * @param onPedirPista cobra la pista (reserva o monedas); devuelve false si no se pudo pagar
  */
 @Composable
 fun PantallaMinijuego(
     capitulo: Capitulo,
+    perfil: UserProfile,
+    onPedirPista: () -> Boolean,
     onCompletado: (estrellas: Int) -> Unit,
     onSalir: () -> Unit
 ) {
     var estrellasObtenidas by remember { mutableStateOf<Int?>(null) }
+    var pistas by remember { mutableIntStateOf(0) }
     val tipo = capitulo.minijuego
 
     Box(
@@ -94,6 +106,18 @@ fun PantallaMinijuego(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = NachoGreenDark
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    SaldoMonedas(perfil.monedas)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    BotonAyuda(
+                        tipo = TipoAyuda.PISTA,
+                        etiqueta = "Pista ${pistas}/${Tienda.MAX_PISTAS_MINIJUEGO}",
+                        reserva = Tienda.reserva(perfil, TipoAyuda.PISTA),
+                        habilitado = estrellasObtenidas == null && pistas < Tienda.MAX_PISTAS_MINIJUEGO,
+                        textoInactivo = if (estrellasObtenidas == null) "SIN PISTAS" else "LISTO",
+                        onClick = { if (onPedirPista()) pistas++ }
                     )
                 }
             }
@@ -124,11 +148,11 @@ fun PantallaMinijuego(
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 val alTerminar: (Int) -> Unit = { if (estrellasObtenidas == null) estrellasObtenidas = it.coerceIn(1, 3) }
                 when (tipo) {
-                    TipoMinijuego.MURAL -> MinijuegoMural(alTerminar)
-                    TipoMinijuego.LETRAS -> MinijuegoLetras(alTerminar)
-                    TipoMinijuego.CIRCUITO -> MinijuegoCircuito(alTerminar)
-                    TipoMinijuego.SINFONIA -> MinijuegoSinfonia(alTerminar)
-                    TipoMinijuego.PENALES -> MinijuegoPenales(alTerminar)
+                    TipoMinijuego.MURAL -> MinijuegoMural(pistas, alTerminar)
+                    TipoMinijuego.LETRAS -> MinijuegoLetras(pistas, alTerminar)
+                    TipoMinijuego.CIRCUITO -> MinijuegoCircuito(pistas, alTerminar)
+                    TipoMinijuego.SINFONIA -> MinijuegoSinfonia(pistas, alTerminar)
+                    TipoMinijuego.PENALES -> MinijuegoPenales(pistas, alTerminar)
                 }
             }
         }

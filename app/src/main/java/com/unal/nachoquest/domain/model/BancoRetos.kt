@@ -231,7 +231,7 @@ object BancoRetos {
                     descripcion = "Reto de lugar: demuestra cuánto sabes de este rincón del campus.",
                     preguntas = lugar.preguntas,
                     recompensaXp = RetosLugares.XP_RECOMPENSA,
-                    recompensaMonedas = 15
+                    recompensaMonedas = RetosLugares.MONEDAS_RECOMPENSA
                 )
             } ?: RetoQuiz(
                 id = Historia.retoIdParaPunto(puntoId),

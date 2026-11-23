@@ -76,7 +76,7 @@ private fun sinTilde(c: Char): Char =
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MinijuegoLetras(alTerminar: (Int) -> Unit) {
+fun MinijuegoLetras(pistas: Int, alTerminar: (Int) -> Unit) {
     val haptic = LocalHapticFeedback.current
     val palabras = remember { BANCO_PALABRAS.shuffled().take(PALABRAS_POR_PARTIDA) }
     var ronda by remember { mutableIntStateOf(0) }
@@ -91,6 +91,14 @@ fun MinijuegoLetras(alTerminar: (Int) -> Unit) {
     val completa = letrasNecesarias.all { it in usadas }
     val sinTinta = tinta <= 0
     val rondaTerminada = completa || sinTinta
+
+    // Pista: Nacho destapa una letra que falta, sin gastar tinta
+    LaunchedEffect(pistas) {
+        if (pistas == 0 || rondaTerminada) return@LaunchedEffect
+        val letra = (letrasNecesarias - usadas).randomOrNull() ?: return@LaunchedEffect
+        usadas = usadas + letra
+        Sonidos.reproducir(Efecto.ACIERTO)
+    }
 
     LaunchedEffect(ronda, rondaTerminada) {
         if (!rondaTerminada) return@LaunchedEffect

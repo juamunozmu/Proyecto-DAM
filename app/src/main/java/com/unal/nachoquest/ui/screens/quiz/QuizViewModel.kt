@@ -10,6 +10,9 @@ import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.LineaDialogo
 import com.unal.nachoquest.domain.model.Logro
 import com.unal.nachoquest.domain.model.Logros
+import com.unal.nachoquest.domain.model.PagoAyuda
+import com.unal.nachoquest.domain.model.Tienda
+import com.unal.nachoquest.domain.model.TipoAyuda
 import com.unal.nachoquest.domain.model.Pregunta
 import com.unal.nachoquest.domain.model.Puntuacion
 import com.unal.nachoquest.domain.model.RetoQuiz
@@ -78,6 +81,12 @@ data class QuizUiState(
     // Comodín 50:50: una vez por reto, Nacho descarta dos opciones incorrectas
     val comodinDisponible: Boolean = true,
     val opcionesDescartadas: Set<Int> = emptySet(),
+    // Ayudas de la tienda: el reloj se usa una vez por pregunta y el corazón una vez por reto
+    val tiempoExtraUsado: Boolean = false,
+    val corazonUsado: Boolean = false,
+    // Sube cada vez que el jugador intenta usar una ayuda sin monedas (la UI lo avisa)
+    val sinSaldoAnimado: Int = 0,
+    val monedasGanadas: Int = 0,
     // Lo que el reto le dejó al jugador además de la XP
     val nivelAlcanzado: Int? = null,
     val logrosNuevos: List<Logro> = emptyList()
@@ -90,6 +99,17 @@ data class QuizUiState(
 
     val sinVidas: Boolean
         get() = vidas <= 0
+
+    /** El comodín pagado sirve cuando ya se gastó el gratis y en esta pregunta no se ha usado. */
+    val puedeComprarComodin: Boolean
+        get() = !comodinDisponible && opcionesDescartadas.isEmpty() && !mostrarResultadoPregunta
+
+    val puedeUsarTiempo: Boolean
+        get() = !tiempoExtraUsado && !mostrarResultadoPregunta
+
+    /** El corazón se puede usar incluso al ver que se perdió el último, antes de pasar al resultado. */
+    val puedeUsarCorazon: Boolean
+        get() = !corazonUsado && vidas < vidasMax
 }
 
 @HiltViewModel
@@ -99,6 +119,9 @@ class QuizViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
+
+    /** Perfil del jugador, para mostrar sus monedas y las ayudas que tiene guardadas. */
+    val perfil: StateFlow<UserProfile> = userRepository.userProfileFlow
 
     private var temporizador: Job? = null
     private var puntoIdCargado: String? = null
@@ -193,17 +216,49 @@ class QuizViewModel @Inject constructor(
         iniciarTemporizador()
     }
 
-    /** Descarta dos opciones incorrectas de la pregunta actual. Solo se puede usar una vez por reto. */
+    /**
+     * Descarta dos opciones incorrectas de la pregunta actual. El primero de cada reto es gratis;
+     * los siguientes (uno por pregunta) se pagan con la reserva o con monedas.
+     */
     fun usarComodin() {
         val state = _uiState.value
         val pregunta = state.preguntaActual ?: return
-        if (state.fase != FaseQuiz.PREGUNTA || state.mostrarResultadoPregunta || !state.comodinDisponible) return
+        if (state.fase != FaseQuiz.PREGUNTA || state.mostrarResultadoPregunta) return
+        if (!state.comodinDisponible && !(state.puedeComprarComodin && pagar(TipoAyuda.COMODIN))) return
         val descartadas = pregunta.opciones.indices
             .filter { it != pregunta.indiceCorrecta }
             .shuffled()
             .take(OPCIONES_QUE_QUITA_EL_COMODIN)
             .toSet()
         _uiState.update { it.copy(comodinDisponible = false, opcionesDescartadas = descartadas) }
+    }
+
+    /** Reloj de arena: suma unos segundos a la pregunta actual. */
+    fun usarTiempoExtra() {
+        val state = _uiState.value
+        if (state.fase != FaseQuiz.PREGUNTA || !state.puedeUsarTiempo || !pagar(TipoAyuda.TIEMPO)) return
+        _uiState.update {
+            it.copy(
+                tiempoExtraUsado = true,
+                tiempoRestanteMs = it.tiempoRestanteMs + Tienda.SEGUNDOS_TIEMPO_EXTRA * 1000L
+            )
+        }
+    }
+
+    /** Corazón extra: recupera un corazón, una vez por reto. */
+    fun usarCorazon() {
+        val state = _uiState.value
+        if (state.fase != FaseQuiz.PREGUNTA || !state.puedeUsarCorazon || !pagar(TipoAyuda.CORAZON)) return
+        _uiState.update { it.copy(corazonUsado = true, vidas = it.vidas + 1) }
+    }
+
+    /** Pista del minijuego. Devuelve true si se pudo pagar y el minijuego debe aplicarla. */
+    fun usarPista(): Boolean = _uiState.value.fase == FaseQuiz.MINIJUEGO && pagar(TipoAyuda.PISTA)
+
+    private fun pagar(tipo: TipoAyuda): Boolean {
+        val pagada = userRepository.usarAyuda(tipo) != PagoAyuda.SIN_SALDO
+        if (!pagada) _uiState.update { it.copy(sinSaldoAnimado = it.sinSaldoAnimado + 1) }
+        return pagada
     }
 
     /** Responder es inmediato: tocar una opción la confirma. */
@@ -223,8 +278,8 @@ class QuizViewModel @Inject constructor(
                     respuestasCorrectas = it.respuestasCorrectas + 1,
                     racha = racha,
                     mejorRacha = maxOf(it.mejorRacha, racha),
-                    // Medio punto de XP por cada segundo que sobró
-                    bonoVelocidad = it.bonoVelocidad + (it.tiempoRestanteMs / 2000L).toInt(),
+                    // Medio punto de XP por cada segundo que sobró (el reloj de arena no suma bono)
+                    bonoVelocidad = it.bonoVelocidad + (it.tiempoRestanteMs.coerceAtMost(TIEMPO_POR_PREGUNTA_MS) / 2000L).toInt(),
                     aciertosAnimados = it.aciertosAnimados + 1
                 )
             } else {
@@ -252,6 +307,7 @@ class QuizViewModel @Inject constructor(
                     mostrarResultadoPregunta = false,
                     opcionesDescartadas = emptySet(),
                     seAcaboElTiempo = false,
+                    tiempoExtraUsado = false,
                     tiempoRestanteMs = TIEMPO_POR_PREGUNTA_MS
                 )
             }
@@ -340,9 +396,16 @@ class QuizViewModel @Inject constructor(
         val item = reto.itemRecompensaId?.takeIf { primeraVez }?.let { CatalogoItems.obtenerPorId(it) }
         val insignia = reto.insigniaRecompensaId?.takeIf { primeraVez }?.let { CatalogoItems.obtenerPorId(it) }
         val coleccionable = reto.coleccionableRecompensaId?.takeIf { primeraVez }?.let { CatalogoItems.obtenerPorId(it) }
+        // Como la XP, las monedas solo se ganan la primera vez (la trivia, la primera vez de cada día)
+        val monedas = when {
+            !primeraVez -> 0
+            state.esTriviaDiaria -> Tienda.MONEDAS_TRIVIA
+            else -> reto.recompensaMonedas
+        }
 
         _uiState.update {
             it.copy(
+                monedasGanadas = monedas,
                 fase = FaseQuiz.RESULTADO,
                 retoAprobado = aprobado,
                 estrellas = resultado.estrellas,
@@ -360,7 +423,8 @@ class QuizViewModel @Inject constructor(
             val racha = userRepository.registrarTriviaDiaria(
                 hoy = diaTrivia,
                 xpGanada = resultado.xp,
-                perfecta = state.respuestasCorrectas == state.totalPreguntas
+                perfecta = state.respuestasCorrectas == state.totalPreguntas,
+                monedasGanadas = monedas
             )
             _uiState.update { it.copy(rachaDias = racha) }
         } else {
@@ -369,7 +433,8 @@ class QuizViewModel @Inject constructor(
                 estrellas = resultado.estrellas,
                 xpGanada = resultado.xp,
                 itemsGanados = listOfNotNull(item?.id, coleccionable?.id),
-                insigniasGanadas = listOfNotNull(insignia?.id)
+                insigniasGanadas = listOfNotNull(insignia?.id),
+                monedasGanadas = monedas
             )
         }
         // El repositorio actualiza el perfil al instante, así que ya se puede comparar

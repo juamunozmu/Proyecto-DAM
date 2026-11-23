@@ -75,7 +75,8 @@ private class Tablero(
     val giros: IntArray,       // giros iniciales
     val filaEntrada: Int,
     val filaSalida: Int,
-    val giroMinimo: Int        // giros necesarios para resolverlo
+    val giroMinimo: Int,       // giros necesarios para resolverlo
+    val camino: List<Int>      // celdas de la solución, de la entrada a la salida
 )
 
 /**
@@ -126,7 +127,7 @@ private fun generarTablero(): Tablero {
         }
         // Las piezas del camino se guardan "sin girar" y lo mostrado es base rotada por los giros
         if (minimo < 6) continue
-        return Tablero(bases, giros, entrada, camino.last().first, minimo)
+        return Tablero(bases, giros, entrada, camino.last().first, minimo, camino.map { it.first * N + it.second })
     }
 }
 
@@ -164,7 +165,7 @@ private fun celdasConEnergia(t: Tablero, giros: List<Int>): Set<Int> {
 }
 
 @Composable
-fun MinijuegoCircuito(alTerminar: (Int) -> Unit) {
+fun MinijuegoCircuito(pistas: Int, alTerminar: (Int) -> Unit) {
     val haptic = LocalHapticFeedback.current
     val tablero = remember { generarTablero() }
     // Giros acumulados (no se reduce a 0-3 para que la animación siempre gire en el mismo sentido)
@@ -174,6 +175,17 @@ fun MinijuegoCircuito(alTerminar: (Int) -> Unit) {
     val energia = celdasConEnergia(tablero, giros)
     val salida = tablero.filaSalida * N + (N - 1)
     val resuelto = salida in energia && rotar(tablero.bases[salida], giros[salida]) and ESTE != 0
+
+    // Pista: Nacho gira hasta su posición la primera pieza del camino que esté mal puesta
+    // (los giros de la pista no cuentan para las estrellas)
+    LaunchedEffect(pistas) {
+        if (pistas == 0 || resuelto) return@LaunchedEffect
+        val celda = tablero.camino.firstOrNull { rotar(tablero.bases[it], giros[it]) != tablero.bases[it] }
+            ?: return@LaunchedEffect
+        val faltan = (1..3).first { rotar(tablero.bases[celda], giros[celda] + it) == tablero.bases[celda] }
+        giros[celda] = giros[celda] + faltan
+        Sonidos.reproducir(Efecto.ACIERTO)
+    }
 
     LaunchedEffect(resuelto) {
         if (resuelto) {
