@@ -26,6 +26,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -76,6 +77,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -945,6 +948,28 @@ private fun FichaLugar(
             IconButton(onClick = onDismiss) {
                 Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = Color.Gray)
             }
+        }
+
+        // Foto real del lugar (en los principales), con el crédito que pide su licencia
+        FotosLugares.dePunto(punto.id)?.let { foto ->
+            Spacer(modifier = Modifier.height(10.dp))
+            Image(
+                painter = painterResource(foto.recurso),
+                contentDescription = "Foto de ${punto.nombre}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(RoundedCornerShape(14.dp))
+            )
+            Text(
+                foto.credito,
+                fontSize = 10.sp,
+                color = Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 2.dp)
+            )
         }
 
         if (punto.descripcion.isNotBlank()) {

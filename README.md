@@ -56,6 +56,10 @@ coleccionable, y avisa si el jugador subió de nivel o desbloqueó un logro.
   - *Límites*: el mapa solo se mueve dentro del campus con unos 250 m de margen, y el zoom mínimo se
     calcula según el ancho de la pantalla para que al alejarse se vea el campus de lado a lado sin
     que sobre ciudad (`ui/screens/map/LimitesMapa.kt`).
+  - *Fotos reales*: al tocar uno de los lugares principales, la ficha muestra una foto real del
+    edificio con el crédito de su autor y su licencia (`ui/screens/map/FotosLugares.kt`, imágenes en
+    `res/drawable-nodpi/`). Hoy tienen foto la Plaza Che, la Biblioteca Central, el León de Greiff,
+    el Museo Leopoldo Rother, el Edificio 401, el Edificio Yu Takeuchi y Veterinaria.
   - *Sin conexión*: cada imagen del mapa que se descarga queda guardada en el teléfono (hasta
     ~200 MB, válida por 30 días) y se muestra aunque no haya red; en ese caso aparece el aviso
     «Sin conexión · se muestra el mapa guardado». No se descarga nada por adelantado, porque las
@@ -219,20 +223,31 @@ El proyecto ya incluye `app/google-services.json` (proyecto `nachoquest`). En la
 
 Trabajo identificado que todavía no se ha hecho, en orden de prioridad:
 
-1. **Pruebas de interfaz (Compose).** Las pruebas actuales cubren la lógica y los datos, pero ninguna
+1. **Más fotos de edificios.** Ya hay 7 (ver «Mapa del campus»). Faltan, con foto ya elegida en
+   Wikimedia Commons pero sin descargar: Estadio Alfonso López, Observatorio, Edificio Manuel Ancízar,
+   Edificio Salmona (Posgrados de Ciencias Humanas), Sociología, Conservatorio, Instituto de Ciencias
+   Naturales, Facultad de Derecho, Facultad de Medicina, Edificio Antonio Nariño e IGAC. No hay foto
+   adecuada en Commons del Museo de Arte, la Concha Acústica (solo panorámicas muy estrechas), la
+   Hemeroteca, el Edificio Uriel Gutiérrez, el Servicio Geológico ni el Edificio Santander. Para
+   descargar de Commons hay que usar tamaños estándar (p. ej. 1280 px) y pausas largas, o devuelve
+   error 429. Cada foto nueva va reducida a ~800 px en `res/drawable-nodpi/`, con su autor y
+   licencia en `FotosLugares.kt` y en «Créditos».
+2. **Pruebas de interfaz (Compose).** Las pruebas actuales cubren la lógica y los datos, pero ninguna
    la interfaz. Faltan pruebas instrumentadas, sin Firebase real, de: validación del acceso y del
    registro, el 50:50 y el +10 s en las preguntas, la compra en la tienda (con saldo y sin saldo) y
    la pista de algún minijuego. Correrlas también en GitHub Actions con un emulador es opcional
    (gratis en repos públicos, pero suma unos 10 minutos al workflow).
-2. **Revisar los datos de las preguntas.** Algunas preguntas tienen datos que conviene que alguien
+3. **Revisar los datos de las preguntas.** Algunas preguntas tienen datos que conviene que alguien
    del equipo confirme: en los retos de lugar (`RetosLugares.kt`) `conservatorio_1`, `icn_2`,
    `takeuchi_4` y `medicina_1`, y en el capítulo 1 (`BancoRetos.kt`) el año del mural del Che
    (`che_2`) y el edificio del costado oriental de la plaza (`che_5`).
-3. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
+4. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
    Android dibuja las apps de borde a borde, así que hay que revisar que ninguna pantalla quede
    debajo de las barras del sistema.
-4. **Mapa sin conexión.** Las imágenes del mapa (osmdroid) se descargan en el momento; precargar el
-   área del campus ayudaría donde la señal es mala.
+
+Hecho: el **mapa sin conexión** quedó resuelto con la caché de lo ya visto (ver «Mapa del campus» en
+Funcionalidades). No se precarga el campus porque las reglas del servidor de OpenStreetMap no lo
+permiten.
 
 ## Documentos
 
@@ -242,6 +257,14 @@ mockups (Reto 2).
 ## Créditos
 
 - Mapas: © colaboradores de OpenStreetMap. Rutas a pie: OSRM.
+- Fotos de los edificios, de Wikimedia Commons (reducidas a 800 px):
+  - Plaza Che: Carlos25i, CC BY-SA 4.0 — `File:Plaza Che - Universidad Nacional de Colombia - Sede Bogotá - 2023.jpg`
+  - Biblioteca Central: Smcamposa, CC BY-SA 3.0 — `File:Biblioteca Central UNAL.jpg`
+  - Auditorio León de Greiff: JuanGris (Lucía Estévez), CC BY-SA 3.0 — `File:Auditorio León de Greiff. Universidad Nacional de Colombia.jpg`
+  - Museo de Arquitectura Leopoldo Rother: MizhyMonroy, CC BY-SA 3.0 — `File:Museo de arquitectura Leopoldo Rother.jpg`
+  - Edificio 401 (Ingeniería): Carlos25i, CC BY-SA 4.0 — `File:Universidad nacional de Colombia - Edificio Facultad de Ingeniería 401.jpg`
+  - Edificio Yu Takeuchi: Gaaplex, CC BY-SA 4.0 — `File:Edificio Yu Takeuchi.jpg`
+  - Facultad de Veterinaria: JuanGris (Lucía Estévez), CC BY-SA 3.0 — `File:Edificio de veterinaria, Universidad Nacional.JPG`
 - Fuente de los títulos: [Jersey 15](https://fonts.google.com/specimen/Jersey+15), de Sarah
   Cadigan-Fried, bajo la licencia SIL Open Font License 1.1 (`docs/licencias/OFL-Jersey15.txt`).
 
