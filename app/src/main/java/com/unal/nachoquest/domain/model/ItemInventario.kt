@@ -131,6 +131,30 @@ object CatalogoItems {
             desbloqueaPuntoId = "edif_408",
             nombrePuntoDesbloqueado = "Laboratorio de Hidráulica",
             requisitoTexto = "Arma la película en la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "hilo_azul",
+            nombre = "Hilo Azul de la Memoria",
+            descripcion = "El segundo hilo. Subió flotando cuando el agua quedó exacta y todavía está húmedo. Tira hacia el Instituto de Genética.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            desbloqueaPuntoId = "edif_426",
+            nombrePuntoDesbloqueado = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Deja el agua exacta en el Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "hilo_verde",
+            nombre = "Hilo Verde de la Memoria",
+            descripcion = "El tercer hilo. Estaba enredado entre los peldaños de la doble hélice. Tira hacia la Capilla.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            desbloqueaPuntoId = "edif_251",
+            nombrePuntoDesbloqueado = "Capilla",
+            requisitoTexto = "Completa la doble hélice en el Instituto de Genética"
         )
     )
 
@@ -224,6 +248,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_701",
             nombreLugarOrigen = "Antigua sede de Cine y Televisión",
             requisitoTexto = "Supera el reto de la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "insignia_hidraulica",
+            nombre = "Maestro del Caudal",
+            descripcion = "Para quienes miden con calma y no riegan ni una gota de más.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "💧",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            requisitoTexto = "Supera el reto del Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "insignia_genetica",
+            nombre = "Lector de ADN",
+            descripcion = "Para quienes saben que cada letra tiene su pareja.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🧬",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Supera el reto del Instituto de Genética"
         )
     )
 
@@ -317,6 +361,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_701",
             nombreLugarOrigen = "Antigua sede de Cine y Televisión",
             requisitoTexto = "Coleccionable rescatado en la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "col_molinete",
+            nombre = "Molinete de Aforo",
+            descripcion = "Una hélice pequeña que se mete en el río para medir qué tan rápido corre el agua. Con eso se calcula su caudal.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🌀",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            requisitoTexto = "Coleccionable encontrado en el Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "col_arveja",
+            nombre = "Arveja de Mendel",
+            descripcion = "Una arveja como las que usó Gregor Mendel en el siglo XIX para descubrir cómo se heredan los rasgos de padres a hijos.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🌱",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Coleccionable hallado en el Instituto de Genética"
         )
     )
 

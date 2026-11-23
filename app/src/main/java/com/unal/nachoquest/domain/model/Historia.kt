@@ -53,6 +53,14 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     MONTAJE(
         "Arma la película",
         "El Enredo cortó la película y pegó los fotogramas al azar. Tócalos en orden para que cada escena vuelva a contarse bien."
+    ),
+    TANQUES(
+        "Agua exacta",
+        "Llena, vacía y pasa agua de un tanque al otro hasta que en uno quede exactamente la cantidad que se pide."
+    ),
+    HELICE(
+        "Completa la hélice",
+        "El Enredo le quitó un lado al ADN. Ponle a cada letra su pareja (A con T, C con G) antes de que la hélice se desenrolle."
     )
 }
 
@@ -224,6 +232,32 @@ object Historia {
             xpRecompensa = 300,
             minijuego = TipoMinijuego.MONTAJE,
             acto = 3
+        ),
+        Capitulo(
+            numero = 10,
+            puntoId = "edif_408",
+            retoId = "reto_hidraulica",
+            titulo = "Agua Revuelta",
+            lugar = "Laboratorio de Hidráulica",
+            sinopsis = "El Enredo revolvió el agua de los tanques de ensayo y el Hilo Azul quedó en el fondo. Solo sube si el agua queda exacta.",
+            itemRequeridoId = "hilo_rojo",
+            itemRecompensaId = "hilo_azul",
+            xpRecompensa = 330,
+            minijuego = TipoMinijuego.TANQUES,
+            acto = 3
+        ),
+        Capitulo(
+            numero = 11,
+            puntoId = "edif_426",
+            retoId = "reto_genetica",
+            titulo = "La Doble Hélice",
+            lugar = "Instituto de Genética (IGUN)",
+            sinopsis = "El Enredo le quitó un lado al ADN de las muestras del instituto. Si la hélice se desenrolla, se lleva el Hilo Verde con ella.",
+            itemRequeridoId = "hilo_azul",
+            itemRecompensaId = "hilo_verde",
+            xpRecompensa = 360,
+            minijuego = TipoMinijuego.HELICE,
+            acto = 3
         )
     )
 
@@ -389,6 +423,32 @@ object Historia {
             LineaDialogo(Hablante.NACHO, "¡El Hilo Rojo! El primero de los cinco. Está tibio, como una sala de cine en pleno estreno.", Expresion.FELIZ),
             LineaDialogo(Hablante.RECUERDO, "Escuchen... agua que corre por donde no debería. El Enredo se fue al Laboratorio de Hidráulica."),
             LineaDialogo(Hablante.NACHO, "¡Pues para allá vamos, {jugador}! Ojalá no nos toque nadar.", Expresion.DECIDIDO)
+        ),
+        "cap10_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Laboratorio de Hidráulica. Aquí los ingenieros prueban con modelos cómo se porta el agua antes de construir un puente, una represa o un acueducto."),
+            LineaDialogo(Hablante.ENREDO, "¡Splash! Revolví el agua de todos los tanques. ¿Cuánta hay en cada uno? ¡Ni idea!"),
+            LineaDialogo(Hablante.RECUERDO, "El Hilo Azul está en el fondo de un tanque. Solo sube si el agua queda exacta, ni una gota más ni una menos."),
+            LineaDialogo(Hablante.NACHO, "Llena, vacía y pasa agua de un tanque al otro hasta dejar justo lo que se pide. Piensa antes de echar agua, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap10_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El agua se aquieta. Justo en la marca exacta, algo azul sube flotando hasta la superficie."),
+            LineaDialogo(Hablante.ENREDO, "¡Ustedes sí saben medir! Bueno... el siguiente hilo lo escondí donde todo viene de a pares."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Azul! Ya van dos de cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "¿De a pares...? La A con la T, la C con la G. Está hablando del ADN: se fue al Instituto de Genética."),
+            LineaDialogo(Hablante.NACHO, "¡Si el Enredo se pone a revolver ADN, quién sabe qué sale! Vamos, {jugador}.", Expresion.SORPRENDIDO)
+        ),
+        "cap11_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Instituto de Genética. Aquí se estudia el ADN y se hacen pruebas para saber quién es familia de quién."),
+            LineaDialogo(Hablante.ENREDO, "¡Miren esta escalera retorcida tan bonita! Le quité un lado. Así se ve más... liviana, ¿no?"),
+            LineaDialogo(Hablante.RECUERDO, "Sin su otra mitad, la doble hélice se desenrolla. Y se lleva el Hilo Verde con ella."),
+            LineaDialogo(Hablante.NACHO, "Cada letra tiene su pareja: la A va con la T y la C con la G. Completa la cadena antes de que se desenrolle, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap11_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La doble hélice vuelve a girar, tranquila. Entre dos de sus peldaños brilla un hilo verde."),
+            LineaDialogo(Hablante.ENREDO, "Uy, qué juiciosos. ¡Pero el próximo escondite es el más bonito! Puros colores... y vidrios."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Verde! Ya van tres.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "Vidrios de colores... Eso es un vitral. La capilla del campus tiene unos preciosos."),
+            LineaDialogo(Hablante.NACHO, "Si el Enredo rompe ese vitral, no se lo perdono. ¡A la capilla, {jugador}!", Expresion.PREOCUPADO)
         )
     )
 

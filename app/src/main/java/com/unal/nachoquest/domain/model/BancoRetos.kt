@@ -320,6 +320,57 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_cine",
                 coleccionableRecompensaId = "col_rollo"
             )
+            // Datos verificados en noviembre de 2026: Chingaza aporta cerca del 70 % del agua de
+            // Bogotá (Acueducto); el agua hierve a menos de 100 °C en la altura (menor presión)
+            "reto_hidraulica" -> RetoQuiz(
+                id = "reto_hidraulica",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 10: Agua Revuelta",
+                descripcion = "El agua, medida gota a gota.",
+                preguntas = listOf(
+                    Pregunta("hidraulica_1", "¿Para qué sirve construir un modelo a escala en un laboratorio de hidráulica?",
+                        listOf("Para probar cómo se portará el agua en un río, una presa o un puerto antes de construirlos", "Para guardar agua lluvia", "Para criar peces", "Para decorar el laboratorio"), 0),
+                    Pregunta("hidraulica_2", "¿Qué sistema, en los páramos del oriente, aporta cerca del 70 % del agua de Bogotá?",
+                        listOf("El Sistema Chingaza", "El río Bogotá", "La laguna de Tota", "El embalse del Guavio"), 0),
+                    Pregunta("hidraulica_3", "¿Qué sabio griego descubrió que un cuerpo sumergido recibe un empuje igual al peso del agua que desaloja?",
+                        listOf("Arquímedes", "Pitágoras", "Aristóteles", "Euclides"), 0),
+                    Pregunta("hidraulica_4", "¿Por qué en Bogotá el agua hierve a menos de 100 °C?",
+                        listOf("Porque a esa altura la presión del aire es menor", "Porque el agua de Bogotá es más pura", "Porque hace frío", "Porque las ollas son de aluminio"), 0),
+                    Pregunta("hidraulica_5", "¿Cuál es el río principal de Colombia, que la recorre de sur a norte hasta el mar Caribe?",
+                        listOf("El Magdalena", "El Amazonas", "El Orinoco", "El Atrato"), 0)
+                ),
+                recompensaXp = 330,
+                recompensaMonedas = 70,
+                itemRecompensaId = "hilo_azul",
+                insigniaRecompensaId = "insignia_hidraulica",
+                coleccionableRecompensaId = "col_molinete"
+            )
+            // Datos verificados en noviembre de 2026: el Grupo de Genética de Poblaciones e
+            // Identificación del IGUN hace pruebas de filiación con el ICBF; Watson y Crick (1953)
+            // y la Fotografía 51 del grupo de Rosalind Franklin
+            "reto_genetica" -> RetoQuiz(
+                id = "reto_genetica",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 11: La Doble Hélice",
+                descripcion = "Las letras con las que está escrita la vida.",
+                preguntas = listOf(
+                    Pregunta("genetica_1", "¿Qué pruebas hace el Instituto de Genética de la UNAL, de la mano del ICBF, para saber quién es el papá o la mamá de alguien?",
+                        listOf("Pruebas de paternidad con ADN", "Exámenes de la vista", "Pruebas de embarazo", "Radiografías"), 0),
+                    Pregunta("genetica_2", "En el ADN, ¿con qué letra se empareja la adenina (A)?",
+                        listOf("Con la timina (T)", "Con la guanina (G)", "Con la citosina (C)", "Con otra adenina (A)"), 0),
+                    Pregunta("genetica_3", "¿Quiénes publicaron en 1953 el modelo de la doble hélice del ADN?",
+                        listOf("James Watson y Francis Crick", "Marie y Pierre Curie", "Charles Darwin y Alfred Wallace", "Louis Pasteur y Robert Koch"), 0),
+                    Pregunta("genetica_4", "¿Qué científica dirigía el trabajo que produjo la «Fotografía 51», clave para descubrir la forma del ADN?",
+                        listOf("Rosalind Franklin", "Marie Curie", "Ada Lovelace", "Jane Goodall"), 0),
+                    Pregunta("genetica_5", "¿Con qué planta hizo Gregor Mendel sus experimentos sobre la herencia?",
+                        listOf("Con arvejas", "Con rosas", "Con maíz", "Con girasoles"), 0)
+                ),
+                recompensaXp = 360,
+                recompensaMonedas = 75,
+                itemRecompensaId = "hilo_verde",
+                insigniaRecompensaId = "insignia_genetica",
+                coleccionableRecompensaId = "col_arveja"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

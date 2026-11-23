@@ -157,6 +157,8 @@ fun PantallaMinijuego(
                     TipoMinijuego.PAREJAS -> MinijuegoParejas(pistas, alTerminar)
                     TipoMinijuego.LABERINTO -> MinijuegoLaberinto(pistas, alTerminar)
                     TipoMinijuego.MONTAJE -> MinijuegoMontaje(pistas, alTerminar)
+                    TipoMinijuego.TANQUES -> MinijuegoTanques(pistas, alTerminar)
+                    TipoMinijuego.HELICE -> MinijuegoHelice(pistas, alTerminar)
                 }
             }
         }
@@ -193,6 +195,8 @@ fun PantallaMinijuego(
                                 TipoMinijuego.PENALES -> "¡Tanda ganada!"
                                 TipoMinijuego.LABERINTO -> "¡Encontraste al Eco!"
                                 TipoMinijuego.MONTAJE -> "¡Película armada!"
+                                TipoMinijuego.TANQUES -> "¡Agua exacta!"
+                                TipoMinijuego.HELICE -> "¡Hélice completa!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,
