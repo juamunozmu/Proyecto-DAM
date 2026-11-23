@@ -8,7 +8,11 @@ package com.unal.nachoquest.domain.model
  * en cada edificio emblemático. Cada capítulo entrega el ítem que abre el siguiente.
  */
 
-enum class Hablante { NACHO, OLVIDO, NARRADOR }
+/**
+ * Quién habla en una escena. El Olvido se volvió el Recuerdo al final del Acto II y desde el
+ * Acto III es aliado de Nacho; el Enredo es el personaje nuevo del Acto III.
+ */
+enum class Hablante { NACHO, OLVIDO, RECUERDO, ENREDO, NARRADOR }
 
 enum class Expresion { NORMAL, FELIZ, SORPRENDIDO, PREOCUPADO, DECIDIDO }
 
@@ -45,6 +49,10 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     LABERINTO(
         "Laberinto en la bruma",
         "La bruma no deja ver más allá de un paso. Guía a Nacho hasta el Eco que espera al otro lado del laberinto."
+    ),
+    MONTAJE(
+        "Arma la película",
+        "El Enredo cortó la película y pegó los fotogramas al azar. Tócalos en orden para que cada escena vuelva a contarse bien."
     )
 }
 
@@ -86,8 +94,19 @@ object Historia {
 
     val titulosActos = mapOf(
         1 to "El Olvido de la Ciudad Blanca",
-        2 to "Los Ecos del Olvido"
+        2 to "Los Ecos del Olvido",
+        3 to "Los Hilos de la Memoria"
     )
+
+    /** Número romano del acto, para los títulos («ACTO III»). */
+    fun romano(acto: Int): String = when (acto) {
+        1 -> "I"
+        2 -> "II"
+        3 -> "III"
+        4 -> "IV"
+        5 -> "V"
+        else -> acto.toString()
+    }
 
     val capitulos = listOf(
         Capitulo(
@@ -191,6 +210,20 @@ object Historia {
             minijuego = TipoMinijuego.LABERINTO,
             acto = 2,
             escenaFinal = ESCENA_EPILOGO_FINAL
+        ),
+        // ---------- Acto III: Los Hilos de la Memoria ----------
+        Capitulo(
+            numero = 9,
+            puntoId = "edif_701",
+            retoId = "reto_cine",
+            titulo = "Fuera de Cuadro",
+            lugar = "Antigua sede de Cine y Televisión",
+            sinopsis = "De la Copa Restaurada salió el Enredo, que se llevó cinco Hilos de la Memoria. El primero está en la vieja casa de la Escuela de Cine, donde cortó la película del campus en pedacitos.",
+            itemRequeridoId = "copa_restaurada",
+            itemRecompensaId = "hilo_rojo",
+            xpRecompensa = 300,
+            minijuego = TipoMinijuego.MONTAJE,
+            acto = 3
         )
     )
 
@@ -334,7 +367,28 @@ object Historia {
             LineaDialogo(Hablante.NARRADOR, "Desde ese día, cuando cae la tarde, sobre la Concha Acústica flota una bruma suave y dorada."),
             LineaDialogo(Hablante.NACHO, "Es el Olvido. Bueno, ahora se hace llamar el Recuerdo. Me ayuda a cuidar la memoria del campus.", Expresion.FELIZ),
             LineaDialogo(Hablante.NACHO, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día."),
-            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Desde hoy eres Guardián de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Desde hoy eres Guardián de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
+            // Gancho del Acto III
+            LineaDialogo(Hablante.NARRADOR, "Esa misma noche, la Copa Restaurada empezó a soltar hilitos de colores, como un saco de lana viejo."),
+            LineaDialogo(Hablante.NARRADOR, "Y desde algún rincón del campus, alguien se rió bajito.")
+        ),
+
+        // ---------- Acto III: Los Hilos de la Memoria ----------
+        "cap9_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "¡{jugador}! ¿Viste la Copa? Está soltando hilos de colores, como un saco de lana viejo.", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.RECUERDO, "Volvieron tantos recuerdos de golpe que algunos se anudaron entre sí... y de ese nudo nació alguien."),
+            LineaDialogo(Hablante.ENREDO, "¡Hola, hola! ¿Jugamos? Me llevé cinco hilos de la Copa. Si los quieren, ¡vengan a buscarlos!"),
+            LineaDialogo(Hablante.NACHO, "¿Y este quién es? No borra nada, pero... lo revuelve todo.", Expresion.PREOCUPADO),
+            LineaDialogo(Hablante.RECUERDO, "Es el Enredo. Escondió el primer hilo aquí, junto al estadio: la vieja casa de la Escuela de Cine, donde se aprendió a hacer películas durante casi treinta años."),
+            LineaDialogo(Hablante.ENREDO, "¡Corté la película del campus y pegué los pedacitos al revés! ¿A que no la arman?"),
+            LineaDialogo(Hablante.NACHO, "Pon los fotogramas en orden, {jugador}. Una película solo tiene sentido si cada imagen va donde toca.", Expresion.DECIDIDO)
+        ),
+        "cap9_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El proyector se enciende. La película del campus corre de principio a fin y, por un instante, todo el edificio huele a crispetas."),
+            LineaDialogo(Hablante.ENREDO, "¡Ey, la armaron rapidísimo! Bueno, bueno... tomen su hilo. ¡Pero el siguiente está mojado!"),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Rojo! El primero de los cinco. Está tibio, como una sala de cine en pleno estreno.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "Escuchen... agua que corre por donde no debería. El Enredo se fue al Laboratorio de Hidráulica."),
+            LineaDialogo(Hablante.NACHO, "¡Pues para allá vamos, {jugador}! Ojalá no nos toque nadar.", Expresion.DECIDIDO)
         )
     )
 

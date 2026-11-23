@@ -20,9 +20,13 @@ import kotlin.math.sin
 
 /**
  * El Olvido: una bruma gris que ondula, con dos ojos pálidos que se entrecierran.
+ * Con [dorado] es el Recuerdo, en lo que se convirtió al final del Acto II: la misma bruma, dorada.
  */
 @Composable
-fun Olvido(modifier: Modifier = Modifier) {
+fun Olvido(modifier: Modifier = Modifier, dorado: Boolean = false) {
+    val colorNube = if (dorado) Color(0xCCD9A93B) else Color(0xCC6E7076)
+    val colorCentro = if (dorado) Color(0xEEB8862B) else Color(0xEE4A4C52)
+    val colorOjos = if (dorado) Color(0xFFFFF6DC) else Color(0xFFE8F0FF)
     val transicion = rememberInfiniteTransition(label = "olvido")
     val fase by transicion.animateFloat(
         initialValue = 0f,
@@ -49,7 +53,7 @@ fun Olvido(modifier: Modifier = Modifier) {
             val r = radioBase * (0.75f + 0.12f * cos(fase + i * 1.3f))
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(Color(0xCC6E7076), Color(0x006E7076)),
+                    colors = listOf(colorNube, colorNube.copy(alpha = 0f)),
                     center = c,
                     radius = r
                 ),
@@ -59,7 +63,7 @@ fun Olvido(modifier: Modifier = Modifier) {
         }
         drawCircle(
             brush = Brush.radialGradient(
-                colors = listOf(Color(0xEE4A4C52), Color(0x004A4C52)),
+                colors = listOf(colorCentro, colorCentro.copy(alpha = 0f)),
                 center = centro,
                 radius = radioBase * 1.2f
             ),
@@ -74,7 +78,7 @@ fun Olvido(modifier: Modifier = Modifier) {
         val yOjos = centro.y - radioBase * 0.1f + sin(fase) * radioBase * 0.06f
         listOf(-1f, 1f).forEach { lado ->
             drawOval(
-                color = Color(0xFFE8F0FF),
+                color = colorOjos,
                 topLeft = Offset(centro.x + lado * separacion - anchoOjo / 2, yOjos - altoOjo / 2),
                 size = Size(anchoOjo, altoOjo)
             )

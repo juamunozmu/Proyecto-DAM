@@ -110,12 +110,27 @@ object CatalogoItems {
         ItemInventario(
             id = "copa_restaurada",
             nombre = "Copa Restaurada",
-            descripcion = "La Copa de la Memoria sin grietas, después de reunir a los tres Ecos. Brilla con la bruma dorada del Recuerdo.",
+            descripcion = "La Copa de la Memoria sin grietas, después de reunir a los tres Ecos. Brilla con la bruma dorada del Recuerdo... y suelta hilos de colores que llevan a la antigua sede de Cine y Televisión.",
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "🌟",
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
+            desbloqueaPuntoId = "edif_701",
+            nombrePuntoDesbloqueado = "Antigua sede de Cine y Televisión",
             requisitoTexto = "Encuentra al último Eco en el laberinto de la Concha Acústica"
+        ),
+        // ---------- Acto III: los cinco Hilos de la Memoria ----------
+        ItemInventario(
+            id = "hilo_rojo",
+            nombre = "Hilo Rojo de la Memoria",
+            descripcion = "El primero de los cinco hilos que el Enredo se llevó de la Copa. Estaba enrollado en una bobina de película y tira, suavecito, hacia el Laboratorio de Hidráulica.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            desbloqueaPuntoId = "edif_408",
+            nombrePuntoDesbloqueado = "Laboratorio de Hidráulica",
+            requisitoTexto = "Arma la película en la antigua sede de Cine y Televisión"
         )
     )
 
@@ -199,6 +214,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
             requisitoTexto = "Supera el reto de la Concha Acústica"
+        ),
+        ItemInventario(
+            id = "insignia_cine",
+            nombre = "Ojo de Director",
+            descripcion = "Para quienes saben que una buena historia depende del orden en que se cuenta.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🎬",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            requisitoTexto = "Supera el reto de la antigua sede de Cine y Televisión"
         )
     )
 
@@ -282,6 +307,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
             requisitoTexto = "Coleccionable escondido en la Concha Acústica"
+        ),
+        ItemInventario(
+            id = "col_rollo",
+            nombre = "Rollo de 16 mm",
+            descripcion = "Un rollo de película de 16 milímetros, como los que se usaban en las escuelas de cine antes del video digital. Tiene una etiqueta escrita a mano: «toma 3».",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎞️",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            requisitoTexto = "Coleccionable rescatado en la antigua sede de Cine y Televisión"
         )
     )
 

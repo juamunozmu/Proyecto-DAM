@@ -60,6 +60,44 @@ import kotlinx.coroutines.delay
 
 private const val MS_POR_LETRA = 24L
 
+/** Colores de la escena según quién habla. */
+private data class EstiloHablante(
+    val fondoArriba: Color,
+    val fondoAbajo: Color,
+    val particulas: Color,
+    // Nombre en la pestaña sobre la caja de diálogo (null: el narrador no lleva pestaña)
+    val nombre: String?,
+    val fondoNombre: Color,
+    val textoNombre: Color,
+    val fondoCaja: Color,
+    val texto: Color,
+    // Nacho habla normal; los demás, en cursiva
+    val cursiva: Boolean
+)
+
+private fun estiloDe(hablante: Hablante): EstiloHablante = when (hablante) {
+    Hablante.NACHO -> EstiloHablante(
+        NachoGreenDark, NachoGreen, NachoYellow,
+        "NACHO", NachoYellow, NachoGreenDark, NachoCream, Color(0xFF1E1E1E), cursiva = false
+    )
+    Hablante.OLVIDO -> EstiloHablante(
+        Color(0xFF2B2D31), Color(0xFF5B5E66), Color(0xFFB0B4BC),
+        "EL OLVIDO", Color(0xFF3A3C42), Color(0xFFE8F0FF), Color(0xF01E1F23), Color(0xFFEDEDED), cursiva = true
+    )
+    Hablante.RECUERDO -> EstiloHablante(
+        Color(0xFF3B2A0E), Color(0xFF8A6A24), Color(0xFFF2D27A),
+        "EL RECUERDO", Color(0xFFD9A93B), Color(0xFF3B2A0E), Color(0xF02A1E0A), Color(0xFFFFF3D6), cursiva = true
+    )
+    Hablante.ENREDO -> EstiloHablante(
+        Color(0xFF2A1236), Color(0xFF6A2C7A), Color(0xFFFF8AD8),
+        "EL ENREDO", Color(0xFF8E24AA), Color.White, Color(0xF0241030), Color(0xFFF6E8FF), cursiva = true
+    )
+    Hablante.NARRADOR -> EstiloHablante(
+        NachoGreenDark, NachoGreen, NachoYellow,
+        null, Color.Transparent, Color.Transparent, Color(0xCC000000), Color(0xFFEDEDED), cursiva = true
+    )
+}
+
 /**
  * Escena de historia a pantalla completa. Tocar la pantalla completa el texto actual
  * o pasa a la siguiente línea; "Saltar" termina la escena de inmediato.
@@ -97,17 +135,9 @@ fun EscenaDialogo(
         }
     }
 
-    val esOlvido = linea.hablante == Hablante.OLVIDO
-    val colorArriba by animateColorAsState(
-        if (esOlvido) Color(0xFF2B2D31) else NachoGreenDark,
-        tween(700),
-        label = "fondoArriba"
-    )
-    val colorAbajo by animateColorAsState(
-        if (esOlvido) Color(0xFF5B5E66) else NachoGreen,
-        tween(700),
-        label = "fondoAbajo"
-    )
+    val estilo = estiloDe(linea.hablante)
+    val colorArriba by animateColorAsState(estilo.fondoArriba, tween(700), label = "fondoArriba")
+    val colorAbajo by animateColorAsState(estilo.fondoAbajo, tween(700), label = "fondoAbajo")
 
     Box(
         modifier = modifier
@@ -129,7 +159,7 @@ fun EscenaDialogo(
     ) {
         ParticulasFlotantes(
             modifier = Modifier.fillMaxSize(),
-            color = if (esOlvido) Color(0xFFB0B4BC) else NachoYellow
+            color = estilo.particulas
         )
 
         TextButton(
@@ -161,6 +191,8 @@ fun EscenaDialogo(
                     hablando = escribiendo
                 )
                 Hablante.OLVIDO -> Olvido(modifier = Modifier.size(240.dp))
+                Hablante.RECUERDO -> Olvido(modifier = Modifier.size(240.dp), dorado = true)
+                Hablante.ENREDO -> Enredo(modifier = Modifier.size(230.dp))
                 Hablante.NARRADOR -> Spacer(modifier = Modifier.size(190.dp))
             }
         }
@@ -173,17 +205,17 @@ fun EscenaDialogo(
                 .navigationBarsPadding()
                 .padding(16.dp)
         ) {
-            if (linea.hablante != Hablante.NARRADOR) {
+            if (estilo.nombre != null) {
                 Box(
                     modifier = Modifier
                         .padding(start = 12.dp)
                         .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                        .background(if (esOlvido) Color(0xFF3A3C42) else NachoYellow)
+                        .background(estilo.fondoNombre)
                         .padding(horizontal = 14.dp, vertical = 5.dp)
                 ) {
                     Text(
-                        text = if (esOlvido) "EL OLVIDO" else "NACHO",
-                        color = if (esOlvido) Color(0xFFE8F0FF) else NachoGreenDark,
+                        text = estilo.nombre,
+                        color = estilo.textoNombre,
                         style = EstiloEtiqueta,
                         fontSize = 19.sp
                     )
@@ -195,21 +227,15 @@ fun EscenaDialogo(
                     .fillMaxWidth()
                     .heightIn(min = 130.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(
-                        when (linea.hablante) {
-                            Hablante.OLVIDO -> Color(0xF01E1F23)
-                            Hablante.NARRADOR -> Color(0xCC000000)
-                            Hablante.NACHO -> NachoCream
-                        }
-                    )
+                    .background(estilo.fondoCaja)
                     .padding(18.dp)
             ) {
                 Text(
                     text = linea.texto.take(letrasVisibles),
-                    color = if (linea.hablante == Hablante.NACHO) Color(0xFF1E1E1E) else Color(0xFFEDEDED),
+                    color = estilo.texto,
                     fontSize = 17.sp,
                     lineHeight = 24.sp,
-                    fontStyle = if (linea.hablante == Hablante.NACHO) FontStyle.Normal else FontStyle.Italic,
+                    fontStyle = if (estilo.cursiva) FontStyle.Italic else FontStyle.Normal,
                     fontWeight = if (linea.hablante == Hablante.NACHO) FontWeight.Medium else FontWeight.Normal
                 )
 

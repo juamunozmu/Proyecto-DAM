@@ -140,24 +140,18 @@ fun ProfileScreen(
                             onVerEscena(Historia.ESCENA_PROLOGO)
                         }
                     )
-                    if (state.actoICompletado) {
-                        DropdownMenuItem(
-                            text = { Text("👑 Ver el epílogo del Acto I") },
-                            onClick = {
-                                menuAbierto = false
-                                onVerEscena(Historia.ESCENA_EPILOGO)
-                            }
-                        )
-                    }
-                    if (state.historiaCompletada) {
-                        DropdownMenuItem(
-                            text = { Text("🌟 Ver el epílogo final") },
-                            onClick = {
-                                menuAbierto = false
-                                onVerEscena(Historia.ESCENA_EPILOGO_FINAL)
-                            }
-                        )
-                    }
+                    // Un epílogo por cada acto terminado (el último capítulo de cada acto lo trae)
+                    Historia.capitulos
+                        .filter { it.escenaFinal != null && it.acto in state.actosCompletados }
+                        .forEach { capitulo ->
+                            DropdownMenuItem(
+                                text = { Text("📜 Ver el epílogo del Acto ${Historia.romano(capitulo.acto)}") },
+                                onClick = {
+                                    menuAbierto = false
+                                    capitulo.escenaFinal?.let(onVerEscena)
+                                }
+                            )
+                        }
                     DropdownMenuItem(
                         text = { Text(if (sonidoActivado) "🔊 Sonido: activado" else "🔇 Sonido: apagado") },
                         onClick = {
@@ -194,7 +188,7 @@ fun ProfileScreen(
                 ) {
                     Nacho(
                         modifier = Modifier.size(70.dp),
-                        expresion = if (state.historiaCompletada) Expresion.FELIZ else Expresion.NORMAL
+                        expresion = if (state.actosCompletados.isNotEmpty()) Expresion.FELIZ else Expresion.NORMAL
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -207,7 +201,7 @@ fun ProfileScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = tituloPorNivel(state.nivel, state.actoICompletado, state.historiaCompletada),
+                        text = tituloPorNivel(state.nivel, state.actosCompletados),
                         color = NachoYellow,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 13.sp
@@ -362,9 +356,9 @@ fun ProfileScreen(
     }
 }
 
-private fun tituloPorNivel(nivel: Int, actoICompletado: Boolean, historiaCompletada: Boolean): String = when {
-    historiaCompletada -> "🌟 Guardián de la Memoria · Nivel $nivel"
-    actoICompletado -> "👑 Leyenda de la Ciudad Blanca · Nivel $nivel"
+private fun tituloPorNivel(nivel: Int, actosCompletados: Set<Int>): String = when {
+    2 in actosCompletados -> "🌟 Guardián de la Memoria · Nivel $nivel"
+    1 in actosCompletados -> "👑 Leyenda de la Ciudad Blanca · Nivel $nivel"
     nivel >= 6 -> "Guardián del campus · Nivel $nivel"
     nivel >= 3 -> "Explorador · Nivel $nivel"
     else -> "Primíparo · Nivel $nivel"

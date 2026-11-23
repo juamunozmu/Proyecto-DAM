@@ -293,6 +293,33 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_concha",
                 coleccionableRecompensaId = "col_afiche"
             )
+            // ---------- Acto III ----------
+            // Datos verificados en noviembre de 2026: el traslado de la escuela (Periódico UNAL,
+            // MinEducación), los 24 fotogramas y la claqueta, los Lumière (28 dic. 1895) y la
+            // nominación de El abrazo de la serpiente (Óscar 2016)
+            "reto_cine" -> RetoQuiz(
+                id = "reto_cine",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 9: Fuera de Cuadro",
+                descripcion = "Lo que hay detrás de cada película.",
+                preguntas = listOf(
+                    Pregunta("cine_1", "¿Dónde funcionó cerca de 30 años la Escuela de Cine y Televisión de la UNAL, antes de pasar al nuevo edificio de Artes?",
+                        listOf("En los camerinos del Estadio Alfonso López", "En el sótano de la Biblioteca Central", "En el Auditorio León de Greiff", "En el Museo de Arte"), 0),
+                    Pregunta("cine_2", "¿Cuántos fotogramas por segundo se volvieron el estándar del cine cuando llegó el sonido?",
+                        listOf("24", "12", "60", "100"), 0),
+                    Pregunta("cine_3", "¿Para qué sirve la claqueta que se cierra antes de cada toma?",
+                        listOf("Para sincronizar la imagen con el sonido e identificar la toma", "Para pedirle silencio al público", "Para encender las luces del set", "Para avisar que se acabó el rollo"), 0),
+                    Pregunta("cine_4", "¿Qué hermanos hicieron en París, en 1895, la primera proyección pública de cine?",
+                        listOf("Los hermanos Lumière", "Los hermanos Wright", "Los hermanos Grimm", "Los hermanos Marx"), 0),
+                    Pregunta("cine_5", "¿Qué película de Ciro Guerra le dio a Colombia su primera nominación al Óscar a mejor película de habla no inglesa?",
+                        listOf("El abrazo de la serpiente", "Pájaros de verano", "La vendedora de rosas", "María llena eres de gracia"), 0)
+                ),
+                recompensaXp = 300,
+                recompensaMonedas = 65,
+                itemRecompensaId = "hilo_rojo",
+                insigniaRecompensaId = "insignia_cine",
+                coleccionableRecompensaId = "col_rollo"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

@@ -156,6 +156,7 @@ fun PantallaMinijuego(
                     TipoMinijuego.DIFERENCIAS -> MinijuegoDiferencias(pistas, alTerminar)
                     TipoMinijuego.PAREJAS -> MinijuegoParejas(pistas, alTerminar)
                     TipoMinijuego.LABERINTO -> MinijuegoLaberinto(pistas, alTerminar)
+                    TipoMinijuego.MONTAJE -> MinijuegoMontaje(pistas, alTerminar)
                 }
             }
         }
@@ -191,6 +192,7 @@ fun PantallaMinijuego(
                             when (tipo) {
                                 TipoMinijuego.PENALES -> "¡Tanda ganada!"
                                 TipoMinijuego.LABERINTO -> "¡Encontraste al Eco!"
+                                TipoMinijuego.MONTAJE -> "¡Película armada!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,

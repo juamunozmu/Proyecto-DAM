@@ -745,14 +745,16 @@
         },
         {
             "id": "edif_701",
-            "nombre": "Cine y Televisión",
+            "nombre": "Antigua sede de Cine y Televisión",
             "edificio": "701",
-            "descripcion": "",
+            "descripcion": "Junto al Estadio Alfonso López. La Escuela de Cine y Televisión funcionó aquí cerca de 30 años, hasta que en 2023 pasó al nuevo edificio de Artes.",
             "latitud": 4.6405272,
             "longitud": -74.0855721,
             "tieneRetoDisponible": false,
             "alias": [
                 "701",
+                "Cine y Televisión",
+                "Escuela de Cine",
                 "Facultad de Cine y Televisión"
             ],
             "categoria": "CULTURA"

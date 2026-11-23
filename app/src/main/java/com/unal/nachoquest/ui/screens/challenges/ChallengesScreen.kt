@@ -50,6 +50,7 @@ import com.unal.nachoquest.domain.model.JugadorRanking
 import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.Enredo
 import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.Olvido
@@ -415,7 +416,7 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Etiqueta(if (state.actoActual == 1) "LA HISTORIA · ACTO I" else "LA HISTORIA · ACTO II", color = NachoYellow)
+                Etiqueta("LA HISTORIA · ACTO ${Historia.romano(state.actoActual)}", color = NachoYellow)
                 Text(
                     Historia.titulosActos[state.actoActual].orEmpty(),
                     color = Color.White,
@@ -442,8 +443,13 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
                 )
             }
             Box(contentAlignment = Alignment.Center) {
+                // El rival del acto en curso: el Olvido en los actos I y II, el Enredo en el III
                 if (!state.historiaCompletada) {
-                    Olvido(modifier = Modifier.size(120.dp))
+                    if (state.actoActual >= 3) {
+                        Enredo(modifier = Modifier.size(120.dp))
+                    } else {
+                        Olvido(modifier = Modifier.size(120.dp))
+                    }
                 }
                 Nacho(
                     modifier = Modifier.size(80.dp),
@@ -462,7 +468,7 @@ private fun SeparadorActo(acto: Int) {
             .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Etiqueta(if (acto == 1) "ACTO I" else "ACTO II", color = NachoGreen)
+        Etiqueta("ACTO ${Historia.romano(acto)}", color = NachoGreen)
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             Historia.titulosActos[acto].orEmpty(),
