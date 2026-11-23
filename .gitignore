@@ -29,3 +29,8 @@ Thumbs.db
 # Ignorar el plan de trabajo
 plan_nachoquest.md
 docs/plan_nachoquest.md
+
+# Llave de firma del release (nunca se sube: ver "Compilar el release" en el README)
+keystore.properties
+*.jks
+*.keystore
