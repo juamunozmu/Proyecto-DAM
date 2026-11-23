@@ -17,20 +17,24 @@ object BancoRetos {
                 preguntas = listOf(
                     Pregunta(
                         id = "che_1",
-                        enunciado = "¿A qué prócer de la independencia corresponde la estatua de bronce de la plaza central?",
+                        // La estatua ya no está: la derribaron en 1976
+                        enunciado = "¿De qué prócer era la estatua que había en la plaza y que le da su nombre oficial?",
                         opciones = listOf("Simón Bolívar", "Francisco de Paula Santander", "Antonio Nariño", "Camilo Torres"),
                         indiceCorrecta = 1
                     ),
                     Pregunta(
                         id = "che_2",
-                        enunciado = "¿En qué año se pintó por primera vez el icónico mural del Che en el auditorio?",
-                        opciones = listOf("1968", "1974", "1984", "1999"),
-                        indiceCorrecta = 2
+                        // El rostro está en el muro occidental del auditorio, el que mira a la plaza. No se
+                        // pregunta el año: las fuentes no coinciden (entre 1976 y 1982)
+                        enunciado = "¿En qué edificio se pintó el rostro del Che que le dio nombre a la plaza?",
+                        opciones = listOf("Biblioteca Central", "Auditorio León de Greiff", "Edificio de Sociología", "Torre de Enfermería"),
+                        indiceCorrecta = 1
                     ),
                     Pregunta(
                         id = "che_3",
-                        enunciado = "¿Qué emblemático auditorio bordea el costado sur de la Plaza Central?",
-                        opciones = listOf("Auditorio León de Greiff", "Aula Máxima", "Auditorio Virginia Gutiérrez", "Concha Acústica"),
+                        // El Auditorio León de Greiff queda al oriente de la plaza y la biblioteca al occidente
+                        enunciado = "¿Qué edificio está en el costado occidental de la plaza?",
+                        opciones = listOf("Biblioteca Central Gabriel García Márquez", "Facultad de Artes", "Conservatorio de Música", "Concha Acústica"),
                         indiceCorrecta = 0
                     ),
                     Pregunta(
@@ -41,8 +45,13 @@ object BancoRetos {
                     ),
                     Pregunta(
                         id = "che_5",
-                        enunciado = "¿Qué edificio acompaña el costado oriental de la plaza?",
-                        opciones = listOf("Edificio de Sociología y Ciencias Humanas", "Zootecnia", "Facultad de Artes", "Veterinaria"),
+                        enunciado = "¿Qué ha pasado varias veces con el rostro del Che en la plaza?",
+                        opciones = listOf(
+                            "Lo han borrado y lo han vuelto a pintar",
+                            "Lo trasladaron a un museo",
+                            "Lo convirtieron en una estatua",
+                            "Nunca se ha tocado desde que se pintó"
+                        ),
                         indiceCorrecta = 0
                     )
                 ),
