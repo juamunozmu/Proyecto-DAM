@@ -68,6 +68,7 @@ data class BottomNavItem<T : Any>(
 fun MainScreen(
     onCerrarSesion: () -> Unit,
     onIniciarReto: (String) -> Unit = {},
+    onAbrirTienda: () -> Unit = {},
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
@@ -154,7 +155,11 @@ fun MainScreen(
                     InventoryScreen()
                 }
                 composable<ProfileRoute> {
-                    ProfileScreen(onCerrarSesion = onCerrarSesion, onVerEscena = viewModel::verEscena)
+                    ProfileScreen(
+                        onCerrarSesion = onCerrarSesion,
+                        onVerEscena = viewModel::verEscena,
+                        onAbrirTienda = onAbrirTienda
+                    )
                 }
             }
         }

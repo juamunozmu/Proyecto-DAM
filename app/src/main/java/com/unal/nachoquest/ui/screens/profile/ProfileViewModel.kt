@@ -31,7 +31,8 @@ data class ProfileUiState(
     val historiaCompletada: Boolean = false,
     val rachaDias: Int = 0,
     val mejorRachaDias: Int = 0,
-    val triviasSuperadas: Int = 0
+    val triviasSuperadas: Int = 0,
+    val monedas: Int = 0
 )
 
 @HiltViewModel
@@ -61,7 +62,8 @@ class ProfileViewModel @Inject constructor(
             historiaCompletada = capitulos == Historia.capitulos.size,
             rachaDias = TriviaDiaria.rachaVigente(perfil, TriviaDiaria.diaActual()),
             mejorRachaDias = perfil.mejorRachaDias,
-            triviasSuperadas = perfil.triviasSuperadas
+            triviasSuperadas = perfil.triviasSuperadas,
+            monedas = perfil.monedas
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProfileUiState())
 }

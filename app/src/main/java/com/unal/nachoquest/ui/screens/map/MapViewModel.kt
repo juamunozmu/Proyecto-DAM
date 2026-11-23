@@ -10,6 +10,7 @@ import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.Logros
 import com.unal.nachoquest.domain.model.PointOfInterest
+import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -349,9 +350,11 @@ class MapViewModel @Inject constructor(
             )
         }
 
-        // Marcar los puntos que son capítulos de la historia y el ítem que exige cada uno
+        // Marcar los puntos que son capítulos de la historia (y el ítem que exige cada uno)
+        // o que tienen un reto de lugar
         return puntos.map { punto ->
-            val capitulo = Historia.capituloPorPunto(punto.id) ?: return@map punto
+            val capitulo = Historia.capituloPorPunto(punto.id)
+                ?: return@map if (RetosLugares.tieneReto(punto.id)) punto.copy(tieneRetoDisponible = true) else punto
             punto.copy(
                 tieneRetoDisponible = true,
                 capituloHistoria = capitulo.numero,

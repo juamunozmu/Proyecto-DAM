@@ -12,6 +12,7 @@ import com.unal.nachoquest.ui.screens.auth.AuthViewModel
 import com.unal.nachoquest.ui.screens.auth.LoginScreen
 import com.unal.nachoquest.ui.screens.auth.RegisterScreen
 import com.unal.nachoquest.ui.screens.quiz.QuizScreen
+import com.unal.nachoquest.ui.screens.shop.TiendaScreen
 import com.unal.nachoquest.ui.screens.splash.SplashScreen
 
 /**
@@ -77,9 +78,10 @@ fun NachoQuestNavHost() {
 
         composable<MainRoute> {
             MainScreen(
-                onIniciarReto = { puntoId -> 
-                    navController.navigate(QuizRoute(puntoId)) 
+                onIniciarReto = { puntoId ->
+                    navController.navigate(QuizRoute(puntoId))
                 },
+                onAbrirTienda = { navController.navigate(TiendaRoute) },
                 onCerrarSesion = {
                     authViewModel.cerrarSesion()
                     navController.navigate(SplashRoute) {
@@ -95,6 +97,10 @@ fun NachoQuestNavHost() {
                 puntoId = quizRoute.puntoId,
                 onTerminar = { navController.popBackStack() }
             )
+        }
+
+        composable<TiendaRoute> {
+            TiendaScreen(onVolver = { navController.popBackStack() })
         }
     }
 }

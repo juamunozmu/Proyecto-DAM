@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,10 +65,71 @@ private val COLORES = mapOf(
     'A' to Color(0xFF244012), // brazos
     'K' to Color(0xFF2F6FDE), // libro
     'L' to Color(0xFF1F2A44), // pantalón
-    'D' to Color(0xFF111111)  // zapatos
+    'D' to Color(0xFF111111), // zapatos
+    // Aspectos de la tienda
+    'G' to Color(0xFF1F6B3A), // gorra
+    'V' to Color(0xFF2E8B57), // visera
+    'N' to Color(0xFF1A1A1A), // birrete
+    'Y' to Color(0xFFFFC107), // borla y rayas doradas
+    'F' to Color(0xFF37474F), // montura de las gafas
+    'O' to Color(0xFF101010), // lentes oscuros
+    'Q' to Color(0xFFC62828)  // bufanda
 )
 
-private fun spriteConExpresion(expresion: Expresion, parpadeando: Boolean, bocaAbierta: Boolean): List<String> {
+// La camiseta dorada solo cambia el color de la camiseta y de los brazos
+private val COLORES_CAMISETA_DORADA = COLORES + mapOf(
+    'B' to Color(0xFFD4A017),
+    'A' to Color(0xFFB8860B)
+)
+
+/** Aspectos que lleva puestos Nacho. La app lo provee con lo que el jugador equipó en la tienda. */
+val LocalAspectosNacho = compositionLocalOf { emptyList<String>() }
+
+/** Repinta el sprite con los accesorios equipados (se aplica después de la expresión). */
+private fun aplicarAspectos(filas: MutableList<String>, aspectos: List<String>) {
+    fun pintar(fila: Int, columnas: Iterable<Int>, c: Char) {
+        val chars = filas[fila].toCharArray()
+        columnas.forEach { chars[it] = c }
+        filas[fila] = String(chars)
+    }
+
+    aspectos.forEach { aspecto ->
+        when (aspecto) {
+            "gorra" -> {
+                filas[0] = "...GGGGGGGG..."
+                filas[1] = "..GGGGGGGGGGVV"
+            }
+            "birrete" -> {
+                filas[0] = ".NNNNNNNNNNNN."
+                filas[1] = "..HNNNNNNNNHY."
+                pintar(2, listOf(12), 'Y')
+            }
+            "gafas" -> {
+                pintar(3, (3..10), 'F')
+                pintar(4, listOf(3, 6, 7, 10), 'F')
+                pintar(5, listOf(3, 6, 7, 10), 'F')
+            }
+            "gafas_sol" -> {
+                pintar(4, (3..10), 'O')
+                pintar(5, listOf(3, 4, 5, 8, 9, 10), 'O')
+            }
+            "bufanda" -> {
+                pintar(9, listOf(2, 4, 6, 8, 10), 'Q')
+                pintar(9, listOf(3, 5, 7, 9, 11), 'Y')
+                // La punta cuelga a la izquierda para no tapar las letras "UN"
+                pintar(10, listOf(3), 'Q')
+                pintar(11, listOf(3), 'Y')
+            }
+        }
+    }
+}
+
+private fun spriteConExpresion(
+    expresion: Expresion,
+    parpadeando: Boolean,
+    bocaAbierta: Boolean,
+    aspectos: List<String>
+): List<String> {
     val filas = SPRITE_BASE.toMutableList()
 
     fun pintar(fila: Int, columnas: List<Int>, c: Char) {
@@ -122,6 +184,7 @@ private fun spriteConExpresion(expresion: Expresion, parpadeando: Boolean, bocaA
         else -> pintar(8, listOf(5, 6, 7, 8), 'M')
     }
 
+    aplicarAspectos(filas, aspectos)
     return filas
 }
 
@@ -130,13 +193,15 @@ private fun spriteConExpresion(expresion: Expresion, parpadeando: Boolean, bocaA
  *
  * @param hablando si es true, la boca se abre y cierra (para acompañar texto que se está escribiendo).
  * @param saltando si es true, rebota con energía (celebraciones).
+ * @param aspectos accesorios que lleva puestos; por defecto, los que el jugador equipó.
  */
 @Composable
 fun Nacho(
     modifier: Modifier = Modifier,
     expresion: Expresion = Expresion.NORMAL,
     hablando: Boolean = false,
-    saltando: Boolean = false
+    saltando: Boolean = false,
+    aspectos: List<String> = LocalAspectosNacho.current
 ) {
     val transicion = rememberInfiniteTransition(label = "nacho")
     val flotar by transicion.animateFloat(
@@ -169,7 +234,8 @@ fun Nacho(
         bocaAbierta = false
     }
 
-    val sprite = spriteConExpresion(expresion, parpadeando, bocaAbierta)
+    val sprite = spriteConExpresion(expresion, parpadeando, bocaAbierta, aspectos)
+    val colores = if ("camiseta_dorada" in aspectos) COLORES_CAMISETA_DORADA else COLORES
 
     Canvas(
         modifier = modifier.graphicsLayer {
@@ -183,11 +249,11 @@ fun Nacho(
             }
         }
     ) {
-        dibujarSprite(sprite)
+        dibujarSprite(sprite, colores)
     }
 }
 
-private fun DrawScope.dibujarSprite(sprite: List<String>) {
+private fun DrawScope.dibujarSprite(sprite: List<String>, colores: Map<Char, Color>) {
     val pixel = minOf(size.width / ANCHO_SPRITE, size.height / sprite.size)
     val origenX = (size.width - pixel * ANCHO_SPRITE) / 2f
     val origenY = (size.height - pixel * sprite.size) / 2f
@@ -196,7 +262,7 @@ private fun DrawScope.dibujarSprite(sprite: List<String>) {
 
     sprite.forEachIndexed { y, fila ->
         fila.forEachIndexed { x, c ->
-            val color = COLORES[c] ?: return@forEachIndexed
+            val color = colores[c] ?: return@forEachIndexed
             drawRect(color, Offset(origenX + x * pixel, origenY + y * pixel), celda)
         }
     }

@@ -112,7 +112,7 @@ private class Sintetizador {
  * Simon musical: Nacho toca una melodía y el jugador la repite. Cada ronda suma una nota.
  */
 @Composable
-fun MinijuegoSinfonia(alTerminar: (Int) -> Unit) {
+fun MinijuegoSinfonia(pistas: Int, alTerminar: (Int) -> Unit) {
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val sintetizador = remember { Sintetizador() }
@@ -143,6 +143,20 @@ fun MinijuegoSinfonia(alTerminar: (Int) -> Unit) {
         }
         progreso = 0
         reproduciendo = false
+        mensaje = "¡Tu turno!"
+    }
+
+    // Pista: Nacho ilumina y toca la nota que sigue. Si la melodía está sonando, espera a tu turno
+    LaunchedEffect(pistas) {
+        if (pistas == 0 || terminado) return@LaunchedEffect
+        while (reproduciendo) delay(100)
+        if (terminado) return@LaunchedEffect
+        val siguiente = melodia[progreso]
+        mensaje = "Nacho te sopla la siguiente nota..."
+        iluminada = siguiente
+        sintetizador.tocar(siguiente)
+        delay(550)
+        if (iluminada == siguiente) iluminada = null
         mensaje = "¡Tu turno!"
     }
 

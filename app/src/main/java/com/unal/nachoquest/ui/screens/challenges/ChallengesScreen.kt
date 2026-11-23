@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.JugadorRanking
+import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.components.Etiqueta
@@ -147,6 +149,79 @@ fun ChallengesScreen(
                     )
                 }
             }
+        }
+
+        if (state.retosLugar.isNotEmpty()) {
+            item {
+                Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 4.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            "Retos del campus",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Tinta,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            "${state.retosLugarCompletados}/${state.retosLugar.size}",
+                            fontWeight = FontWeight.ExtraBold,
+                            color = NachoGreenDark
+                        )
+                    }
+                    Text(
+                        "Busca los pines ❓ en el mapa y acércate a cada lugar para jugar su reto. " +
+                            "Los que ya superaste se pueden repetir desde aquí.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray
+                    )
+                }
+            }
+            items(state.retosLugar, key = { it.reto.puntoId }) { lugar ->
+                FilaRetoLugar(lugar = lugar, onRepetir = { onIniciarReto(lugar.reto.puntoId) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilaRetoLugar(lugar: RetoLugarUi, onRepetir: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .tarjetaJuego(
+                fondo = Papel,
+                borde = if (lugar.completado) CantoCrema else Color(0xFFD1B3E0),
+                radio = 14.dp,
+                canto = 3.dp
+            )
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(if (lugar.completado) "✅" else "❓", fontSize = 20.sp)
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                lugar.reto.nombre,
+                fontWeight = FontWeight.Bold,
+                color = Tinta,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = if (lugar.completado) "⭐".repeat(lugar.estrellas) + "☆".repeat(3 - lugar.estrellas)
+                else "📍 Juégalo en el lugar · +${RetosLugares.XP_RECOMPENSA} XP",
+                style = MaterialTheme.typography.bodySmall,
+                color = if (lugar.completado) NachoYellow else Color.Gray
+            )
+        }
+        if (lugar.completado) {
+            BotonJuego(
+                texto = "Repetir",
+                onClick = onRepetir,
+                color = NachoAzul,
+                alto = 38.dp,
+                tamanoTexto = 13.sp
+            )
         }
     }
 }

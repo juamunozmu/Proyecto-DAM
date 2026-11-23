@@ -88,7 +88,7 @@ private fun xEnCancha(posicionEnArco: Float): Float = ARCO_IZQ + (ARCO_DER - ARC
  * patear. Gana al meter tres goles; mientras menos tiros necesite, más estrellas.
  */
 @Composable
-fun MinijuegoPenales(alTerminar: (Int) -> Unit) {
+fun MinijuegoPenales(pistas: Int, alTerminar: (Int) -> Unit) {
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
 
@@ -105,13 +105,20 @@ fun MinijuegoPenales(alTerminar: (Int) -> Unit) {
 
     val ganado = goles >= ReglasPenales.GOLES_PARA_GANAR
 
+    // Pista: cámara lenta para el próximo tiro (la mira y el arquero se mueven más despacio)
+    var camaraLenta by remember { mutableStateOf(false) }
+    LaunchedEffect(pistas) {
+        if (pistas > 0 && !ganado) camaraLenta = true
+    }
+
     LaunchedEffect(Unit) {
         var anterior = 0L
         while (true) {
             withFrameNanos { ahora ->
                 if (anterior != 0L) {
                     // Si la app estuvo en pausa, el salto de tiempo no debe teletransportar al arquero
-                    val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.05f)
+                    val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.05f) *
+                        if (camaraLenta) ReglasPenales.FACTOR_CAMARA_LENTA else 1f
                     if (fase == FaseTiro.APUNTANDO) {
                         faseMira.floatValue += ReglasPenales.velocidadMira(goles) * dt
                     }
@@ -145,6 +152,7 @@ fun MinijuegoPenales(alTerminar: (Int) -> Unit) {
                 Sonidos.reproducir(Efecto.ATAJADA)
             }
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            camaraLenta = false
             delay(1100)
             if (goles >= ReglasPenales.GOLES_PARA_GANAR) {
                 alTerminar(ReglasPenales.estrellas(tiros))
@@ -159,6 +167,7 @@ fun MinijuegoPenales(alTerminar: (Int) -> Unit) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Marcador("Goles: $goles/${ReglasPenales.GOLES_PARA_GANAR}")
             Marcador("Tiros: $tiros")
+            if (camaraLenta) Marcador("🐢 Cámara lenta")
         }
         Spacer(modifier = Modifier.height(12.dp))
 

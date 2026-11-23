@@ -22,6 +22,9 @@ internal object ReglasPenales {
     const val ALCANCE_ARQUERO = 0.16f
     const val RADIO_BALON = 0.04f
 
+    // Con la pista de cámara lenta, la mira y el arquero van a esta fracción de su velocidad
+    const val FACTOR_CAMARA_LENTA = 0.4f
+
     // Velocidades del vaivén, en radianes por segundo; el arquero se acelera con cada gol
     private const val VELOCIDAD_MIRA = 2.9f
     private val VELOCIDADES_ARQUERO = floatArrayOf(1.8f, 2.5f, 3.3f)

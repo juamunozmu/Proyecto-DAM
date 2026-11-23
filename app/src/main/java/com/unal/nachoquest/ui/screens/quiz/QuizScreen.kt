@@ -73,7 +73,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
+import com.unal.nachoquest.domain.model.Tienda
+import com.unal.nachoquest.domain.model.TipoAyuda
+import com.unal.nachoquest.domain.model.UserProfile
+import com.unal.nachoquest.ui.components.AvisoSinMonedas
+import com.unal.nachoquest.ui.components.BotonAyuda
 import com.unal.nachoquest.ui.components.BotonJuego
+import com.unal.nachoquest.ui.components.SaldoMonedas
 import com.unal.nachoquest.ui.components.EscenaDialogo
 import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.LluviaConfeti
@@ -104,6 +110,8 @@ fun QuizScreen(
     viewModel: QuizViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val perfil by viewModel.perfil.collectAsState()
+    AvisoSinMonedas(state.sinSaldoAnimado)
 
     // Evita cerrar dos veces (p. ej. "Saltar" + toque final), lo que sacaría también la pantalla principal
     var cerrado by remember { mutableStateOf(false) }
@@ -135,9 +143,15 @@ fun QuizScreen(
         when (fase) {
             FaseQuiz.INTRO -> EscenaDialogo(lineas = state.escenaIntro, onTerminar = viewModel::terminarIntro)
             FaseQuiz.MINIJUEGO -> state.capitulo?.let { cap ->
-                PantallaMinijuego(capitulo = cap, onCompletado = viewModel::completarMinijuego, onSalir = cerrar)
+                PantallaMinijuego(
+                    capitulo = cap,
+                    perfil = perfil,
+                    onPedirPista = viewModel::usarPista,
+                    onCompletado = viewModel::completarMinijuego,
+                    onSalir = cerrar
+                )
             }
-            FaseQuiz.PREGUNTA -> PantallaPregunta(state, viewModel, onSalir = cerrar)
+            FaseQuiz.PREGUNTA -> PantallaPregunta(state, perfil, viewModel, onSalir = cerrar)
             FaseQuiz.RESULTADO -> PantallaResultados(
                 state = state,
                 onContinuar = { if (!viewModel.continuarTrasResultado()) cerrar() },
@@ -156,7 +170,7 @@ fun QuizScreen(
 }
 
 @Composable
-private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSalir: () -> Unit) {
+private fun PantallaPregunta(state: QuizUiState, perfil: UserProfile, viewModel: QuizViewModel, onSalir: () -> Unit) {
     val reto = state.reto ?: return
     val pregunta = state.preguntaActual ?: return
     val haptic = LocalHapticFeedback.current
@@ -174,7 +188,8 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
         }
     }
 
-    val fraccionTiempo = state.tiempoRestanteMs.toFloat() / TIEMPO_POR_PREGUNTA_MS
+    // Con el reloj de arena puede sobrar más del tiempo normal: la barra se queda llena
+    val fraccionTiempo = (state.tiempoRestanteMs.toFloat() / TIEMPO_POR_PREGUNTA_MS).coerceAtMost(1f)
     val tiempoCritico = !state.mostrarResultadoPregunta && fraccionTiempo < 0.25f
 
     val expresionNacho = when {
@@ -214,7 +229,10 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Corazones(vidas = state.vidas, maximo = state.vidasMax)
+            Column(horizontalAlignment = Alignment.End) {
+                Corazones(vidas = state.vidas, maximo = state.vidasMax)
+                SaldoMonedas(perfil.monedas, modifier = Modifier.padding(top = 4.dp))
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -281,30 +299,54 @@ private fun PantallaPregunta(state: QuizUiState, viewModel: QuizViewModel, onSal
             }
         }
 
+        androidx.compose.animation.AnimatedVisibility(
+            visible = state.racha >= 2,
+            enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(
+                text = "🔥 Racha x${state.racha}",
+                style = EstiloEtiqueta,
+                color = NachoNaranja,
+                fontSize = 19.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        // Ayudas: el primer 50:50 es gratis; lo demás se paga con la reserva o con monedas
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            BotonComodin(
-                disponible = state.comodinDisponible,
-                habilitado = !state.mostrarResultadoPregunta,
-                onClick = viewModel::usarComodin
+            BotonAyuda(
+                tipo = TipoAyuda.COMODIN,
+                etiqueta = "50:50",
+                reserva = Tienda.reserva(perfil, TipoAyuda.COMODIN),
+                gratis = state.comodinDisponible,
+                habilitado = !state.mostrarResultadoPregunta && (state.comodinDisponible || state.puedeComprarComodin),
+                onClick = viewModel::usarComodin,
+                modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.weight(1f))
-            androidx.compose.animation.AnimatedVisibility(
-                visible = state.racha >= 2,
-                enter = scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)) + fadeIn(),
-                exit = fadeOut()
-            ) {
-                Text(
-                    text = "🔥 Racha x${state.racha}",
-                    style = EstiloEtiqueta,
-                    color = NachoNaranja,
-                    fontSize = 19.sp
-                )
-            }
+            BotonAyuda(
+                tipo = TipoAyuda.TIEMPO,
+                etiqueta = "+${Tienda.SEGUNDOS_TIEMPO_EXTRA} s",
+                reserva = Tienda.reserva(perfil, TipoAyuda.TIEMPO),
+                habilitado = state.puedeUsarTiempo,
+                onClick = viewModel::usarTiempoExtra,
+                modifier = Modifier.weight(1f)
+            )
+            BotonAyuda(
+                tipo = TipoAyuda.CORAZON,
+                etiqueta = "+1",
+                reserva = Tienda.reserva(perfil, TipoAyuda.CORAZON),
+                habilitado = state.puedeUsarCorazon,
+                textoInactivo = if (state.corazonUsado) "USADO" else "LLENO",
+                onClick = viewModel::usarCorazon,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         // Opciones
@@ -439,27 +481,6 @@ private fun BarraTiempo(fraccion: Float, pausado: Boolean) {
 }
 
 /** Comodín 50:50: Nacho descarta dos opciones incorrectas. Se gasta al usarlo. */
-@Composable
-private fun BotonComodin(disponible: Boolean, habilitado: Boolean, onClick: () -> Unit) {
-    val color = if (disponible) Color(0xFF8D6E00) else Color.Gray
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(if (disponible) NachoYellow.copy(alpha = 0.22f) else Color.LightGray.copy(alpha = 0.3f))
-            .border(1.5.dp, if (disponible) NachoYellow else Color.LightGray, RoundedCornerShape(12.dp))
-            .clickable(enabled = disponible && habilitado) {
-                Sonidos.reproducir(Efecto.TOQUE)
-                onClick()
-            }
-            .padding(horizontal = 10.dp, vertical = 5.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text("💡", fontSize = 14.sp)
-        Spacer(modifier = Modifier.width(5.dp))
-        Text(text = if (disponible) "COMODÍN 50:50" else "COMODÍN USADO", style = EstiloEtiqueta, color = color)
-    }
-}
-
 @Composable
 private fun OpcionPregunta(
     letra: Char,
@@ -738,6 +759,7 @@ private fun ResumenPartida(state: QuizUiState) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         DatoResumen(valor = "+${xpMostrada.value.toInt()}", etiqueta = "XP", emoji = "⚡")
+        DatoResumen(valor = "+${state.monedasGanadas}", etiqueta = "Monedas", emoji = "🪙")
         DatoResumen(valor = "x${state.mejorRacha}", etiqueta = "Mejor racha", emoji = "🔥")
         DatoResumen(valor = "${state.vidas}", etiqueta = "Corazones", emoji = "❤️")
     }

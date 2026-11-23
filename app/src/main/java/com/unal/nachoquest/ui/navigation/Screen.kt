@@ -28,3 +28,6 @@ object ProfileRoute
 
 @Serializable
 data class QuizRoute(val puntoId: String)
+
+@Serializable
+object TiendaRoute

@@ -61,7 +61,7 @@ private const val LADO = 3
  * Se tocan dos piezas para intercambiarlas.
  */
 @Composable
-fun MinijuegoMural(alTerminar: (Int) -> Unit) {
+fun MinijuegoMural(pistas: Int, alTerminar: (Int) -> Unit) {
     val haptic = LocalHapticFeedback.current
     // piezas[posición] = pieza que está en esa posición
     val piezas = remember { mutableStateListOf<Int>().apply { addAll(mezclaDificil()) } }
@@ -69,6 +69,19 @@ fun MinijuegoMural(alTerminar: (Int) -> Unit) {
     var movimientos by remember { mutableIntStateOf(0) }
     var resuelto by remember { mutableStateOf(false) }
     val minimo = remember { intercambiosMinimos(piezas.toList()) }
+
+    // Pista: Nacho lleva una pieza desordenada a su sitio (cuenta como un movimiento)
+    LaunchedEffect(pistas) {
+        if (pistas == 0 || resuelto) return@LaunchedEffect
+        val destino = piezas.indices.firstOrNull { piezas[it] != it } ?: return@LaunchedEffect
+        val origen = piezas.indexOf(destino)
+        piezas[origen] = piezas[destino]
+        piezas[destino] = destino
+        movimientos++
+        seleccion = null
+        Sonidos.reproducir(Efecto.ACIERTO)
+        if (piezas.withIndex().all { it.index == it.value }) resuelto = true
+    }
 
     LaunchedEffect(resuelto) {
         if (resuelto) {
