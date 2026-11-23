@@ -13,6 +13,7 @@ import com.unal.nachoquest.domain.model.Logros
 import com.unal.nachoquest.domain.model.Pregunta
 import com.unal.nachoquest.domain.model.Puntuacion
 import com.unal.nachoquest.domain.model.RetoQuiz
+import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.domain.model.UserProfile
 import com.unal.nachoquest.domain.model.primerNombre
@@ -123,9 +124,11 @@ class QuizViewModel @Inject constructor(
         val retoBase = BancoRetos.retoParaPunto(puntoId)
         // Se mezclan las opciones para que la respuesta correcta no esté siempre en el mismo lugar
         val capitulo = Historia.capituloPorReto(retoBase.id)
-        val preguntas = if (capitulo != null) retoBase.preguntas.shuffled().take(PREGUNTAS_CAPITULO) else retoBase.preguntas
+        // Capítulos y retos de lugar sortean unas pocas preguntas de su banco en cada partida
+        val sorteaPreguntas = capitulo != null || RetosLugares.tieneReto(puntoId)
+        val preguntas = if (sorteaPreguntas) retoBase.preguntas.shuffled().take(PREGUNTAS_CAPITULO) else retoBase.preguntas
         val reto = retoBase.copy(preguntas = preguntas.map { it.conOpcionesMezcladas() })
-        val vidas = if (capitulo != null) VIDAS_CAPITULO else VIDAS_INICIALES
+        val vidas = if (sorteaPreguntas) VIDAS_CAPITULO else VIDAS_INICIALES
 
         // La intro solo se muestra la primera vez; al repetir se va directo a las preguntas
         val intro = capitulo

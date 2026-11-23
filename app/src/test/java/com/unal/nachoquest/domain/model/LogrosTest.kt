@@ -22,6 +22,19 @@ class LogrosTest {
     }
 
     @Test
+    fun `los retos de lugar tienen sus logros pero no cuentan como fragmento`() {
+        val cinco = RetosLugares.retos.take(5).map { it.retoId }
+        val perfil = UserProfile(retosCompletados = cinco)
+        assertTrue(logro(perfil, "guia_campus").desbloqueado)
+        assertFalse(logro(perfil, "enciclopedia").desbloqueado)
+        assertEquals(5, logro(perfil, "enciclopedia").progreso)
+        assertFalse(logro(perfil, "primera_exploracion").desbloqueado)
+
+        val todos = UserProfile(retosCompletados = RetosLugares.retos.map { it.retoId })
+        assertTrue(logro(todos, "enciclopedia").desbloqueado)
+    }
+
+    @Test
     fun `los logros incrementales muestran el progreso`() {
         val perfil = UserProfile(lugaresDescubiertos = List(4) { "lugar_$it" })
         val caminante = logro(perfil, "caminante")

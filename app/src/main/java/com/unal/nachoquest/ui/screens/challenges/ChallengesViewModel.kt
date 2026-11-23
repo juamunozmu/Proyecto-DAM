@@ -7,6 +7,8 @@ import com.unal.nachoquest.domain.model.CatalogoItems
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.JugadorRanking
+import com.unal.nachoquest.domain.model.RetoLugar
+import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,12 +46,20 @@ data class RankingUiState(
     val error: Boolean = false
 )
 
+data class RetoLugarUi(
+    val reto: RetoLugar,
+    val completado: Boolean,
+    val estrellas: Int
+)
+
 data class ChallengesUiState(
     val capitulos: List<CapituloUi> = emptyList(),
     val historiaCompletada: Boolean = false,
-    val trivia: TriviaUi = TriviaUi()
+    val trivia: TriviaUi = TriviaUi(),
+    val retosLugar: List<RetoLugarUi> = emptyList()
 ) {
     val completados: Int get() = capitulos.count { it.estado == EstadoCapitulo.COMPLETADO }
+    val retosLugarCompletados: Int get() = retosLugar.count { it.completado }
 }
 
 @HiltViewModel
@@ -96,6 +106,16 @@ class ChallengesViewModel @Inject constructor(
                 )
             },
             historiaCompletada = actual == null,
+            // Primero los pendientes, para que se vea qué falta por explorar
+            retosLugar = RetosLugares.retos
+                .map { reto ->
+                    RetoLugarUi(
+                        reto = reto,
+                        completado = reto.retoId in perfil.retosCompletados,
+                        estrellas = perfil.estrellasPorReto[reto.retoId] ?: 0
+                    )
+                }
+                .sortedBy { it.completado },
             trivia = TriviaDiaria.diaActual().let { hoy ->
                 TriviaUi(
                     jugadaHoy = TriviaDiaria.yaJugoHoy(perfil, hoy),

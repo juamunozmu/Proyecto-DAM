@@ -93,6 +93,7 @@ import com.unal.nachoquest.domain.model.Expresion
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.ItemInventario
 import com.unal.nachoquest.domain.model.PointOfInterest
+import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.components.Efecto
 import com.unal.nachoquest.ui.components.Etiqueta
@@ -568,6 +569,10 @@ private fun actualizarMarcadores(
             estado == EstadoEdificioReto.BLOQUEADO_HISTORIA -> pin("bloqueado") {
                 crearPin(context, android.graphics.Color.rgb(230, 81, 0), "🔒", grande = false)
             }
+            // Reto de lugar pendiente: pin morado para que se distinga de los edificios sin reto
+            punto.tieneRetoDisponible && punto.capituloHistoria == null -> pin("reto_lugar") {
+                crearPin(context, android.graphics.Color.rgb(123, 31, 162), "❓", grande = false)
+            }
             else -> pin(categoria.name) { crearPin(context, categoria.colorArgb, categoria.emoji, grande = false) }
         }
 
@@ -883,9 +888,10 @@ private fun FichaLugar(
             Text(punto.descripcion, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
         }
 
-        // Estado del capítulo de la historia en este lugar
+        // Estado del capítulo de la historia (o del reto de lugar) en este lugar
         if (punto.tieneRetoDisponible && estadoReto != EstadoEdificioReto.SIN_RETO) {
             Spacer(modifier = Modifier.height(10.dp))
+            val esCapitulo = punto.capituloHistoria != null
             val (fondo, colorTexto, texto) = when (estadoReto) {
                 EstadoEdificioReto.BLOQUEADO_HISTORIA -> Triple(
                     Color(0xFFFFF3E0), Color(0xFFE65100),
@@ -893,7 +899,8 @@ private fun FichaLugar(
                 )
                 EstadoEdificioReto.FUERA_DE_RANGO -> Triple(
                     Color(0xFFE3F2FD), Azul,
-                    "📖 Aquí está el capítulo ${punto.capituloHistoria ?: ""}. Acércate a menos de 75 m para jugarlo."
+                    if (esCapitulo) "📖 Aquí está el capítulo ${punto.capituloHistoria}. Acércate a menos de 75 m para jugarlo."
+                    else "❓ Este lugar tiene un reto (+${RetosLugares.XP_RECOMPENSA} XP). Acércate a menos de 75 m para jugarlo."
                 )
                 EstadoEdificioReto.LISTO_PARA_JUGAR -> Triple(
                     NachoGreen.copy(alpha = 0.1f), NachoGreenDark,
@@ -901,7 +908,7 @@ private fun FichaLugar(
                 )
                 else -> Triple(
                     NachoYellow.copy(alpha = 0.2f), Color(0xFF8D6E00),
-                    "✅ Capítulo completado. Puedes repetirlo para mejorar tus estrellas."
+                    "✅ ${if (esCapitulo) "Capítulo" else "Reto"} completado. Puedes repetirlo para mejorar tus estrellas."
                 )
             }
             Text(
@@ -992,7 +999,7 @@ private fun TarjetaLlegada(
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (hayReto) {
                 BotonJuego(
-                    texto = "Jugar el capítulo",
+                    texto = if (punto.capituloHistoria != null) "Jugar el capítulo" else "Jugar el reto",
                     onClick = onIniciarReto,
                     alto = 48.dp,
                     tamanoTexto = 15.sp,

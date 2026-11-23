@@ -2,7 +2,8 @@ package com.unal.nachoquest.domain.model
 
 /**
  * Banco de preguntas de cada reto. Los capítulos de la historia tienen su propio reto;
- * el resto de edificios usa un reto genérico sobre el campus.
+ * los edificios emblemáticos tienen un reto de lugar (ver [RetosLugares]) y el resto usa un
+ * reto genérico sobre el campus.
  */
 object BancoRetos {
 
@@ -222,7 +223,17 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_estadio",
                 coleccionableRecompensaId = "col_camiseta"
             )
-            else -> RetoQuiz(
+            else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
+                RetoQuiz(
+                    id = lugar.retoId,
+                    puntoInteresId = puntoId,
+                    titulo = lugar.nombre,
+                    descripcion = "Reto de lugar: demuestra cuánto sabes de este rincón del campus.",
+                    preguntas = lugar.preguntas,
+                    recompensaXp = RetosLugares.XP_RECOMPENSA,
+                    recompensaMonedas = 15
+                )
+            } ?: RetoQuiz(
                 id = Historia.retoIdParaPunto(puntoId),
                 puntoInteresId = puntoId,
                 titulo = "Desafío de Exploración UNAL",

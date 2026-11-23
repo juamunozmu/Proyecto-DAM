@@ -26,6 +26,8 @@ object Logros {
         val capitulosHechos = Historia.capitulos.count { it.retoId in perfil.retosCompletados }
         val coleccionables = CatalogoItems.itemsColeccionables.count { it.id in perfil.itemsDesbloqueados }
         val perfectos = perfil.estrellasPorReto.values.count { it >= 3 }
+        val retosLugar = RetosLugares.retos.count { it.retoId in perfil.retosCompletados }
+        val totalRetosLugar = RetosLugares.retos.size
 
         return listOf(
             Logro(
@@ -33,7 +35,25 @@ object Logros {
                 titulo = "Primera exploración",
                 descripcion = "Recupera tu primer Fragmento de Memoria",
                 emoji = "🧭",
-                desbloqueado = perfil.retosCompletados.isNotEmpty()
+                desbloqueado = capitulosHechos >= 1
+            ),
+            Logro(
+                id = "guia_campus",
+                titulo = "Guía del campus",
+                descripcion = "Supera 5 retos de lugar en el mapa",
+                emoji = "❓",
+                desbloqueado = retosLugar >= 5,
+                progreso = retosLugar.coerceAtMost(5),
+                meta = 5
+            ),
+            Logro(
+                id = "enciclopedia",
+                titulo = "Enciclopedia andante",
+                descripcion = "Supera todos los retos de lugar del campus",
+                emoji = "🏛️",
+                desbloqueado = retosLugar == totalRetosLugar,
+                progreso = retosLugar,
+                meta = totalRetosLugar
             ),
             Logro(
                 id = "maestro_biblioteca",

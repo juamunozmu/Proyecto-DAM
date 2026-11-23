@@ -35,8 +35,14 @@ coleccionable, y avisa si el jugador subió de nivel o desbloqueó un logro.
 - **GPS**: los capítulos se juegan a menos de 75 m del edificio. «Cómo llegar» traza una ruta a pie
   (OSRM) con distancia y tiempo, la recalcula si el jugador se desvía y avisa al llegar.
 - **Retos**: línea de tiempo de los capítulos, que también se pueden jugar sin estar en el campus.
-- **Trivia del día**: cinco preguntas nuevas cada día (las mismas para todos los jugadores), con
-  racha de días seguidos que da XP extra.
+- **Retos de lugar**: 17 edificios emblemáticos que no son capítulos (Museo Leopoldo Rother,
+  Observatorio, Hemeroteca, edificio Salmona, Conservatorio, etc.) tienen su propio reto de 3
+  preguntas, sorteadas de un banco de 4 por lugar. Se marcan con un pin morado ❓, se juegan a menos
+  de 75 m, dan XP y cuentan para los logros «Guía del campus» y «Enciclopedia andante». La pestaña
+  Retos muestra el avance y permite repetir los ya superados. Las preguntas están en
+  `domain/model/RetosLugares.kt`.
+- **Trivia del día**: cinco preguntas nuevas cada día (las mismas para todos los jugadores),
+  sacadas de un banco de 50, con racha de días seguidos que da XP extra.
 - **Ranking**: tabla de posiciones con los jugadores que más XP tienen.
 - **Exploración**: abrir la ficha de un lugar por primera vez lo descubre y da XP.
 - **Sonido**: efectos sintetizados (no hay archivos de audio) en botones, minijuegos, preguntas y
