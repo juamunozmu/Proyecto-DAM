@@ -1,5 +1,6 @@
 package com.unal.nachoquest.domain.model
 
+import com.unal.nachoquest.ui.screens.map.LimitesMapa
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
@@ -55,11 +56,11 @@ class ContenidoJuegoTest {
 
     @Test
     fun `los edificios están dentro del área navegable del mapa`() {
-        // Mismos límites que setScrollableAreaLimitDouble en MapScreen
+        // Los mismos límites que usa el mapa (LimitesMapa): un lugar fuera de ellos no se podría ver
         puntos.forEach { punto ->
             val lat = punto.getValue("latitud").jsonPrimitive.double
             val lon = punto.getValue("longitud").jsonPrimitive.double
-            assertTrue("${punto.texto("id")} está fuera del mapa ($lat, $lon)", lat in 4.620..4.650 && lon in -74.100..-74.070)
+            assertTrue("${punto.texto("id")} está fuera del mapa ($lat, $lon)", LimitesMapa.contiene(lat, lon))
         }
     }
 
