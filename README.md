@@ -134,6 +134,20 @@ app/src/main/
 La interfaz tiene aspecto de juego retro: los títulos y marcadores usan una fuente pixelada, a juego
 con el sprite de Nacho, y los botones y tarjetas tienen un canto inferior que les da relieve.
 
+**Borde a borde.** La app apunta a la API 35 (`targetSdk = 35`), así que Android la dibuja detrás de la
+barra de estado y de la barra de navegación. `MainActivity` lo activa con `enableEdgeToEdge()` en
+todas las versiones, para que se vea igual desde Android 8. Detrás de la barra de estado va siempre
+una franja verde oscura (`ui/components/BarraDeEstado.kt`) con los iconos en blanco. Cada pantalla se
+aparta de los bordes por su cuenta:
+
+- Las pestañas (mapa, retos, inventario y perfil) ya quedan dentro del `Scaffold` de `MainScreen`.
+- Las demás pantallas usan `statusBarsPadding()` arriba y `navigationBarsPadding()` abajo, o
+  `systemBarsPadding()` para las dos.
+- Donde hay campos de texto se usa `imePadding()`, porque con la app de borde a borde el teclado ya
+  no achica la ventana (`adjustResize` deja de tener efecto).
+
+Una pantalla nueva que no use el `Scaffold` debe hacer lo mismo.
+
 El progreso de cada jugador vive en el documento `users/{uid}` de Firestore. Mientras hay sesión,
 `UserRepository` lo escucha en tiempo real, y las escrituras solo envían los campos que cambian
 (`arrayUnion`, `increment`), así que un perfil que todavía no ha cargado nunca sobrescribe el
@@ -253,9 +267,10 @@ Trabajo identificado que todavía no se ha hecho, en orden de prioridad:
    del equipo confirme: en los retos de lugar (`RetosLugares.kt`) `conservatorio_1`, `icn_2`,
    `takeuchi_4` y `medicina_1`, y en el capítulo 1 (`BancoRetos.kt`) el año del mural del Che
    (`che_2`) y el edificio del costado oriental de la plaza (`che_5`).
-3. **Subir el `targetSdk` a 35/36.** Solo es obligatorio para publicar en Google Play. Desde la API 35
-   Android dibuja las apps de borde a borde, así que hay que revisar que ninguna pantalla quede
-   debajo de las barras del sistema.
+3. **Subir el `targetSdk` a 36.** Ya está en 35 (ver «Arquitectura»). Para el 36 hay que subir también
+   el `compileSdk` y el plugin de Android para Gradle (AGP), y revisar dos cambios de Android 16: en
+   tabletas y plegables ya no se respeta la orientación vertical fija, y el gesto de volver muestra
+   una animación de la pantalla anterior.
 4. **Pruebas de interfaz en GitHub Actions (opcional).** Las pruebas de interfaz solo se corren en
    local. Correrlas en la integración continua con un emulador es gratis en repos públicos, pero
    suma unos 10 minutos al workflow.

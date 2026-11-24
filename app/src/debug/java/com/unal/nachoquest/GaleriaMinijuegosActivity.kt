@@ -2,9 +2,12 @@ package com.unal.nachoquest
 
 import android.os.Bundle
 import android.widget.Toast
+import android.graphics.Color
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.unal.nachoquest.domain.model.Capitulo
 import com.unal.nachoquest.domain.model.Historia
 import com.unal.nachoquest.domain.model.UserProfile
+import com.unal.nachoquest.ui.components.BarraDeEstado
 import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.screens.quiz.minijuegos.PantallaMinijuego
 import com.unal.nachoquest.ui.theme.NachoCream
@@ -40,6 +44,8 @@ import com.unal.nachoquest.ui.theme.NachoQuestTheme
 class GaleriaMinijuegosActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Igual que MainActivity: borde a borde, con la franja verde detrás de la barra de estado
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
         val inicial = Historia.capitulos.find { it.numero == intent.getIntExtra("capitulo", 0) }
         setContent {
             NachoQuestTheme {
@@ -83,6 +89,7 @@ class GaleriaMinijuegosActivity : ComponentActivity() {
                         )
                     }
                 }
+                BarraDeEstado()
             }
         }
     }
