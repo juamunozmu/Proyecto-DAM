@@ -520,7 +520,10 @@ object Historia {
             LineaDialogo(Hablante.ENREDO, "¡Y cuando alguien se pierde en el campus, le tiro un hilito para que encuentre el camino!"),
             LineaDialogo(Hablante.RECUERDO, "La película, el agua, el ADN, el vitral y la carrera. Ninguno de esos recuerdos se va a perder."),
             LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Ahora eres Tejedor de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
-            LineaDialogo(Hablante.NARRADOR, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día.")
+            LineaDialogo(Hablante.NARRADOR, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día."),
+            // Gancho del Acto IV (los edificios de trámites y oficinas)
+            LineaDialogo(Hablante.NARRADOR, "Pero esa misma noche, en las oficinas del campus, un sello empezó a estampar solo: «PENDIENTE», «PENDIENTE», «PENDIENTE»..."),
+            LineaDialogo(Hablante.NARRADOR, "Y a la mañana siguiente, todos los formularios de la universidad tenían una casilla nueva que nadie sabía llenar.")
         )
     )
 
