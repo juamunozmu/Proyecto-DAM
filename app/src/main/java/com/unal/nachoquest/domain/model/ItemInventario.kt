@@ -153,8 +153,20 @@ object CatalogoItems {
             puntoOrigenId = "edif_426",
             nombreLugarOrigen = "Instituto de Genética (IGUN)",
             desbloqueaPuntoId = "edif_251",
-            nombrePuntoDesbloqueado = "Capilla",
+            nombrePuntoDesbloqueado = "Capilla Cristo Maestro",
             requisitoTexto = "Completa la doble hélice en el Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "hilo_amarillo",
+            nombre = "Hilo Amarillo de la Memoria",
+            descripcion = "El cuarto hilo. Apareció flotando en el rayo de luz que atravesó el vitral. Tira hacia el Centro Polideportivo.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            desbloqueaPuntoId = "edif_103",
+            nombrePuntoDesbloqueado = "Centro Polideportivo",
+            requisitoTexto = "Enciende el vitral de la Capilla Cristo Maestro"
         )
     )
 
@@ -268,6 +280,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_426",
             nombreLugarOrigen = "Instituto de Genética (IGUN)",
             requisitoTexto = "Supera el reto del Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "insignia_capilla",
+            nombre = "Guardián de la Luz",
+            descripcion = "Para quienes no se rinden hasta que el último vidrio vuelve a brillar.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🌈",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            requisitoTexto = "Supera el reto de la Capilla Cristo Maestro"
         )
     )
 
@@ -381,6 +403,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_426",
             nombreLugarOrigen = "Instituto de Genética (IGUN)",
             requisitoTexto = "Coleccionable hallado en el Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "col_vidrio",
+            nombre = "Vidrio Emplomado",
+            descripcion = "Un pedacito de vitral: vidrio de color unido a los demás con una tira de plomo, como los que forman las ventanas de la capilla.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🪟",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            requisitoTexto = "Coleccionable encontrado en la Capilla Cristo Maestro"
         )
     )
 

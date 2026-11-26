@@ -62,7 +62,7 @@ class HistoriaTest {
     @Test
     fun `los hilos del acto III abren cada capítulo en orden`() {
         val acto3 = Historia.capitulosDelActo(3)
-        assertEquals(listOf("edif_701", "edif_408", "edif_426"), acto3.take(3).map { it.puntoId })
+        assertEquals(listOf("edif_701", "edif_408", "edif_426", "edif_251"), acto3.take(4).map { it.puntoId })
         acto3.zipWithNext().forEach { (anterior, siguiente) ->
             assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
         }

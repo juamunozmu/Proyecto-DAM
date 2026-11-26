@@ -375,15 +375,16 @@
         },
         {
             "id": "edif_251",
-            "nombre": "Capilla",
+            "nombre": "Capilla Cristo Maestro",
             "edificio": "251",
-            "descripcion": "",
+            "descripcion": "Inaugurada en 1953. Su vitral principal, del pintor francés Paul Boné, muestra a Cristo enseñando; el de la Virgen María es de Sergio Trujillo Magnenat. Camilo Torres fue su capellán.",
             "latitud": 4.6328712,
             "longitud": -74.0814726,
             "tieneRetoDisponible": false,
             "alias": [
                 "251",
                 "Capilla",
+                "Cristo Maestro",
                 "Iglesia"
             ],
             "categoria": "CULTURA"

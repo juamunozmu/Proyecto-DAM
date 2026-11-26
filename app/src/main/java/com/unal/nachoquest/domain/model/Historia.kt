@@ -61,6 +61,10 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     HELICE(
         "Completa la hélice",
         "El Enredo le quitó un lado al ADN. Ponle a cada letra su pareja (A con T, C con G) antes de que la hélice se desenrolle."
+    ),
+    VITRAL(
+        "Enciende el vitral",
+        "El Enredo apagó los vidrios del vitral. Al tocar uno cambian él y los de arriba, abajo y a los lados. Déjalos todos encendidos."
     )
 }
 
@@ -258,6 +262,19 @@ object Historia {
             xpRecompensa = 360,
             minijuego = TipoMinijuego.HELICE,
             acto = 3
+        ),
+        Capitulo(
+            numero = 12,
+            puntoId = "edif_251",
+            retoId = "reto_capilla",
+            titulo = "El Vitral Roto",
+            lugar = "Capilla Cristo Maestro",
+            sinopsis = "El Enredo apagó el vitral de la capilla vidrio por vidrio. El Hilo Amarillo solo aparece cuando la luz vuelve a pasar por todos.",
+            itemRequeridoId = "hilo_verde",
+            itemRecompensaId = "hilo_amarillo",
+            xpRecompensa = 390,
+            minijuego = TipoMinijuego.VITRAL,
+            acto = 3
         )
     )
 
@@ -449,6 +466,19 @@ object Historia {
             LineaDialogo(Hablante.NACHO, "¡El Hilo Verde! Ya van tres.", Expresion.FELIZ),
             LineaDialogo(Hablante.RECUERDO, "Vidrios de colores... Eso es un vitral. La capilla del campus tiene unos preciosos."),
             LineaDialogo(Hablante.NACHO, "Si el Enredo rompe ese vitral, no se lo perdono. ¡A la capilla, {jugador}!", Expresion.PREOCUPADO)
+        ),
+        "cap12_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Capilla Cristo Maestro, de 1953. Su nombre viene del vitral del pintor francés Paul Boné, que muestra a Cristo enseñando."),
+            LineaDialogo(Hablante.ENREDO, "¡Qué oscurito tan rico! Le apagué los vidrios uno por uno. Y los enredé: si tocas uno, cambian también sus vecinos."),
+            LineaDialogo(Hablante.RECUERDO, "Un vitral sin luz es solo plomo y vidrio gris. Y el Hilo Amarillo se esconde donde no llega el sol."),
+            LineaDialogo(Hablante.NACHO, "Toca los vidrios hasta que todos brillen, {jugador}. Piensa bien: el mismo toque que prende uno puede apagar al de al lado.", Expresion.DECIDIDO)
+        ),
+        "cap12_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La luz de la tarde atraviesa el vitral y pinta el piso de colores. En el rayo más dorado flota un hilo amarillo."),
+            LineaDialogo(Hablante.ENREDO, "¡Ay, qué brillo! Me encandilé... Bueno, me queda un solo hilo. Y ese no lo suelto: lo llevo amarrado a mí."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Amarillo! Ya van cuatro de cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "El último lo tiene él. Lo oí correr hacia el Polideportivo: quiere que lo alcancemos."),
+            LineaDialogo(Hablante.NACHO, "Pues a correr se dijo. ¡Al Polideportivo, {jugador}!", Expresion.DECIDIDO)
         )
     )
 

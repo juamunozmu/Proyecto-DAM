@@ -159,6 +159,7 @@ fun PantallaMinijuego(
                     TipoMinijuego.MONTAJE -> MinijuegoMontaje(pistas, alTerminar)
                     TipoMinijuego.TANQUES -> MinijuegoTanques(pistas, alTerminar)
                     TipoMinijuego.HELICE -> MinijuegoHelice(pistas, alTerminar)
+                    TipoMinijuego.VITRAL -> MinijuegoVitral(pistas, alTerminar)
                 }
             }
         }
@@ -197,6 +198,7 @@ fun PantallaMinijuego(
                                 TipoMinijuego.MONTAJE -> "¡Película armada!"
                                 TipoMinijuego.TANQUES -> "¡Agua exacta!"
                                 TipoMinijuego.HELICE -> "¡Hélice completa!"
+                                TipoMinijuego.VITRAL -> "¡Vitral encendido!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,

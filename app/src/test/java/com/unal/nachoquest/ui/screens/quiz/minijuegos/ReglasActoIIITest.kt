@@ -120,4 +120,56 @@ class ReglasActoIIITest {
         assertEquals(2, ReglasHelice.estrellas(ReglasHelice.ERRORES_POR_DESENROLLAR + 2))
         assertEquals(1, ReglasHelice.estrellas(5))
     }
+
+    // ---------- Vitral (capítulo 12) ----------
+
+    @Test
+    fun `tocar un vidrio cambia él y sus vecinos, y tocarlo otra vez lo deja igual`() {
+        val lado = 3
+        val encendido = ReglasVitral.encendido(lado)
+        // El del centro cambia cinco vidrios: él y los cuatro de al lado
+        val centro = ReglasVitral.tocar(encendido, lado, 4)
+        assertEquals(listOf(1, 3, 4, 5, 7), centro.indices.filter { !centro[it] })
+        // La esquina solo tiene dos vecinos
+        val esquina = ReglasVitral.tocar(encendido, lado, 0)
+        assertEquals(listOf(0, 1, 3), esquina.indices.filter { !esquina[it] })
+        // El borde no da la vuelta a la fila siguiente
+        val borde = ReglasVitral.tocar(encendido, lado, 2)
+        assertEquals(listOf(1, 2, 5), borde.indices.filter { !borde[it] })
+        assertEquals(encendido, ReglasVitral.tocar(centro, lado, 4))
+    }
+
+    @Test
+    fun `cada vitral empieza roto y su solución mínima lo enciende`() {
+        ReglasVitral.NIVELES.forEach { nivel ->
+            val inicial = ReglasVitral.inicial(nivel)
+            assertFalse("El vitral de ${nivel.lado} empieza encendido", ReglasVitral.resuelto(inicial))
+            val solucion = ReglasVitral.solucionMinima(inicial, nivel.lado)
+            val final = solucion.fold(inicial) { vitral, vidrio -> ReglasVitral.tocar(vitral, nivel.lado, vidrio) }
+            assertTrue("La solución del vitral de ${nivel.lado} no lo enciende", ReglasVitral.resuelto(final))
+            // Nunca hace falta más toques que los que lo rompieron
+            assertTrue(solucion.size <= nivel.toquesQueLoRompen.size)
+        }
+    }
+
+    @Test
+    fun `los vitrales crecen y el primero se arregla con dos toques`() {
+        val lados = ReglasVitral.NIVELES.map { it.lado }
+        assertEquals(lados.sorted(), lados)
+        // En 3×3 la solución es única: hay que tocar las dos esquinas que lo rompieron
+        assertEquals(2, ReglasVitral.minimo(ReglasVitral.NIVELES.first()))
+        assertEquals(listOf(0, 8), ReglasVitral.solucionMinima(ReglasVitral.inicial(ReglasVitral.NIVELES.first()), 3).sorted())
+    }
+
+    @Test
+    fun `un vitral encendido no necesita toques`() {
+        assertTrue(ReglasVitral.solucionMinima(ReglasVitral.encendido(4), 4).isEmpty())
+    }
+
+    @Test
+    fun `menos toques de más dan más estrellas en el vitral`() {
+        assertEquals(3, ReglasVitral.estrellas(0))
+        assertEquals(2, ReglasVitral.estrellas(5))
+        assertEquals(1, ReglasVitral.estrellas(20))
+    }
 }

@@ -371,6 +371,33 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_genetica",
                 coleccionableRecompensaId = "col_arveja"
             )
+            // Datos verificados en noviembre de 2026 (El Tiempo, 25 de mayo de 2023): se inauguró en
+            // octubre de 1953; el vitral de Paul Boné muestra a Cristo enseñando y le da el nombre;
+            // Camilo Torres fue capellán en los años sesenta; Miguel Sopó Duque fundió en bronce
+            // las catorce estaciones del viacrucis
+            "reto_capilla" -> RetoQuiz(
+                id = "reto_capilla",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 12: El Vitral Roto",
+                descripcion = "La luz que entra de colores.",
+                preguntas = listOf(
+                    Pregunta("capilla_1", "¿En qué año se inauguró la Capilla Cristo Maestro de la Ciudad Universitaria?",
+                        listOf("En 1953", "En 1867", "En 1999", "En 1910"), 0),
+                    Pregunta("capilla_2", "¿De dónde le viene el nombre a la Capilla Cristo Maestro?",
+                        listOf("De su vitral principal, que muestra a Cristo enseñando", "De un profesor llamado Cristo", "De la calle donde queda", "De una canción de la universidad"), 0),
+                    Pregunta("capilla_3", "¿Qué sacerdote y sociólogo fue capellán de la Universidad Nacional en los años sesenta?",
+                        listOf("Camilo Torres Restrepo", "José Celestino Mutis", "Francisco José de Caldas", "Antonio Nariño"), 0),
+                    Pregunta("capilla_4", "¿En qué material están fundidas las catorce estaciones del viacrucis de la capilla?",
+                        listOf("En bronce", "En oro", "En plástico", "En cera"), 0),
+                    Pregunta("capilla_5", "En un vitral tradicional, ¿con qué metal se unen los pedazos de vidrio de colores?",
+                        listOf("Con plomo", "Con oro", "Con aluminio", "Con cobre de cables"), 0)
+                ),
+                recompensaXp = 390,
+                recompensaMonedas = 80,
+                itemRecompensaId = "hilo_amarillo",
+                insigniaRecompensaId = "insignia_capilla",
+                coleccionableRecompensaId = "col_vidrio"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,
