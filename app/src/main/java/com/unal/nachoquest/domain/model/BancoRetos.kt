@@ -398,6 +398,31 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_capilla",
                 coleccionableRecompensaId = "col_vidrio"
             )
+            // Datos verificados en noviembre de 2026 (reglamento de World Athletics): desde 2018 la
+            // zona de entrega del 4×100 mide 30 m, y entregar el testigo fuera de ella descalifica
+            "reto_polideportivo" -> RetoQuiz(
+                id = "reto_polideportivo",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 13: El Último Nudo",
+                descripcion = "Una carrera se gana entre todos.",
+                preguntas = listOf(
+                    Pregunta("poli_1", "¿Cuántos corredores forman un equipo de relevos 4×100?",
+                        listOf("Cuatro", "Cien", "Dos", "Ocho"), 0),
+                    Pregunta("poli_2", "¿Cómo se llama el tubo que se pasan los corredores en un relevo?",
+                        listOf("El testigo", "El bastón de mando", "La antorcha", "El cronómetro"), 0),
+                    Pregunta("poli_3", "En el relevo 4×100, ¿cuánto mide hoy la zona donde se entrega el testigo?",
+                        listOf("30 metros", "5 metros", "100 metros", "1 metro"), 0),
+                    Pregunta("poli_4", "¿Qué le pasa a un equipo de relevos si entrega el testigo fuera de la zona?",
+                        listOf("Queda descalificado", "Gana un punto extra", "Vuelve a empezar desde cero", "No pasa nada"), 0),
+                    Pregunta("poli_5", "¿Cuántos metros corre en total un equipo en el relevo 4×400?",
+                        listOf("1600 metros", "400 metros", "800 metros", "4400 metros"), 0)
+                ),
+                recompensaXp = 450,
+                recompensaMonedas = 90,
+                itemRecompensaId = "madeja_memoria",
+                insigniaRecompensaId = "insignia_relevos",
+                coleccionableRecompensaId = "col_testigo"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

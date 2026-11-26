@@ -68,7 +68,7 @@ class ProfileViewModel @Inject constructor(
                 .toSet(),
             tituloHistoria = Historia.capituloActual(perfil.retosCompletados)
                 ?.let { "Acto ${it.acto} · ${Historia.titulosActos[it.acto]}" }
-                ?: "¡Los Ecos se reunieron!",
+                ?: "¡Los cinco hilos volvieron a la Copa!",
             rachaDias = TriviaDiaria.rachaVigente(perfil, TriviaDiaria.diaActual()),
             mejorRachaDias = perfil.mejorRachaDias,
             triviasSuperadas = perfil.triviasSuperadas,

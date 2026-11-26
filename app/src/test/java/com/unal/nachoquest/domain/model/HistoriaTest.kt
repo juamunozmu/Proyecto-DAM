@@ -45,7 +45,7 @@ class HistoriaTest {
         assertEquals("edif_761", acto2.last().puntoId)
         assertEquals(Historia.ESCENA_EPILOGO_FINAL, acto2.last().escenaFinal)
         // Solo el último capítulo de cada acto tiene epílogo
-        assertEquals(2, Historia.capitulos.count { it.escenaFinal != null })
+        assertEquals(3, Historia.capitulos.count { it.escenaFinal != null })
     }
 
     @Test
@@ -60,9 +60,20 @@ class HistoriaTest {
     }
 
     @Test
+    fun `el acto III termina con los relevos en el Polideportivo y su epílogo`() {
+        val ultimo = Historia.capitulosDelActo(3).last()
+        assertEquals(13, ultimo.numero)
+        assertEquals(TipoMinijuego.RELEVOS, ultimo.minijuego)
+        assertEquals(Historia.ESCENA_EPILOGO_ACTO3, ultimo.escenaFinal)
+        assertEquals(ultimo, Historia.capitulos.last())
+        assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO3, "Ana").isNotEmpty())
+        assertEquals("Los Hilos de la Memoria", Historia.titulosActos[ultimo.acto])
+    }
+
+    @Test
     fun `los hilos del acto III abren cada capítulo en orden`() {
         val acto3 = Historia.capitulosDelActo(3)
-        assertEquals(listOf("edif_701", "edif_408", "edif_426", "edif_251"), acto3.take(4).map { it.puntoId })
+        assertEquals(listOf("edif_701", "edif_408", "edif_426", "edif_251", "edif_103"), acto3.map { it.puntoId })
         acto3.zipWithNext().forEach { (anterior, siguiente) ->
             assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
         }

@@ -65,6 +65,10 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     VITRAL(
         "Enciende el vitral",
         "El Enredo apagó los vidrios del vitral. Al tocar uno cambian él y los de arriba, abajo y a los lados. Déjalos todos encendidos."
+    ),
+    RELEVOS(
+        "La carrera de relevos",
+        "Un 4×100 contra el Enredo. Toca los pies en orden para correr y pasa el testigo en la zona amarilla: entre más al final, con más impulso sale el siguiente."
     )
 }
 
@@ -100,9 +104,10 @@ data class Capitulo(
 object Historia {
 
     const val ESCENA_PROLOGO = "prologo"
-    // Epílogo del Acto I (después del capítulo 5) y epílogo final (después del capítulo 8)
+    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8) y del Acto III (después del 13)
     const val ESCENA_EPILOGO = "epilogo"
     const val ESCENA_EPILOGO_FINAL = "epilogo_final"
+    const val ESCENA_EPILOGO_ACTO3 = "epilogo_acto3"
 
     val titulosActos = mapOf(
         1 to "El Olvido de la Ciudad Blanca",
@@ -275,6 +280,20 @@ object Historia {
             xpRecompensa = 390,
             minijuego = TipoMinijuego.VITRAL,
             acto = 3
+        ),
+        Capitulo(
+            numero = 13,
+            puntoId = "edif_103",
+            retoId = "reto_polideportivo",
+            titulo = "El Último Nudo",
+            lugar = "Centro Polideportivo",
+            sinopsis = "El Enredo lleva el Hilo Morado amarrado a la cintura y te reta a una carrera de relevos. Si le ganas, te lo entrega.",
+            itemRequeridoId = "hilo_amarillo",
+            itemRecompensaId = "madeja_memoria",
+            xpRecompensa = 450,
+            minijuego = TipoMinijuego.RELEVOS,
+            acto = 3,
+            escenaFinal = ESCENA_EPILOGO_ACTO3
         )
     )
 
@@ -479,6 +498,29 @@ object Historia {
             LineaDialogo(Hablante.NACHO, "¡El Hilo Amarillo! Ya van cuatro de cinco.", Expresion.FELIZ),
             LineaDialogo(Hablante.RECUERDO, "El último lo tiene él. Lo oí correr hacia el Polideportivo: quiere que lo alcancemos."),
             LineaDialogo(Hablante.NACHO, "Pues a correr se dijo. ¡Al Polideportivo, {jugador}!", Expresion.DECIDIDO)
+        ),
+        "cap13_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Centro Polideportivo. Canchas, gimnasio y gente entrenando a toda hora: aquí nadie se queda quieto."),
+            LineaDialogo(Hablante.ENREDO, "¡Llegaron! El Hilo Morado lo tengo amarrado a la cintura. Si lo quieren, ¡gánenme una carrera de relevos!"),
+            LineaDialogo(Hablante.RECUERDO, "Cuatro tramos de cien metros. El testigo se pasa en la zona de entrega; si se cae, hay que recogerlo."),
+            LineaDialogo(Hablante.NACHO, "Alterna los pies para correr y pasa el testigo al final de la zona, {jugador}. ¡Vamos a desenredar esto!", Expresion.DECIDIDO)
+        ),
+        "cap13_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El testigo cruza la meta primero. El Enredo se deja caer en la pista, sin aire... y se ríe."),
+            LineaDialogo(Hablante.ENREDO, "¡Qué carrera! Nunca nadie había jugado conmigo tanto rato. Tomen, se lo ganaron."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Morado! Ya están los cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Rojo, azul, verde, amarillo y morado. Los cinco hilos se trenzan solos y forman una madeja que brilla como la Copa."),
+            LineaDialogo(Hablante.ENREDO, "¿Entonces... ya se acabó el juego? Yo solo quería que alguien me persiguiera por el campus."),
+            LineaDialogo(Hablante.RECUERDO, "Yo también estuve sola, enredada en mis propios recuerdos. Quédate con nosotros: siempre hay algo que ordenar."),
+            LineaDialogo(Hablante.NACHO, "¡Y algo que jugar! Bienvenido, Enredo.", Expresion.FELIZ)
+        ),
+        ESCENA_EPILOGO_ACTO3 to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Desde ese día, la Madeja de la Memoria descansa junto a la Copa Restaurada."),
+            LineaDialogo(Hablante.NACHO, "El Enredo ya no revuelve recuerdos: ahora los teje. Cada historia del campus tiene su propio hilo.", Expresion.FELIZ),
+            LineaDialogo(Hablante.ENREDO, "¡Y cuando alguien se pierde en el campus, le tiro un hilito para que encuentre el camino!"),
+            LineaDialogo(Hablante.RECUERDO, "La película, el agua, el ADN, el vitral y la carrera. Ninguno de esos recuerdos se va a perder."),
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Ahora eres Tejedor de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día.")
         )
     )
 

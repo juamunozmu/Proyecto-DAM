@@ -129,16 +129,16 @@ fun ChallengesScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("🌟", fontSize = 34.sp)
+                    Text("🧶", fontSize = 34.sp)
                     Text(
-                        "¡Guardián de la Memoria!",
+                        "¡Tejedor de la Memoria!",
                         style = MaterialTheme.typography.titleLarge,
                         color = NachoGreenDark,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "Reuniste a los tres Ecos y el Olvido ahora es el Recuerdo. Repite los capítulos " +
+                        "Recuperaste los cinco hilos y el Enredo ahora teje recuerdos. Repite los capítulos " +
                             "para conseguir todas las estrellas, juega la trivia cada día y sube en el ranking.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.DarkGray,
@@ -147,7 +147,7 @@ fun ChallengesScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     BotonJuego(
                         texto = "Ver el epílogo final",
-                        onClick = { onVerEscena(Historia.ESCENA_EPILOGO_FINAL) },
+                        onClick = { onVerEscena(Historia.ESCENA_EPILOGO_ACTO3) },
                         color = NachoYellow,
                         colorTexto = NachoGreenDark,
                         alto = 44.dp,

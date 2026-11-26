@@ -166,6 +166,103 @@ class ReglasActoIIITest {
         assertTrue(ReglasVitral.solucionMinima(ReglasVitral.encendido(4), 4).isEmpty())
     }
 
+    // ---------- Relevos (capítulo 13) ----------
+
+    /**
+     * Corre los 400 m dando [pasosPorSegundo] pasos alternados y entregando el testigo cuando
+     * va [entregaEn] metros dentro de la zona (null: nunca entrega). Devuelve los segundos.
+     */
+    private fun simularCarrera(pasosPorSegundo: Float, entregaEn: Float?): Float {
+        val dt = 0.01f
+        var t = 0f
+        var posicion = 0f
+        var velocidad = 0f
+        var corredor = 0
+        var pie: Pie? = null
+        var hastaElPaso = 0f
+        var recogiendo = 0f
+        while (posicion < ReglasRelevos.META && t < 120f) {
+            t += dt
+            if (recogiendo > 0f) {
+                recogiendo -= dt
+                continue
+            }
+            hastaElPaso -= dt
+            if (hastaElPaso <= 0f) {
+                val siguiente = if (pie == Pie.IZQUIERDO) Pie.DERECHO else Pie.IZQUIERDO
+                velocidad = ReglasRelevos.pisar(velocidad, siguiente, pie)
+                pie = siguiente
+                hastaElPaso += 1f / pasosPorSegundo
+            }
+            velocidad = ReglasRelevos.frenar(velocidad, dt)
+            posicion += velocidad * dt
+            if (entregaEn != null && posicion >= ReglasRelevos.inicioZona(corredor) + entregaEn) {
+                val entrega = ReglasRelevos.entregar(posicion, corredor, velocidad)
+                if (entrega is Entrega.Valida) {
+                    corredor++
+                    velocidad = entrega.velocidadSalida
+                    pie = null
+                }
+            }
+            if (ReglasRelevos.seCayo(posicion, corredor)) {
+                corredor++
+                velocidad = 0f
+                pie = null
+                recogiendo = ReglasRelevos.CASTIGO_CAIDA
+            }
+        }
+        return t
+    }
+
+    private val tiempoEnredo = ReglasRelevos.META / ReglasRelevos.VELOCIDAD_ENREDO
+
+    @Test
+    fun `alternar los pies acelera y repetir pie es un tropiezo`() {
+        val v = ReglasRelevos.pisar(0f, Pie.IZQUIERDO, null)
+        assertEquals(ReglasRelevos.IMPULSO, v, 0.001f)
+        assertEquals(2 * ReglasRelevos.IMPULSO, ReglasRelevos.pisar(v, Pie.DERECHO, Pie.IZQUIERDO), 0.001f)
+        assertEquals(v * ReglasRelevos.FACTOR_TROPIEZO, ReglasRelevos.pisar(v, Pie.IZQUIERDO, Pie.IZQUIERDO), 0.001f)
+        assertEquals(ReglasRelevos.VELOCIDAD_MAXIMA, ReglasRelevos.pisar(ReglasRelevos.VELOCIDAD_MAXIMA, Pie.DERECHO, Pie.IZQUIERDO), 0.001f)
+        assertTrue(ReglasRelevos.frenar(10f, 0.1f) < 10f)
+        assertEquals(0f, ReglasRelevos.frenar(0f, 0.1f), 0.001f)
+    }
+
+    @Test
+    fun `el testigo solo se entrega en la zona y al final sale con más impulso`() {
+        assertEquals(Entrega.FueraDeZona, ReglasRelevos.entregar(50f, 0, 15f))
+        // La zona del segundo corredor no sirve para el primero
+        assertFalse(ReglasRelevos.enZona(175f, 0))
+        val temprano = ReglasRelevos.entregar(72f, 0, 15f) as Entrega.Valida
+        val tarde = ReglasRelevos.entregar(98f, 0, 15f) as Entrega.Valida
+        assertTrue(tarde.velocidadSalida > temprano.velocidadSalida)
+        assertTrue(tarde.velocidadSalida <= 15f)
+        // El último corredor no entrega: corre hasta la meta
+        assertEquals(Entrega.FueraDeZona, ReglasRelevos.entregar(380f, 3, 15f))
+        assertFalse(ReglasRelevos.seCayo(399f, 3))
+        assertTrue(ReglasRelevos.seCayo(100f, 0))
+        assertFalse(ReglasRelevos.seCayo(100f, 1))
+    }
+
+    @Test
+    fun `quien corre bien le gana al Enredo y quien corre lento no`() {
+        // Seis pasos por segundo y entregas al final de la zona: gana
+        assertTrue(simularCarrera(6f, entregaEn = 27f) < tiempoEnredo)
+        // Tres pasos por segundo no alcanzan
+        assertTrue(simularCarrera(3f, entregaEn = 27f) > tiempoEnredo)
+        // Dejar caer el testigo cuesta más que entregarlo al final de la zona
+        assertTrue(simularCarrera(6f, entregaEn = null) > simularCarrera(6f, entregaEn = 27f))
+    }
+
+    @Test
+    fun `la pista le resta tiempo al Enredo y menos carreras dan más estrellas`() {
+        assertTrue(ReglasRelevos.posicionEnredo(10f, ReglasRelevos.CORDONES_AMARRADOS) < ReglasRelevos.posicionEnredo(10f))
+        assertEquals(0f, ReglasRelevos.posicionEnredo(1f, ReglasRelevos.CORDONES_AMARRADOS), 0.001f)
+        assertEquals(ReglasRelevos.META, ReglasRelevos.posicionEnredo(1000f), 0.001f)
+        assertEquals(3, ReglasRelevos.estrellas(1))
+        assertEquals(2, ReglasRelevos.estrellas(2))
+        assertEquals(1, ReglasRelevos.estrellas(5))
+    }
+
     @Test
     fun `menos toques de más dan más estrellas en el vitral`() {
         assertEquals(3, ReglasVitral.estrellas(0))

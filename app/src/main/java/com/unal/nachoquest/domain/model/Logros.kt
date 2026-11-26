@@ -29,6 +29,8 @@ object Logros {
         val totalActo1 = Historia.capitulosDelActo(1).size
         val capitulosActo2 = hechosDelActo(2)
         val totalActo2 = Historia.capitulosDelActo(2).size
+        val capitulosActo3 = hechosDelActo(3)
+        val totalActo3 = Historia.capitulosDelActo(3).size
         val coleccionables = CatalogoItems.itemsColeccionables.count { it.id in perfil.itemsDesbloqueados }
         val perfectos = perfil.estrellasPorReto.values.count { it >= 3 }
         val retosLugar = RetosLugares.retos.count { it.retoId in perfil.retosCompletados }
@@ -143,6 +145,15 @@ object Logros {
                 desbloqueado = capitulosActo2 == totalActo2,
                 progreso = capitulosActo2,
                 meta = totalActo2
+            ),
+            Logro(
+                id = "tejedor_memoria",
+                titulo = "Tejedor de la Memoria",
+                descripcion = "Recupera los cinco hilos y termina el Acto III",
+                emoji = "🧶",
+                desbloqueado = capitulosActo3 == totalActo3,
+                progreso = capitulosActo3,
+                meta = totalActo3
             )
         )
     }

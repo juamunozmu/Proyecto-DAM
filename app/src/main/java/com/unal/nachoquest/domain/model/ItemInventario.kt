@@ -167,6 +167,16 @@ object CatalogoItems {
             desbloqueaPuntoId = "edif_103",
             nombrePuntoDesbloqueado = "Centro Polideportivo",
             requisitoTexto = "Enciende el vitral de la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "madeja_memoria",
+            nombre = "Madeja de la Memoria",
+            descripcion = "Los cinco hilos de la Copa (rojo, azul, verde, amarillo y morado) trenzados en una sola madeja. El último, el morado, se lo ganaste al Enredo en una carrera de relevos.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Gánale al Enredo la carrera de relevos en el Centro Polideportivo"
         )
     )
 
@@ -290,6 +300,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_251",
             nombreLugarOrigen = "Capilla Cristo Maestro",
             requisitoTexto = "Supera el reto de la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "insignia_relevos",
+            nombre = "Relevista Veloz",
+            descripcion = "Para quienes saben que una carrera se gana entre todos, y que el testigo nunca se suelta.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🏃",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Supera el reto del Centro Polideportivo"
         )
     )
 
@@ -413,6 +433,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_251",
             nombreLugarOrigen = "Capilla Cristo Maestro",
             requisitoTexto = "Coleccionable encontrado en la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "col_testigo",
+            nombre = "Testigo de Relevos",
+            descripcion = "El tubo que se pasan los corredores de un relevo. Debe cambiar de manos dentro de la zona de entrega: si no, el equipo queda descalificado.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🥢",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Coleccionable encontrado en el Centro Polideportivo"
         )
     )
 
