@@ -665,6 +665,7 @@ private fun PantallaResultados(
                     aprobado && state.esRepeticion -> "¡Repaso superado!"
                     aprobado && state.capitulo?.escenaFinal == Historia.ESCENA_EPILOGO -> "¡Venciste al Olvido!"
                     aprobado && state.capitulo?.escenaFinal == Historia.ESCENA_EPILOGO_FINAL -> "¡Los Ecos se reunieron!"
+                    aprobado && state.capitulo?.escenaFinal == Historia.ESCENA_EPILOGO_ACTO3 -> "¡Desenredaste al Enredo!"
                     aprobado -> "¡Fragmento recuperado!"
                     else -> "La bruma te alcanzó"
                 },

@@ -208,9 +208,13 @@ fun MinijuegoCircuito(pistas: Int, alTerminar: (Int) -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        // El tablero cabe a lo ancho y a lo alto (tabletas en horizontal), centrado
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+            contentAlignment = Alignment.Center
+        ) {
             val ladoIndicador = 30.dp
-            val lado = (maxWidth - ladoIndicador * 2) / N
+            val lado = minOf((maxWidth - ladoIndicador * 2) / N, maxHeight / N)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // Generador a la izquierda
                 Column(modifier = Modifier.width(ladoIndicador)) {

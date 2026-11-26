@@ -45,7 +45,58 @@ class HistoriaTest {
         assertEquals("edif_761", acto2.last().puntoId)
         assertEquals(Historia.ESCENA_EPILOGO_FINAL, acto2.last().escenaFinal)
         // Solo el último capítulo de cada acto tiene epílogo
-        assertEquals(2, Historia.capitulos.count { it.escenaFinal != null })
+        assertEquals(3, Historia.capitulos.count { it.escenaFinal != null })
+    }
+
+    @Test
+    fun `el acto III empieza con la Copa Restaurada en la antigua sede de Cine y Televisión`() {
+        val primero = Historia.capitulosDelActo(3).first()
+        assertEquals(9, primero.numero)
+        assertEquals("edif_701", primero.puntoId)
+        assertEquals("copa_restaurada", primero.itemRequeridoId)
+        assertEquals(primero.puntoId, CatalogoItems.obtenerPorId("copa_restaurada")?.desbloqueaPuntoId)
+        assertEquals(TipoMinijuego.MONTAJE, primero.minijuego)
+        assertEquals("Los Hilos de la Memoria", Historia.titulosActos[3])
+    }
+
+    @Test
+    fun `el acto III termina con los relevos en el Polideportivo y su epílogo`() {
+        val ultimo = Historia.capitulosDelActo(3).last()
+        assertEquals(13, ultimo.numero)
+        assertEquals(TipoMinijuego.RELEVOS, ultimo.minijuego)
+        assertEquals(Historia.ESCENA_EPILOGO_ACTO3, ultimo.escenaFinal)
+        assertEquals(ultimo, Historia.capitulos.last())
+        assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO3, "Ana").isNotEmpty())
+        assertEquals("Los Hilos de la Memoria", Historia.titulosActos[ultimo.acto])
+    }
+
+    @Test
+    fun `los hilos del acto III abren cada capítulo en orden`() {
+        val acto3 = Historia.capitulosDelActo(3)
+        assertEquals(listOf("edif_701", "edif_408", "edif_426", "edif_251", "edif_103"), acto3.map { it.puntoId })
+        acto3.zipWithNext().forEach { (anterior, siguiente) ->
+            assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
+        }
+    }
+
+    @Test
+    fun `quien terminó el acto II sigue con el acto III`() {
+        val actos1y2 = (Historia.capitulosDelActo(1) + Historia.capitulosDelActo(2)).map { it.retoId }
+        assertTrue(Historia.actoCompletado(2, actos1y2))
+        assertFalse(Historia.historiaCompletada(actos1y2))
+        assertEquals(9, Historia.capituloActual(actos1y2)?.numero)
+    }
+
+    @Test
+    fun `el Enredo y el Recuerdo hablan en el acto III`() {
+        val escena = Historia.escena("cap9_intro", "Ana")
+        assertTrue(escena.any { it.hablante == Hablante.ENREDO })
+        assertTrue(escena.any { it.hablante == Hablante.RECUERDO })
+    }
+
+    @Test
+    fun `los actos se numeran en romanos`() {
+        assertEquals(listOf("I", "II", "III", "IV"), (1..4).map(Historia::romano))
     }
 
     @Test

@@ -156,6 +156,11 @@ fun PantallaMinijuego(
                     TipoMinijuego.DIFERENCIAS -> MinijuegoDiferencias(pistas, alTerminar)
                     TipoMinijuego.PAREJAS -> MinijuegoParejas(pistas, alTerminar)
                     TipoMinijuego.LABERINTO -> MinijuegoLaberinto(pistas, alTerminar)
+                    TipoMinijuego.MONTAJE -> MinijuegoMontaje(pistas, alTerminar)
+                    TipoMinijuego.TANQUES -> MinijuegoTanques(pistas, alTerminar)
+                    TipoMinijuego.HELICE -> MinijuegoHelice(pistas, alTerminar)
+                    TipoMinijuego.VITRAL -> MinijuegoVitral(pistas, alTerminar)
+                    TipoMinijuego.RELEVOS -> MinijuegoRelevos(pistas, alTerminar)
                 }
             }
         }
@@ -191,6 +196,11 @@ fun PantallaMinijuego(
                             when (tipo) {
                                 TipoMinijuego.PENALES -> "¡Tanda ganada!"
                                 TipoMinijuego.LABERINTO -> "¡Encontraste al Eco!"
+                                TipoMinijuego.MONTAJE -> "¡Película armada!"
+                                TipoMinijuego.TANQUES -> "¡Agua exacta!"
+                                TipoMinijuego.HELICE -> "¡Hélice completa!"
+                                TipoMinijuego.VITRAL -> "¡Vitral encendido!"
+                                TipoMinijuego.RELEVOS -> "¡Carrera ganada!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,

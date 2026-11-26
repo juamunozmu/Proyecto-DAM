@@ -1,6 +1,6 @@
 [versions]
 osmdroid = "6.1.18"
-agp = "8.8.2"
+agp = "8.9.1"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
 coreKtx = "1.16.0"

@@ -110,12 +110,73 @@ object CatalogoItems {
         ItemInventario(
             id = "copa_restaurada",
             nombre = "Copa Restaurada",
-            descripcion = "La Copa de la Memoria sin grietas, después de reunir a los tres Ecos. Brilla con la bruma dorada del Recuerdo.",
+            descripcion = "La Copa de la Memoria sin grietas, después de reunir a los tres Ecos. Brilla con la bruma dorada del Recuerdo... y suelta hilos de colores que llevan a la antigua sede de Cine y Televisión.",
             categoria = CategoriaItem.OBJETO,
             emojiIcono = "🌟",
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
+            desbloqueaPuntoId = "edif_701",
+            nombrePuntoDesbloqueado = "Antigua sede de Cine y Televisión",
             requisitoTexto = "Encuentra al último Eco en el laberinto de la Concha Acústica"
+        ),
+        // ---------- Acto III: los cinco Hilos de la Memoria ----------
+        ItemInventario(
+            id = "hilo_rojo",
+            nombre = "Hilo Rojo de la Memoria",
+            descripcion = "El primero de los cinco hilos que el Enredo se llevó de la Copa. Estaba enrollado en una bobina de película y tira, suavecito, hacia el Laboratorio de Hidráulica.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            desbloqueaPuntoId = "edif_408",
+            nombrePuntoDesbloqueado = "Laboratorio de Hidráulica",
+            requisitoTexto = "Arma la película en la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "hilo_azul",
+            nombre = "Hilo Azul de la Memoria",
+            descripcion = "El segundo hilo. Subió flotando cuando el agua quedó exacta y todavía está húmedo. Tira hacia el Instituto de Genética.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            desbloqueaPuntoId = "edif_426",
+            nombrePuntoDesbloqueado = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Deja el agua exacta en el Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "hilo_verde",
+            nombre = "Hilo Verde de la Memoria",
+            descripcion = "El tercer hilo. Estaba enredado entre los peldaños de la doble hélice. Tira hacia la Capilla.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            desbloqueaPuntoId = "edif_251",
+            nombrePuntoDesbloqueado = "Capilla Cristo Maestro",
+            requisitoTexto = "Completa la doble hélice en el Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "hilo_amarillo",
+            nombre = "Hilo Amarillo de la Memoria",
+            descripcion = "El cuarto hilo. Apareció flotando en el rayo de luz que atravesó el vitral. Tira hacia el Centro Polideportivo.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            desbloqueaPuntoId = "edif_103",
+            nombrePuntoDesbloqueado = "Centro Polideportivo",
+            requisitoTexto = "Enciende el vitral de la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "madeja_memoria",
+            nombre = "Madeja de la Memoria",
+            descripcion = "Los cinco hilos de la Copa (rojo, azul, verde, amarillo y morado) trenzados en una sola madeja. El último, el morado, se lo ganaste al Enredo en una carrera de relevos.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "🧶",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Gánale al Enredo la carrera de relevos en el Centro Polideportivo"
         )
     )
 
@@ -199,6 +260,56 @@ object CatalogoItems {
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
             requisitoTexto = "Supera el reto de la Concha Acústica"
+        ),
+        ItemInventario(
+            id = "insignia_cine",
+            nombre = "Ojo de Director",
+            descripcion = "Para quienes saben que una buena historia depende del orden en que se cuenta.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🎬",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            requisitoTexto = "Supera el reto de la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "insignia_hidraulica",
+            nombre = "Maestro del Caudal",
+            descripcion = "Para quienes miden con calma y no riegan ni una gota de más.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "💧",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            requisitoTexto = "Supera el reto del Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "insignia_genetica",
+            nombre = "Lector de ADN",
+            descripcion = "Para quienes saben que cada letra tiene su pareja.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🧬",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Supera el reto del Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "insignia_capilla",
+            nombre = "Guardián de la Luz",
+            descripcion = "Para quienes no se rinden hasta que el último vidrio vuelve a brillar.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🌈",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            requisitoTexto = "Supera el reto de la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "insignia_relevos",
+            nombre = "Relevista Veloz",
+            descripcion = "Para quienes saben que una carrera se gana entre todos, y que el testigo nunca se suelta.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🏃",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Supera el reto del Centro Polideportivo"
         )
     )
 
@@ -282,6 +393,56 @@ object CatalogoItems {
             puntoOrigenId = "edif_761",
             nombreLugarOrigen = "Concha Acústica",
             requisitoTexto = "Coleccionable escondido en la Concha Acústica"
+        ),
+        ItemInventario(
+            id = "col_rollo",
+            nombre = "Rollo de 16 mm",
+            descripcion = "Un rollo de película de 16 milímetros, como los que se usaban en las escuelas de cine antes del video digital. Tiene una etiqueta escrita a mano: «toma 3».",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎞️",
+            puntoOrigenId = "edif_701",
+            nombreLugarOrigen = "Antigua sede de Cine y Televisión",
+            requisitoTexto = "Coleccionable rescatado en la antigua sede de Cine y Televisión"
+        ),
+        ItemInventario(
+            id = "col_molinete",
+            nombre = "Molinete de Aforo",
+            descripcion = "Una hélice pequeña que se mete en el río para medir qué tan rápido corre el agua. Con eso se calcula su caudal.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🌀",
+            puntoOrigenId = "edif_408",
+            nombreLugarOrigen = "Laboratorio de Hidráulica",
+            requisitoTexto = "Coleccionable encontrado en el Laboratorio de Hidráulica"
+        ),
+        ItemInventario(
+            id = "col_arveja",
+            nombre = "Arveja de Mendel",
+            descripcion = "Una arveja como las que usó Gregor Mendel en el siglo XIX para descubrir cómo se heredan los rasgos de padres a hijos.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🌱",
+            puntoOrigenId = "edif_426",
+            nombreLugarOrigen = "Instituto de Genética (IGUN)",
+            requisitoTexto = "Coleccionable hallado en el Instituto de Genética"
+        ),
+        ItemInventario(
+            id = "col_vidrio",
+            nombre = "Vidrio Emplomado",
+            descripcion = "Un pedacito de vitral: vidrio de color unido a los demás con una tira de plomo, como los que forman las ventanas de la capilla.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🪟",
+            puntoOrigenId = "edif_251",
+            nombreLugarOrigen = "Capilla Cristo Maestro",
+            requisitoTexto = "Coleccionable encontrado en la Capilla Cristo Maestro"
+        ),
+        ItemInventario(
+            id = "col_testigo",
+            nombre = "Testigo de Relevos",
+            descripcion = "El tubo que se pasan los corredores de un relevo. Debe cambiar de manos dentro de la zona de entrega: si no, el equipo queda descalificado.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🥢",
+            puntoOrigenId = "edif_103",
+            nombreLugarOrigen = "Centro Polideportivo",
+            requisitoTexto = "Coleccionable encontrado en el Centro Polideportivo"
         )
     )
 

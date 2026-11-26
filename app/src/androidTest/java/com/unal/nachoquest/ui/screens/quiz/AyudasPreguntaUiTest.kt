@@ -1,5 +1,6 @@
 package com.unal.nachoquest.ui.screens.quiz
 
+import android.os.SystemClock
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -106,16 +107,19 @@ class AyudasPreguntaUiTest {
         every { repositorio.usarAyuda(TipoAyuda.TIEMPO) } returns PagoAyuda.CON_MONEDAS
         abrirTrivia()
         val antes = viewModel.uiState.value.tiempoRestanteMs
+        val inicio = SystemClock.elapsedRealtime()
 
         compose.onNodeWithText("+${Tienda.SEGUNDOS_TIEMPO_EXTRA} s", substring = true).performClick()
         compose.waitForIdle()
 
         val state = viewModel.uiState.value
+        val transcurrido = SystemClock.elapsedRealtime() - inicio
         assertTrue(state.tiempoExtraUsado)
-        // El reloj sigue corriendo, así que se deja un margen de un segundo
+        // El reloj sigue corriendo mientras tanto: se descuenta lo que pasó de verdad (en un
+        // emulador lento, como el de GitHub Actions, puede ser más de un segundo)
         assertTrue(
-            "Quedaban $antes ms y ahora ${state.tiempoRestanteMs} ms",
-            state.tiempoRestanteMs >= antes + Tienda.SEGUNDOS_TIEMPO_EXTRA * 1000L - 1_000L
+            "Quedaban $antes ms, pasaron $transcurrido ms y ahora quedan ${state.tiempoRestanteMs} ms",
+            state.tiempoRestanteMs >= antes + Tienda.SEGUNDOS_TIEMPO_EXTRA * 1000L - transcurrido - 200L
         )
         verify(exactly = 1) { repositorio.usarAyuda(TipoAyuda.TIEMPO) }
         // Solo se usa una vez por pregunta

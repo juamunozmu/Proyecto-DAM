@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +49,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val COLUMNAS = 4
+// Ancho / alto de cada carta
+private const val PROPORCION_CARTA = 0.78f
+private val ESPACIO_CARTAS = 8.dp
 
 /**
  * Parejas del potrero: 16 cartas boca abajo con 8 animales. Se voltean de dos en dos; si son
@@ -109,20 +114,33 @@ fun MinijuegoParejas(pistas: Int, alTerminar: (Int) -> Unit) {
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.sacudir(fallos)
+        // La grilla cabe a lo ancho y a lo alto (tabletas en horizontal), centrada
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+            contentAlignment = Alignment.Center
         ) {
-            mazo.indices.chunked(COLUMNAS).forEach { fila ->
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    fila.forEach { carta ->
-                        CartaAnimal(
-                            animal = ReglasParejas.ANIMALES[mazo[carta]],
-                            bocaArriba = carta in volteadas || carta in emparejadas,
-                            emparejada = carta in emparejadas,
-                            onClick = { voltear(carta) },
-                            modifier = Modifier.weight(1f)
-                        )
+            val filas = (mazo.size + COLUMNAS - 1) / COLUMNAS
+            val anchoCarta = minOf(
+                (maxWidth - ESPACIO_CARTAS * (COLUMNAS - 1)) / COLUMNAS,
+                (maxHeight - ESPACIO_CARTAS * (filas - 1)) / filas * PROPORCION_CARTA
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(ESPACIO_CARTAS),
+                modifier = Modifier
+                    .width(anchoCarta * COLUMNAS + ESPACIO_CARTAS * (COLUMNAS - 1))
+                    .sacudir(fallos)
+            ) {
+                mazo.indices.chunked(COLUMNAS).forEach { fila ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(ESPACIO_CARTAS), modifier = Modifier.fillMaxWidth()) {
+                        fila.forEach { carta ->
+                            CartaAnimal(
+                                animal = ReglasParejas.ANIMALES[mazo[carta]],
+                                bocaArriba = carta in volteadas || carta in emparejadas,
+                                emparejada = carta in emparejadas,
+                                onClick = { voltear(carta) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
             }
@@ -150,7 +168,7 @@ private fun CartaAnimal(
     val muestraCara = giro > 90f
     Box(
         modifier = modifier
-            .aspectRatio(0.78f)
+            .aspectRatio(PROPORCION_CARTA)
             .graphicsLayer {
                 rotationY = giro
                 cameraDistance = 12f * density

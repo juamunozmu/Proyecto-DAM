@@ -8,7 +8,11 @@ package com.unal.nachoquest.domain.model
  * en cada edificio emblemático. Cada capítulo entrega el ítem que abre el siguiente.
  */
 
-enum class Hablante { NACHO, OLVIDO, NARRADOR }
+/**
+ * Quién habla en una escena. El Olvido se volvió el Recuerdo al final del Acto II y desde el
+ * Acto III es aliado de Nacho; el Enredo es el personaje nuevo del Acto III.
+ */
+enum class Hablante { NACHO, OLVIDO, RECUERDO, ENREDO, NARRADOR }
 
 enum class Expresion { NORMAL, FELIZ, SORPRENDIDO, PREOCUPADO, DECIDIDO }
 
@@ -45,6 +49,26 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     LABERINTO(
         "Laberinto en la bruma",
         "La bruma no deja ver más allá de un paso. Guía a Nacho hasta el Eco que espera al otro lado del laberinto."
+    ),
+    MONTAJE(
+        "Arma la película",
+        "El Enredo cortó la película y pegó los fotogramas al azar. Tócalos en orden para que cada escena vuelva a contarse bien."
+    ),
+    TANQUES(
+        "Agua exacta",
+        "Llena, vacía y pasa agua de un tanque al otro hasta que en uno quede exactamente la cantidad que se pide."
+    ),
+    HELICE(
+        "Completa la hélice",
+        "El Enredo le quitó un lado al ADN. Ponle a cada letra su pareja (A con T, C con G) antes de que la hélice se desenrolle."
+    ),
+    VITRAL(
+        "Enciende el vitral",
+        "El Enredo apagó los vidrios del vitral. Al tocar uno cambian él y los de arriba, abajo y a los lados. Déjalos todos encendidos."
+    ),
+    RELEVOS(
+        "La carrera de relevos",
+        "Un 4×100 contra el Enredo. Toca los pies en orden para correr y pasa el testigo en la zona amarilla: entre más al final, con más impulso sale el siguiente."
     )
 }
 
@@ -80,14 +104,26 @@ data class Capitulo(
 object Historia {
 
     const val ESCENA_PROLOGO = "prologo"
-    // Epílogo del Acto I (después del capítulo 5) y epílogo final (después del capítulo 8)
+    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8) y del Acto III (después del 13)
     const val ESCENA_EPILOGO = "epilogo"
     const val ESCENA_EPILOGO_FINAL = "epilogo_final"
+    const val ESCENA_EPILOGO_ACTO3 = "epilogo_acto3"
 
     val titulosActos = mapOf(
         1 to "El Olvido de la Ciudad Blanca",
-        2 to "Los Ecos del Olvido"
+        2 to "Los Ecos del Olvido",
+        3 to "Los Hilos de la Memoria"
     )
+
+    /** Número romano del acto, para los títulos («ACTO III»). */
+    fun romano(acto: Int): String = when (acto) {
+        1 -> "I"
+        2 -> "II"
+        3 -> "III"
+        4 -> "IV"
+        5 -> "V"
+        else -> acto.toString()
+    }
 
     val capitulos = listOf(
         Capitulo(
@@ -191,6 +227,73 @@ object Historia {
             minijuego = TipoMinijuego.LABERINTO,
             acto = 2,
             escenaFinal = ESCENA_EPILOGO_FINAL
+        ),
+        // ---------- Acto III: Los Hilos de la Memoria ----------
+        Capitulo(
+            numero = 9,
+            puntoId = "edif_701",
+            retoId = "reto_cine",
+            titulo = "Fuera de Cuadro",
+            lugar = "Antigua sede de Cine y Televisión",
+            sinopsis = "De la Copa Restaurada salió el Enredo, que se llevó cinco Hilos de la Memoria. El primero está en la vieja casa de la Escuela de Cine, donde cortó la película del campus en pedacitos.",
+            itemRequeridoId = "copa_restaurada",
+            itemRecompensaId = "hilo_rojo",
+            xpRecompensa = 300,
+            minijuego = TipoMinijuego.MONTAJE,
+            acto = 3
+        ),
+        Capitulo(
+            numero = 10,
+            puntoId = "edif_408",
+            retoId = "reto_hidraulica",
+            titulo = "Agua Revuelta",
+            lugar = "Laboratorio de Hidráulica",
+            sinopsis = "El Enredo revolvió el agua de los tanques de ensayo y el Hilo Azul quedó en el fondo. Solo sube si el agua queda exacta.",
+            itemRequeridoId = "hilo_rojo",
+            itemRecompensaId = "hilo_azul",
+            xpRecompensa = 330,
+            minijuego = TipoMinijuego.TANQUES,
+            acto = 3
+        ),
+        Capitulo(
+            numero = 11,
+            puntoId = "edif_426",
+            retoId = "reto_genetica",
+            titulo = "La Doble Hélice",
+            lugar = "Instituto de Genética (IGUN)",
+            sinopsis = "El Enredo le quitó un lado al ADN de las muestras del instituto. Si la hélice se desenrolla, se lleva el Hilo Verde con ella.",
+            itemRequeridoId = "hilo_azul",
+            itemRecompensaId = "hilo_verde",
+            xpRecompensa = 360,
+            minijuego = TipoMinijuego.HELICE,
+            acto = 3
+        ),
+        Capitulo(
+            numero = 12,
+            puntoId = "edif_251",
+            retoId = "reto_capilla",
+            titulo = "El Vitral Roto",
+            lugar = "Capilla Cristo Maestro",
+            sinopsis = "El Enredo apagó el vitral de la capilla vidrio por vidrio. El Hilo Amarillo solo aparece cuando la luz vuelve a pasar por todos.",
+            itemRequeridoId = "hilo_verde",
+            itemRecompensaId = "hilo_amarillo",
+            xpRecompensa = 390,
+            minijuego = TipoMinijuego.VITRAL,
+            acto = 3
+        ),
+        Capitulo(
+            numero = 13,
+            puntoId = "edif_103",
+            retoId = "reto_polideportivo",
+            titulo = "El Último Nudo",
+            lugar = "Centro Polideportivo",
+            sinopsis = "El Enredo lleva el Hilo Morado amarrado a la cintura y te reta a una carrera de relevos. Si le ganas, te lo entrega.",
+            itemRequeridoId = "hilo_amarillo",
+            itemRecompensaId = "madeja_memoria",
+            xpRecompensa = 450,
+            minijuego = TipoMinijuego.RELEVOS,
+            acto = 3,
+            escenaFinal = ESCENA_EPILOGO_ACTO3
         )
     )
 
@@ -334,7 +437,93 @@ object Historia {
             LineaDialogo(Hablante.NARRADOR, "Desde ese día, cuando cae la tarde, sobre la Concha Acústica flota una bruma suave y dorada."),
             LineaDialogo(Hablante.NACHO, "Es el Olvido. Bueno, ahora se hace llamar el Recuerdo. Me ayuda a cuidar la memoria del campus.", Expresion.FELIZ),
             LineaDialogo(Hablante.NACHO, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día."),
-            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Desde hoy eres Guardián de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ)
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Desde hoy eres Guardián de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
+            // Gancho del Acto III
+            LineaDialogo(Hablante.NARRADOR, "Esa misma noche, la Copa Restaurada empezó a soltar hilitos de colores, como un saco de lana viejo."),
+            LineaDialogo(Hablante.NARRADOR, "Y desde algún rincón del campus, alguien se rió bajito.")
+        ),
+
+        // ---------- Acto III: Los Hilos de la Memoria ----------
+        "cap9_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "¡{jugador}! ¿Viste la Copa? Está soltando hilos de colores, como un saco de lana viejo.", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.RECUERDO, "Volvieron tantos recuerdos de golpe que algunos se anudaron entre sí... y de ese nudo nació alguien."),
+            LineaDialogo(Hablante.ENREDO, "¡Hola, hola! ¿Jugamos? Me llevé cinco hilos de la Copa. Si los quieren, ¡vengan a buscarlos!"),
+            LineaDialogo(Hablante.NACHO, "¿Y este quién es? No borra nada, pero... lo revuelve todo.", Expresion.PREOCUPADO),
+            LineaDialogo(Hablante.RECUERDO, "Es el Enredo. Escondió el primer hilo aquí, junto al estadio: la vieja casa de la Escuela de Cine, donde se aprendió a hacer películas durante casi treinta años."),
+            LineaDialogo(Hablante.ENREDO, "¡Corté la película del campus y pegué los pedacitos al revés! ¿A que no la arman?"),
+            LineaDialogo(Hablante.NACHO, "Pon los fotogramas en orden, {jugador}. Una película solo tiene sentido si cada imagen va donde toca.", Expresion.DECIDIDO)
+        ),
+        "cap9_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El proyector se enciende. La película del campus corre de principio a fin y, por un instante, todo el edificio huele a crispetas."),
+            LineaDialogo(Hablante.ENREDO, "¡Ey, la armaron rapidísimo! Bueno, bueno... tomen su hilo. ¡Pero el siguiente está mojado!"),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Rojo! El primero de los cinco. Está tibio, como una sala de cine en pleno estreno.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "Escuchen... agua que corre por donde no debería. El Enredo se fue al Laboratorio de Hidráulica."),
+            LineaDialogo(Hablante.NACHO, "¡Pues para allá vamos, {jugador}! Ojalá no nos toque nadar.", Expresion.DECIDIDO)
+        ),
+        "cap10_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Laboratorio de Hidráulica. Aquí los ingenieros prueban con modelos cómo se porta el agua antes de construir un puente, una represa o un acueducto."),
+            LineaDialogo(Hablante.ENREDO, "¡Splash! Revolví el agua de todos los tanques. ¿Cuánta hay en cada uno? ¡Ni idea!"),
+            LineaDialogo(Hablante.RECUERDO, "El Hilo Azul está en el fondo de un tanque. Solo sube si el agua queda exacta, ni una gota más ni una menos."),
+            LineaDialogo(Hablante.NACHO, "Llena, vacía y pasa agua de un tanque al otro hasta dejar justo lo que se pide. Piensa antes de echar agua, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap10_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El agua se aquieta. Justo en la marca exacta, algo azul sube flotando hasta la superficie."),
+            LineaDialogo(Hablante.ENREDO, "¡Ustedes sí saben medir! Bueno... el siguiente hilo lo escondí donde todo viene de a pares."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Azul! Ya van dos de cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "¿De a pares...? La A con la T, la C con la G. Está hablando del ADN: se fue al Instituto de Genética."),
+            LineaDialogo(Hablante.NACHO, "¡Si el Enredo se pone a revolver ADN, quién sabe qué sale! Vamos, {jugador}.", Expresion.SORPRENDIDO)
+        ),
+        "cap11_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Instituto de Genética. Aquí se estudia el ADN y se hacen pruebas para saber quién es familia de quién."),
+            LineaDialogo(Hablante.ENREDO, "¡Miren esta escalera retorcida tan bonita! Le quité un lado. Así se ve más... liviana, ¿no?"),
+            LineaDialogo(Hablante.RECUERDO, "Sin su otra mitad, la doble hélice se desenrolla. Y se lleva el Hilo Verde con ella."),
+            LineaDialogo(Hablante.NACHO, "Cada letra tiene su pareja: la A va con la T y la C con la G. Completa la cadena antes de que se desenrolle, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap11_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La doble hélice vuelve a girar, tranquila. Entre dos de sus peldaños brilla un hilo verde."),
+            LineaDialogo(Hablante.ENREDO, "Uy, qué juiciosos. ¡Pero el próximo escondite es el más bonito! Puros colores... y vidrios."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Verde! Ya van tres.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "Vidrios de colores... Eso es un vitral. La capilla del campus tiene unos preciosos."),
+            LineaDialogo(Hablante.NACHO, "Si el Enredo rompe ese vitral, no se lo perdono. ¡A la capilla, {jugador}!", Expresion.PREOCUPADO)
+        ),
+        "cap12_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Capilla Cristo Maestro, de 1953. Su nombre viene del vitral del pintor francés Paul Boné, que muestra a Cristo enseñando."),
+            LineaDialogo(Hablante.ENREDO, "¡Qué oscurito tan rico! Le apagué los vidrios uno por uno. Y los enredé: si tocas uno, cambian también sus vecinos."),
+            LineaDialogo(Hablante.RECUERDO, "Un vitral sin luz es solo plomo y vidrio gris. Y el Hilo Amarillo se esconde donde no llega el sol."),
+            LineaDialogo(Hablante.NACHO, "Toca los vidrios hasta que todos brillen, {jugador}. Piensa bien: el mismo toque que prende uno puede apagar al de al lado.", Expresion.DECIDIDO)
+        ),
+        "cap12_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La luz de la tarde atraviesa el vitral y pinta el piso de colores. En el rayo más dorado flota un hilo amarillo."),
+            LineaDialogo(Hablante.ENREDO, "¡Ay, qué brillo! Me encandilé... Bueno, me queda un solo hilo. Y ese no lo suelto: lo llevo amarrado a mí."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Amarillo! Ya van cuatro de cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.RECUERDO, "El último lo tiene él. Lo oí correr hacia el Polideportivo: quiere que lo alcancemos."),
+            LineaDialogo(Hablante.NACHO, "Pues a correr se dijo. ¡Al Polideportivo, {jugador}!", Expresion.DECIDIDO)
+        ),
+        "cap13_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Centro Polideportivo. Canchas, gimnasio y gente entrenando a toda hora: aquí nadie se queda quieto."),
+            LineaDialogo(Hablante.ENREDO, "¡Llegaron! El Hilo Morado lo tengo amarrado a la cintura. Si lo quieren, ¡gánenme una carrera de relevos!"),
+            LineaDialogo(Hablante.RECUERDO, "Cuatro tramos de cien metros. El testigo se pasa en la zona de entrega; si se cae, hay que recogerlo."),
+            LineaDialogo(Hablante.NACHO, "Alterna los pies para correr y pasa el testigo al final de la zona, {jugador}. ¡Vamos a desenredar esto!", Expresion.DECIDIDO)
+        ),
+        "cap13_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El testigo cruza la meta primero. El Enredo se deja caer en la pista, sin aire... y se ríe."),
+            LineaDialogo(Hablante.ENREDO, "¡Qué carrera! Nunca nadie había jugado conmigo tanto rato. Tomen, se lo ganaron."),
+            LineaDialogo(Hablante.NACHO, "¡El Hilo Morado! Ya están los cinco.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Rojo, azul, verde, amarillo y morado. Los cinco hilos se trenzan solos y forman una madeja que brilla como la Copa."),
+            LineaDialogo(Hablante.ENREDO, "¿Entonces... ya se acabó el juego? Yo solo quería que alguien me persiguiera por el campus."),
+            LineaDialogo(Hablante.RECUERDO, "Yo también estuve sola, enredada en mis propios recuerdos. Quédate con nosotros: siempre hay algo que ordenar."),
+            LineaDialogo(Hablante.NACHO, "¡Y algo que jugar! Bienvenido, Enredo.", Expresion.FELIZ)
+        ),
+        ESCENA_EPILOGO_ACTO3 to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Desde ese día, la Madeja de la Memoria descansa junto a la Copa Restaurada."),
+            LineaDialogo(Hablante.NACHO, "El Enredo ya no revuelve recuerdos: ahora los teje. Cada historia del campus tiene su propio hilo.", Expresion.FELIZ),
+            LineaDialogo(Hablante.ENREDO, "¡Y cuando alguien se pierde en el campus, le tiro un hilito para que encuentre el camino!"),
+            LineaDialogo(Hablante.RECUERDO, "La película, el agua, el ADN, el vitral y la carrera. Ninguno de esos recuerdos se va a perder."),
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Ahora eres Tejedor de la Memoria de la Ciudad Blanca. ¡Qué nota!", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Todavía quedan rincones por descubrir, preguntas por responder y una trivia nueva cada día."),
+            // Gancho del Acto IV (los edificios de trámites y oficinas)
+            LineaDialogo(Hablante.NARRADOR, "Pero esa misma noche, en las oficinas del campus, un sello empezó a estampar solo: «PENDIENTE», «PENDIENTE», «PENDIENTE»..."),
+            LineaDialogo(Hablante.NARRADOR, "Y a la mañana siguiente, todos los formularios de la universidad tenían una casilla nueva que nadie sabía llenar.")
         )
     )
 

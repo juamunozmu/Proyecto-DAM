@@ -293,6 +293,136 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_concha",
                 coleccionableRecompensaId = "col_afiche"
             )
+            // ---------- Acto III ----------
+            // Datos verificados en noviembre de 2026: el traslado de la escuela (Periódico UNAL,
+            // MinEducación), los 24 fotogramas y la claqueta, los Lumière (28 dic. 1895) y la
+            // nominación de El abrazo de la serpiente (Óscar 2016)
+            "reto_cine" -> RetoQuiz(
+                id = "reto_cine",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 9: Fuera de Cuadro",
+                descripcion = "Lo que hay detrás de cada película.",
+                preguntas = listOf(
+                    Pregunta("cine_1", "¿Dónde funcionó cerca de 30 años la Escuela de Cine y Televisión de la UNAL, antes de pasar al nuevo edificio de Artes?",
+                        listOf("En los camerinos del Estadio Alfonso López", "En el sótano de la Biblioteca Central", "En el Auditorio León de Greiff", "En el Museo de Arte"), 0),
+                    Pregunta("cine_2", "¿Cuántos fotogramas por segundo se volvieron el estándar del cine cuando llegó el sonido?",
+                        listOf("24", "12", "60", "100"), 0),
+                    Pregunta("cine_3", "¿Para qué sirve la claqueta que se cierra antes de cada toma?",
+                        listOf("Para sincronizar la imagen con el sonido e identificar la toma", "Para pedirle silencio al público", "Para encender las luces del set", "Para avisar que se acabó el rollo"), 0),
+                    Pregunta("cine_4", "¿Qué hermanos hicieron en París, en 1895, la primera proyección pública de cine?",
+                        listOf("Los hermanos Lumière", "Los hermanos Wright", "Los hermanos Grimm", "Los hermanos Marx"), 0),
+                    Pregunta("cine_5", "¿Qué película de Ciro Guerra le dio a Colombia su primera nominación al Óscar a mejor película de habla no inglesa?",
+                        listOf("El abrazo de la serpiente", "Pájaros de verano", "La vendedora de rosas", "María llena eres de gracia"), 0)
+                ),
+                recompensaXp = 300,
+                recompensaMonedas = 65,
+                itemRecompensaId = "hilo_rojo",
+                insigniaRecompensaId = "insignia_cine",
+                coleccionableRecompensaId = "col_rollo"
+            )
+            // Datos verificados en noviembre de 2026: Chingaza aporta cerca del 70 % del agua de
+            // Bogotá (Acueducto); el agua hierve a menos de 100 °C en la altura (menor presión)
+            "reto_hidraulica" -> RetoQuiz(
+                id = "reto_hidraulica",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 10: Agua Revuelta",
+                descripcion = "El agua, medida gota a gota.",
+                preguntas = listOf(
+                    Pregunta("hidraulica_1", "¿Para qué sirve construir un modelo a escala en un laboratorio de hidráulica?",
+                        listOf("Para probar cómo se portará el agua en un río, una presa o un puerto antes de construirlos", "Para guardar agua lluvia", "Para criar peces", "Para decorar el laboratorio"), 0),
+                    Pregunta("hidraulica_2", "¿Qué sistema, en los páramos del oriente, aporta cerca del 70 % del agua de Bogotá?",
+                        listOf("El Sistema Chingaza", "El río Bogotá", "La laguna de Tota", "El embalse del Guavio"), 0),
+                    Pregunta("hidraulica_3", "¿Qué sabio griego descubrió que un cuerpo sumergido recibe un empuje igual al peso del agua que desaloja?",
+                        listOf("Arquímedes", "Pitágoras", "Aristóteles", "Euclides"), 0),
+                    Pregunta("hidraulica_4", "¿Por qué en Bogotá el agua hierve a menos de 100 °C?",
+                        listOf("Porque a esa altura la presión del aire es menor", "Porque el agua de Bogotá es más pura", "Porque hace frío", "Porque las ollas son de aluminio"), 0),
+                    Pregunta("hidraulica_5", "¿Cuál es el río principal de Colombia, que la recorre de sur a norte hasta el mar Caribe?",
+                        listOf("El Magdalena", "El Amazonas", "El Orinoco", "El Atrato"), 0)
+                ),
+                recompensaXp = 330,
+                recompensaMonedas = 70,
+                itemRecompensaId = "hilo_azul",
+                insigniaRecompensaId = "insignia_hidraulica",
+                coleccionableRecompensaId = "col_molinete"
+            )
+            // Datos verificados en noviembre de 2026: el Grupo de Genética de Poblaciones e
+            // Identificación del IGUN hace pruebas de filiación con el ICBF; Watson y Crick (1953)
+            // y la Fotografía 51 del grupo de Rosalind Franklin
+            "reto_genetica" -> RetoQuiz(
+                id = "reto_genetica",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 11: La Doble Hélice",
+                descripcion = "Las letras con las que está escrita la vida.",
+                preguntas = listOf(
+                    Pregunta("genetica_1", "¿Qué pruebas hace el Instituto de Genética de la UNAL, de la mano del ICBF, para saber quién es el papá o la mamá de alguien?",
+                        listOf("Pruebas de paternidad con ADN", "Exámenes de la vista", "Pruebas de embarazo", "Radiografías"), 0),
+                    Pregunta("genetica_2", "En el ADN, ¿con qué letra se empareja la adenina (A)?",
+                        listOf("Con la timina (T)", "Con la guanina (G)", "Con la citosina (C)", "Con otra adenina (A)"), 0),
+                    Pregunta("genetica_3", "¿Quiénes publicaron en 1953 el modelo de la doble hélice del ADN?",
+                        listOf("James Watson y Francis Crick", "Marie y Pierre Curie", "Charles Darwin y Alfred Wallace", "Louis Pasteur y Robert Koch"), 0),
+                    Pregunta("genetica_4", "¿Qué científica dirigía el trabajo que produjo la «Fotografía 51», clave para descubrir la forma del ADN?",
+                        listOf("Rosalind Franklin", "Marie Curie", "Ada Lovelace", "Jane Goodall"), 0),
+                    Pregunta("genetica_5", "¿Con qué planta hizo Gregor Mendel sus experimentos sobre la herencia?",
+                        listOf("Con arvejas", "Con rosas", "Con maíz", "Con girasoles"), 0)
+                ),
+                recompensaXp = 360,
+                recompensaMonedas = 75,
+                itemRecompensaId = "hilo_verde",
+                insigniaRecompensaId = "insignia_genetica",
+                coleccionableRecompensaId = "col_arveja"
+            )
+            // Datos verificados en noviembre de 2026 (El Tiempo, 25 de mayo de 2023): se inauguró en
+            // octubre de 1953; el vitral de Paul Boné muestra a Cristo enseñando y le da el nombre;
+            // Camilo Torres fue capellán en los años sesenta; Miguel Sopó Duque fundió en bronce
+            // las catorce estaciones del viacrucis
+            "reto_capilla" -> RetoQuiz(
+                id = "reto_capilla",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 12: El Vitral Roto",
+                descripcion = "La luz que entra de colores.",
+                preguntas = listOf(
+                    Pregunta("capilla_1", "¿En qué año se inauguró la Capilla Cristo Maestro de la Ciudad Universitaria?",
+                        listOf("En 1953", "En 1867", "En 1999", "En 1910"), 0),
+                    Pregunta("capilla_2", "¿De dónde le viene el nombre a la Capilla Cristo Maestro?",
+                        listOf("De su vitral principal, que muestra a Cristo enseñando", "De un profesor llamado Cristo", "De la calle donde queda", "De una canción de la universidad"), 0),
+                    Pregunta("capilla_3", "¿Qué sacerdote y sociólogo fue capellán de la Universidad Nacional en los años sesenta?",
+                        listOf("Camilo Torres Restrepo", "José Celestino Mutis", "Francisco José de Caldas", "Antonio Nariño"), 0),
+                    Pregunta("capilla_4", "¿En qué material están fundidas las catorce estaciones del viacrucis de la capilla?",
+                        listOf("En bronce", "En oro", "En plástico", "En cera"), 0),
+                    Pregunta("capilla_5", "En un vitral tradicional, ¿con qué metal se unen los pedazos de vidrio de colores?",
+                        listOf("Con plomo", "Con oro", "Con aluminio", "Con cobre de cables"), 0)
+                ),
+                recompensaXp = 390,
+                recompensaMonedas = 80,
+                itemRecompensaId = "hilo_amarillo",
+                insigniaRecompensaId = "insignia_capilla",
+                coleccionableRecompensaId = "col_vidrio"
+            )
+            // Datos verificados en noviembre de 2026 (reglamento de World Athletics): desde 2018 la
+            // zona de entrega del 4×100 mide 30 m, y entregar el testigo fuera de ella descalifica
+            "reto_polideportivo" -> RetoQuiz(
+                id = "reto_polideportivo",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 13: El Último Nudo",
+                descripcion = "Una carrera se gana entre todos.",
+                preguntas = listOf(
+                    Pregunta("poli_1", "¿Cuántos corredores forman un equipo de relevos 4×100?",
+                        listOf("Cuatro", "Cien", "Dos", "Ocho"), 0),
+                    Pregunta("poli_2", "¿Cómo se llama el tubo que se pasan los corredores en un relevo?",
+                        listOf("El testigo", "El bastón de mando", "La antorcha", "El cronómetro"), 0),
+                    Pregunta("poli_3", "En el relevo 4×100, ¿cuánto mide hoy la zona donde se entrega el testigo?",
+                        listOf("30 metros", "5 metros", "100 metros", "1 metro"), 0),
+                    Pregunta("poli_4", "¿Qué le pasa a un equipo de relevos si entrega el testigo fuera de la zona?",
+                        listOf("Queda descalificado", "Gana un punto extra", "Vuelve a empezar desde cero", "No pasa nada"), 0),
+                    Pregunta("poli_5", "¿Cuántos metros corre en total un equipo en el relevo 4×400?",
+                        listOf("1600 metros", "400 metros", "800 metros", "4400 metros"), 0)
+                ),
+                recompensaXp = 450,
+                recompensaMonedas = 90,
+                itemRecompensaId = "madeja_memoria",
+                insigniaRecompensaId = "insignia_relevos",
+                coleccionableRecompensaId = "col_testigo"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,
