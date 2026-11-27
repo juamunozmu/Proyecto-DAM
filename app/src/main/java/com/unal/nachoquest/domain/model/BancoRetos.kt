@@ -485,6 +485,57 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_archivo",
                 coleccionableRecompensaId = "col_pluma"
             )
+            // Las cuatro primeras eran del reto de lugar de la Hemeroteca, que pasó a ser capítulo
+            "reto_hemeroteca" -> RetoQuiz(
+                id = "reto_hemeroteca",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 16: Noticias sin Fecha",
+                descripcion = "Lo que pasó, contado el mismo día.",
+                preguntas = listOf(
+                    Pregunta("hemeroteca_1", "¿Qué guarda principalmente una hemeroteca?",
+                        listOf("Periódicos y revistas", "Plantas secas", "Fósiles", "Instrumentos musicales"), 0),
+                    Pregunta("hemeroteca_2", "¿Qué cargo ocupó Carlos Lleras Restrepo, que da nombre a la Hemeroteca?",
+                        listOf("Presidente de Colombia", "Rector de la universidad", "Alcalde de Medellín", "Arzobispo de Bogotá"), 0),
+                    Pregunta("hemeroteca_3", "¿En qué periodo gobernó Carlos Lleras Restrepo?",
+                        listOf("1966-1970", "1946-1950", "1982-1986", "1994-1998"), 0),
+                    Pregunta("hemeroteca_4", "Si buscas la noticia original del Bogotazo de 1948, ¿dónde la encuentras?",
+                        listOf("En la Hemeroteca", "En el Herbario", "En el Observatorio", "En el Conservatorio"), 0),
+                    Pregunta("hemeroteca_5", "¿Cómo se llaman las publicaciones que salen cada cierto tiempo con el mismo nombre, como los diarios y las revistas?",
+                        listOf("Publicaciones seriadas", "Publicaciones únicas", "Manuscritos", "Enciclopedias"), 0)
+                ),
+                recompensaXp = 540,
+                recompensaMonedas = 105,
+                itemRecompensaId = "folio_hemeroteca",
+                insigniaRecompensaId = "insignia_hemeroteca",
+                coleccionableRecompensaId = "col_hemeroteca"
+            )
+            // Datos verificados en noviembre de 2026 (Facultad de Ingeniería): la Secretaría de
+            // Facultad atiende en el Edificio 408 - CADE; las solicitudes estudiantiles se radican
+            // en el primer piso, en la ventanilla del área curricular; las certificaciones
+            // académicas se piden por el aplicativo Ticket FIBOG
+            "reto_cade" -> RetoQuiz(
+                id = "reto_cade",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 17: La Fila Eterna",
+                descripcion = "Una ventanilla para cada área.",
+                preguntas = listOf(
+                    Pregunta("cade_1", "En el CADE de Ingeniería, ¿dónde se radican las solicitudes de los estudiantes?",
+                        listOf("En el primer piso, en la ventanilla de su área curricular", "En la cafetería", "En el Estadio Alfonso López", "En la Biblioteca Central"), 0),
+                    Pregunta("cade_2", "¿Qué oficina de la Facultad de Ingeniería funciona en el CADE?",
+                        listOf("La Secretaría de Facultad", "El Museo de Arte", "La Hemeroteca", "El Observatorio Astronómico"), 0),
+                    Pregunta("cade_3", "¿Qué laboratorio queda justo al lado del CADE de Ingeniería?",
+                        listOf("El Laboratorio de Hidráulica", "El Laboratorio de Genética", "El Herbario", "El planetario"), 0),
+                    Pregunta("cade_4", "En la Facultad de Ingeniería, ¿cómo se piden las certificaciones académicas?",
+                        listOf("En línea, por el aplicativo Ticket FIBOG", "Por carta en el estadio", "Llamando a la radio", "Solo en persona en la rectoría"), 0),
+                    Pregunta("cade_5", "En una fila bien atendida, ¿a quién se atiende primero?",
+                        listOf("Al que llegó primero", "Al que llegó de último", "Al más alto", "Al que grite más duro"), 0)
+                ),
+                recompensaXp = 570,
+                recompensaMonedas = 110,
+                itemRecompensaId = "folio_cade",
+                insigniaRecompensaId = "insignia_cade",
+                coleccionableRecompensaId = "col_turno"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

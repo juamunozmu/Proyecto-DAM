@@ -204,6 +204,30 @@ object CatalogoItems {
             desbloqueaPuntoId = "edif_571",
             nombrePuntoDesbloqueado = "Hemeroteca Nacional Universitaria",
             requisitoTexto = "Encuentra los folios en los estantes del Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "folio_hemeroteca",
+            nombre = "Folio 3 del Expediente",
+            descripcion = "La tercera hoja del Expediente de la Memoria. Estaba doblada en cuatro dentro del periódico más viejo de la Hemeroteca. Lleva al CADE de Ingeniería.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            desbloqueaPuntoId = "edif_408A",
+            nombrePuntoDesbloqueado = "CADE de Ingeniería",
+            requisitoTexto = "Devuélvele la fecha a cada titular en la Hemeroteca"
+        ),
+        ItemInventario(
+            id = "folio_cade",
+            nombre = "Folio 4 del Expediente",
+            descripcion = "La cuarta hoja del Expediente de la Memoria, debajo de la pila de solicitudes del CADE. Con ella están todos los folios: solo falta la firma, en la Unidad Camilo Torres.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            desbloqueaPuntoId = "edif_862",
+            nombrePuntoDesbloqueado = "Unidad Camilo Torres",
+            requisitoTexto = "Pasa la pila de solicitudes a su ventanilla en el CADE de Ingeniería"
         )
     )
 
@@ -357,6 +381,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_500B",
             nombreLugarOrigen = "Archivo Central e Histórico",
             requisitoTexto = "Supera el reto del Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "insignia_hemeroteca",
+            nombre = "Lector de Prensa",
+            descripcion = "Para quienes saben que una noticia sin fecha es solo un rumor.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "📰",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Supera el reto de la Hemeroteca Nacional Universitaria"
+        ),
+        ItemInventario(
+            id = "insignia_cade",
+            nombre = "Paciencia de Ventanilla",
+            descripcion = "Para quienes despachan una fila entera, carpeta por carpeta, sin doblar ninguna.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🎫",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            requisitoTexto = "Supera el reto del CADE de Ingeniería"
         )
     )
 
@@ -510,6 +554,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_500B",
             nombreLugarOrigen = "Archivo Central e Histórico",
             requisitoTexto = "Coleccionable encontrado en el Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "col_hemeroteca",
+            nombre = "Periódico Amarillento",
+            descripcion = "Un periódico viejo, con el papel amarillo por los años. En la Hemeroteca se guardan miles como este para que cualquiera pueda leer lo que pasó.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🗞️",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Coleccionable encontrado en la Hemeroteca Nacional Universitaria"
+        ),
+        ItemInventario(
+            id = "col_turno",
+            nombre = "Ficha de Turno",
+            descripcion = "Una ficha con un número de turno. En una fila, el primero que llega es el primero que atienden.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎟️",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            requisitoTexto = "Coleccionable encontrado en el CADE de Ingeniería"
         )
     )
 

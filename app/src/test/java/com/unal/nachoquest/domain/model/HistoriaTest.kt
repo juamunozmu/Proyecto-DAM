@@ -82,6 +82,15 @@ class HistoriaTest {
     }
 
     @Test
+    fun `los folios del acto IV abren cada capítulo en orden`() {
+        val acto4 = Historia.capitulosDelActo(4)
+        assertEquals(listOf("edif_861", "edif_500B", "edif_571", "edif_408A"), acto4.take(4).map { it.puntoId })
+        acto4.zipWithNext().forEach { (anterior, siguiente) ->
+            assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
+        }
+    }
+
+    @Test
     fun `el Sello y el Búho aparecen en el acto IV`() {
         val escenas = Historia.capitulosDelActo(4).flatMap {
             Historia.escena(it.escenaIntro, "Ana") + Historia.escena(it.escenaOutro, "Ana")

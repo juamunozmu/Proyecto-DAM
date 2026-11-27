@@ -52,20 +52,6 @@ object RetosLugares {
             )
         ),
         RetoLugar(
-            puntoId = "edif_571",
-            nombre = "Hemeroteca Nacional Universitaria",
-            preguntas = listOf(
-                p("hemeroteca_1", "¿Qué guarda principalmente una hemeroteca?",
-                    "Periódicos y revistas", "Plantas secas", "Fósiles", "Instrumentos musicales"),
-                p("hemeroteca_2", "¿Qué cargo ocupó Carlos Lleras Restrepo, que da nombre a la Hemeroteca?",
-                    "Presidente de Colombia", "Rector de la universidad", "Alcalde de Medellín", "Arzobispo de Bogotá"),
-                p("hemeroteca_3", "¿En qué periodo gobernó Carlos Lleras Restrepo?",
-                    "1966-1970", "1946-1950", "1982-1986", "1994-1998"),
-                p("hemeroteca_4", "Si buscas la noticia original del Bogotazo de 1948, ¿dónde la encuentras?",
-                    "En la Hemeroteca", "En el Herbario", "En el Observatorio", "En el Conservatorio")
-            )
-        ),
-        RetoLugar(
             puntoId = "edif_413",
             nombre = "Observatorio Astronómico",
             preguntas = listOf(

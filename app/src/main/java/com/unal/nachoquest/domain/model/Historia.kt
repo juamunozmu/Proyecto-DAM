@@ -78,6 +78,14 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     ARCHIVO(
         "Busca el folio",
         "Las cajas del Archivo están en orden de número. Abre una y sabrás si el folio está antes o después. Encuéntralo abriendo las menos posibles."
+    ),
+    FECHAS(
+        "Fechas en trámite",
+        "El Sello tapó la fecha de los periódicos. Toca un titular y luego el año en que salió la noticia."
+    ),
+    PILA(
+        "La pila de solicitudes",
+        "Pasa todas las carpetas a la ventanilla 3. Se mueve una a la vez, y nunca una grande sobre una pequeña."
     )
 }
 
@@ -330,6 +338,32 @@ object Historia {
             itemRecompensaId = "folio_archivo",
             xpRecompensa = 510,
             minijuego = TipoMinijuego.ARCHIVO,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 16,
+            puntoId = "edif_571",
+            retoId = "reto_hemeroteca",
+            titulo = "Noticias sin Fecha",
+            lugar = "Hemeroteca Nacional Universitaria",
+            sinopsis = "El Sello tapó con «PENDIENTE» la fecha de los periódicos. Una noticia sin fecha no es memoria: es un rumor.",
+            itemRequeridoId = "folio_archivo",
+            itemRecompensaId = "folio_hemeroteca",
+            xpRecompensa = 540,
+            minijuego = TipoMinijuego.FECHAS,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 17,
+            puntoId = "edif_408A",
+            retoId = "reto_cade",
+            titulo = "La Fila Eterna",
+            lugar = "CADE de Ingeniería",
+            sinopsis = "El Sello amontonó todas las solicitudes de los estudiantes en una sola ventanilla. Si nadie las atiende, nadie se gradúa... y nadie se va.",
+            itemRequeridoId = "folio_hemeroteca",
+            itemRecompensaId = "folio_cade",
+            xpRecompensa = 570,
+            minijuego = TipoMinijuego.PILA,
             acto = 4
         )
     )
@@ -597,6 +631,37 @@ object Historia {
             LineaDialogo(Hablante.BUHO, "Terminar no es olvidar, pequeño Sello. Un recuerdo cerrado se guarda para siempre; uno pendiente se pierde en un cajón."),
             LineaDialogo(Hablante.RECUERDO, "Los otros folios están entre periódicos viejos. Huele a tinta de imprenta... a la Hemeroteca."),
             LineaDialogo(Hablante.NACHO, "Pues a la Hemeroteca, {jugador}. ¡Con búho y todo!", Expresion.FELIZ)
+        ),
+        "cap16_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Hemeroteca Nacional Universitaria Carlos Lleras Restrepo. Aquí se guardan periódicos y revistas de hace muchísimos años."),
+            LineaDialogo(Hablante.NARRADOR, "En cada periódico, donde debería ir la fecha, hay un sello rojo: PENDIENTE."),
+            LineaDialogo(Hablante.SELLO, "¡Si las noticias no tienen fecha, nunca se vuelven viejas! ¡Así nada queda en el pasado!"),
+            LineaDialogo(Hablante.BUHO, "Uuh. Una noticia sin fecha no es memoria, pequeño Sello: es un rumor. Nadie sabe si pasó ayer o hace un siglo."),
+            LineaDialogo(Hablante.NACHO, "Toca cada titular y devuélvele su año, {jugador}. ¡Seguro te sabes varios de los capítulos anteriores!", Expresion.DECIDIDO)
+        ),
+        "cap16_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Las fechas vuelven a su lugar. Dentro del periódico más viejo, doblado en cuatro, aparece el tercer folio del Expediente."),
+            LineaDialogo(Hablante.SELLO, "Esa noticia del estadio... es de 1938. Ya pasó hace mucho, y todavía la recuerdan."),
+            LineaDialogo(Hablante.BUHO, "Exacto. Terminó hace mucho y sigue aquí. Eso es lo que hace la memoria."),
+            LineaDialogo(Hablante.ENREDO, "¡Ey, vi volar una hoja con sello de lacre! Iba hacia Ingeniería, a las ventanillas del CADE."),
+            LineaDialogo(Hablante.RECUERDO, "El CADE, junto al Laboratorio de Hidráulica. Allí los estudiantes de Ingeniería radican sus solicitudes."),
+            LineaDialogo(Hablante.NACHO, "¡Ya van tres folios! Al CADE, {jugador}.", Expresion.FELIZ)
+        ),
+        "cap17_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El CADE de Ingeniería. En el primer piso, cada área tiene su ventanilla para radicar solicitudes, y arriba está la Secretaría de la Facultad."),
+            LineaDialogo(Hablante.NARRADOR, "Pero hoy todas las carpetas están amontonadas en la primera ventanilla, y la fila sale hasta la calle."),
+            LineaDialogo(Hablante.SELLO, "¡Si nadie atiende las solicitudes, nadie se gradúa! ¡Y si nadie se gradúa, nadie se va del campus!"),
+            LineaDialogo(Hablante.RECUERDO, "Así que eso es lo que te asusta: que la gente se vaya."),
+            LineaDialogo(Hablante.BUHO, "Pasa las carpetas a la tercera ventanilla, {jugador}. Una a la vez, y nunca una grande encima de una pequeña, que se dobla."),
+            LineaDialogo(Hablante.NACHO, "Paciencia de ventanilla, {jugador}. ¡Tú puedes!", Expresion.DECIDIDO)
+        ),
+        "cap17_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La última carpeta llega a su ventanilla. La fila avanza, y debajo de la pila aparece el cuarto folio del Expediente."),
+            LineaDialogo(Hablante.SELLO, "Cada semestre se van... Se gradúan, se despiden y el campus se queda con sus pupitres vacíos."),
+            LineaDialogo(Hablante.BUHO, "Y cada semestre llegan otros. Los que se van dejan su huella aquí: en el archivo, en los periódicos, en los edificios. Nadie se va del todo si alguien guarda su memoria."),
+            LineaDialogo(Hablante.SELLO, "¿Y quién la guarda?"),
+            LineaDialogo(Hablante.BUHO, "Eso lo dice la casilla. Ya tenemos los cuatro folios: solo falta firmar. Nos vemos en la Unidad Camilo Torres."),
+            LineaDialogo(Hablante.NACHO, "¡El último paso, {jugador}! Vamos a cerrar el Expediente de la Memoria.", Expresion.FELIZ)
         )
     )
 

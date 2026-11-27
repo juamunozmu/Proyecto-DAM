@@ -81,6 +81,67 @@ class ReglasActoIVTest {
         }
     }
 
+    // ---------- Fechas (capítulo 16) ----------
+
+    @Test
+    fun `cada periódico tiene cuatro titulares con años distintos`() {
+        assertEquals(3, ReglasFechas.RONDAS.size)
+        ReglasFechas.RONDAS.forEach { ronda ->
+            assertEquals(4, ronda.size)
+            assertEquals(ronda.size, ronda.map { it.anio }.toSet().size)
+            assertEquals(ronda.size, ronda.map { it.texto }.toSet().size)
+        }
+        val titular = ReglasFechas.RONDAS.first().first()
+        assertTrue(ReglasFechas.esCorrecta(titular, titular.anio))
+        assertFalse(ReglasFechas.esCorrecta(titular, titular.anio + 1))
+        assertEquals(3, ReglasFechas.estrellas(1))
+        assertEquals(1, ReglasFechas.estrellas(9))
+    }
+
+    // ---------- Pila (capítulo 17) ----------
+
+    @Test
+    fun `una carpeta grande nunca va sobre una pequeña`() {
+        val inicio = ReglasPila.inicial(3)
+        assertEquals(listOf(listOf(3, 2, 1), emptyList(), emptyList()), inicio)
+        val uno = ReglasPila.mover(inicio, Movimiento(0, 2))
+        assertEquals(listOf(listOf(3, 2), emptyList(), listOf(1)), uno)
+        // La 2 no puede ir sobre la 1
+        assertFalse(ReglasPila.puedeMover(uno, Movimiento(0, 2)))
+        assertEquals(uno, ReglasPila.mover(uno, Movimiento(0, 2)))
+        // Desde una ventanilla vacía no sale nada
+        assertFalse(ReglasPila.puedeMover(uno, Movimiento(1, 0)))
+    }
+
+    @Test
+    fun `desde el inicio la solución es el mínimo y resuelve la pila`() {
+        ReglasPila.CARPETAS_POR_NIVEL.forEach { carpetas ->
+            val solucion = ReglasPila.solucion(ReglasPila.inicial(carpetas))
+            assertEquals(ReglasPila.minimo(carpetas), solucion.size)
+            val final = solucion.fold(ReglasPila.inicial(carpetas)) { v, mov ->
+                assertTrue(ReglasPila.puedeMover(v, mov))
+                ReglasPila.mover(v, mov)
+            }
+            assertTrue(ReglasPila.resuelto(final, carpetas))
+        }
+    }
+
+    @Test
+    fun `la pista resuelve desde cualquier punto sin pasarse del mínimo inicial`() {
+        val carpetas = 4
+        var v = ReglasPila.inicial(carpetas)
+        // Unos movimientos cualquiera (válidos) antes de pedir ayuda
+        listOf(Movimiento(0, 1), Movimiento(0, 2), Movimiento(1, 2), Movimiento(0, 1)).forEach { v = ReglasPila.mover(v, it) }
+        val solucion = ReglasPila.solucion(v)
+        val final = solucion.fold(v) { estado, mov ->
+            assertTrue(ReglasPila.puedeMover(estado, mov))
+            ReglasPila.mover(estado, mov)
+        }
+        assertTrue(ReglasPila.resuelto(final, carpetas))
+        assertTrue(solucion.size <= ReglasPila.minimo(carpetas))
+        assertTrue(ReglasPila.solucion(final).isEmpty())
+    }
+
     @Test
     fun `menos aperturas de más dan más estrellas en el archivo`() {
         assertEquals(3, ReglasArchivo.estrellas(0))

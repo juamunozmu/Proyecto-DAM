@@ -163,6 +163,8 @@ fun PantallaMinijuego(
                     TipoMinijuego.RELEVOS -> MinijuegoRelevos(pistas, alTerminar)
                     TipoMinijuego.TRAMITES -> MinijuegoTramites(pistas, alTerminar)
                     TipoMinijuego.ARCHIVO -> MinijuegoArchivo(pistas, alTerminar)
+                    TipoMinijuego.FECHAS -> MinijuegoFechas(pistas, alTerminar)
+                    TipoMinijuego.PILA -> MinijuegoPila(pistas, alTerminar)
                 }
             }
         }
@@ -205,6 +207,8 @@ fun PantallaMinijuego(
                                 TipoMinijuego.RELEVOS -> "¡Carrera ganada!"
                                 TipoMinijuego.TRAMITES -> "¡Trámites al día!"
                                 TipoMinijuego.ARCHIVO -> "¡Folios encontrados!"
+                                TipoMinijuego.FECHAS -> "¡Noticias con fecha!"
+                                TipoMinijuego.PILA -> "¡Fila despachada!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,
