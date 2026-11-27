@@ -142,6 +142,33 @@ class ReglasActoIVTest {
         assertTrue(ReglasPila.solucion(final).isEmpty())
     }
 
+    // ---------- Expediente (capítulo 18) ----------
+
+    @Test
+    fun `cada sello llega más rápido y se seca antes`() {
+        val intervalos = (0 until ReglasExpediente.SELLOS).map { ReglasExpediente.intervalo(it) }
+        val duraciones = (0 until ReglasExpediente.SELLOS).map { ReglasExpediente.duracion(it) }
+        assertEquals(ReglasExpediente.INTERVALO_PRIMERO, intervalos.first(), 0.001f)
+        assertEquals(ReglasExpediente.INTERVALO_ULTIMO, intervalos.last(), 0.001f)
+        assertEquals(ReglasExpediente.DURACION_ULTIMO, duraciones.last(), 0.001f)
+        intervalos.zipWithNext().forEach { (a, b) -> assertTrue(b < a) }
+        duraciones.zipWithNext().forEach { (a, b) -> assertTrue(b < a) }
+        // Siempre se alcanza a aprobar: cada sello dura más de lo que tarda en llegar el siguiente
+        (0 until ReglasExpediente.SELLOS).forEach { assertTrue(ReglasExpediente.duracion(it) > ReglasExpediente.intervalo(it)) }
+    }
+
+    @Test
+    fun `el sello solo cae en páginas libres`() {
+        repeat(50) { semilla ->
+            val selladas = (0 until 8).toSet()
+            assertEquals(8, ReglasExpediente.paginaLibre(selladas, Random(semilla)))
+        }
+        assertEquals(null, ReglasExpediente.paginaLibre((0 until ReglasExpediente.PAGINAS).toSet()))
+        assertEquals(3, ReglasExpediente.estrellas(2))
+        assertEquals(2, ReglasExpediente.estrellas(6))
+        assertEquals(1, ReglasExpediente.estrellas(7))
+    }
+
     @Test
     fun `menos aperturas de más dan más estrellas en el archivo`() {
         assertEquals(3, ReglasArchivo.estrellas(0))

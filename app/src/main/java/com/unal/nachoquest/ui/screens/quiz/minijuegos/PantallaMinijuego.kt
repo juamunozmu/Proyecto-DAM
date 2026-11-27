@@ -165,6 +165,7 @@ fun PantallaMinijuego(
                     TipoMinijuego.ARCHIVO -> MinijuegoArchivo(pistas, alTerminar)
                     TipoMinijuego.FECHAS -> MinijuegoFechas(pistas, alTerminar)
                     TipoMinijuego.PILA -> MinijuegoPila(pistas, alTerminar)
+                    TipoMinijuego.EXPEDIENTE -> MinijuegoExpediente(pistas, alTerminar)
                 }
             }
         }
@@ -209,6 +210,7 @@ fun PantallaMinijuego(
                                 TipoMinijuego.ARCHIVO -> "¡Folios encontrados!"
                                 TipoMinijuego.FECHAS -> "¡Noticias con fecha!"
                                 TipoMinijuego.PILA -> "¡Fila despachada!"
+                                TipoMinijuego.EXPEDIENTE -> "¡Expediente aprobado!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,

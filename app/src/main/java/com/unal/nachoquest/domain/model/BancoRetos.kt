@@ -536,6 +536,33 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_cade",
                 coleccionableRecompensaId = "col_turno"
             )
+            // Datos verificados en noviembre de 2026 (directorios de la UNAL): la Unidad Camilo
+            // Torres (Calle 44 # 45-67) se organiza en bloques como el B7; allí funcionan el
+            // Programa de Egresados, oficinas de Bienestar y la Unidad de Educación Continua y
+            // Permanente de Ingeniería. Camilo Torres cofundó la carrera de Sociología con Fals Borda
+            "reto_camilo_torres" -> RetoQuiz(
+                id = "reto_camilo_torres",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 18: La Firma",
+                descripcion = "Donde la universidad recuerda a los que se fueron.",
+                preguntas = listOf(
+                    Pregunta("camilo_1", "¿Qué programa de la universidad, que sigue en contacto con quienes ya se graduaron, funciona en la Unidad Camilo Torres?",
+                        listOf("El Programa de Egresados", "El Programa de Admisiones", "El equipo de fútbol", "La emisora"), 0),
+                    Pregunta("camilo_2", "¿Cómo se le dice a una persona que ya terminó su carrera y se graduó de la universidad?",
+                        listOf("Egresada", "Aspirante", "Admitida", "Visitante"), 0),
+                    Pregunta("camilo_3", "¿Cómo se identifican los edificios de la Unidad Camilo Torres?",
+                        listOf("Por bloques con letra y número, como el B7", "Por colores", "Por nombres de animales", "Por números romanos"), 0),
+                    Pregunta("camilo_4", "¿Qué unidad de la Facultad de Ingeniería, que ofrece cursos y diplomados, tiene su sede en la Unidad Camilo Torres?",
+                        listOf("La Unidad de Educación Continua y Permanente", "El Laboratorio de Hidráulica", "El CADE de Ingeniería", "El Observatorio Astronómico"), 0),
+                    Pregunta("camilo_5", "Camilo Torres, cuyo nombre lleva la Unidad, fundó con Orlando Fals Borda una carrera de la universidad. ¿Cuál?",
+                        listOf("Sociología", "Medicina", "Ingeniería Civil", "Música"), 0)
+                ),
+                recompensaXp = 620,
+                recompensaMonedas = 120,
+                itemRecompensaId = "expediente_memoria",
+                insigniaRecompensaId = "insignia_camilo_torres",
+                coleccionableRecompensaId = "col_sello_dorado"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

@@ -86,6 +86,10 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     PILA(
         "La pila de solicitudes",
         "Pasa todas las carpetas a la ventanilla 3. Se mueve una a la vez, y nunca una grande sobre una pequeña."
+    ),
+    EXPEDIENTE(
+        "El último sello",
+        "El Sello estampa «PENDIENTE» en las páginas del Expediente por última vez. Toca cada página sellada para aprobarla antes de que la tinta se seque."
     )
 }
 
@@ -121,10 +125,12 @@ data class Capitulo(
 object Historia {
 
     const val ESCENA_PROLOGO = "prologo"
-    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8) y del Acto III (después del 13)
+    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8), del Acto III
+    // (después del 13) y del Acto IV (después del 18)
     const val ESCENA_EPILOGO = "epilogo"
     const val ESCENA_EPILOGO_FINAL = "epilogo_final"
     const val ESCENA_EPILOGO_ACTO3 = "epilogo_acto3"
+    const val ESCENA_EPILOGO_ACTO4 = "epilogo_acto4"
 
     val titulosActos = mapOf(
         1 to "El Olvido de la Ciudad Blanca",
@@ -365,6 +371,20 @@ object Historia {
             xpRecompensa = 570,
             minijuego = TipoMinijuego.PILA,
             acto = 4
+        ),
+        Capitulo(
+            numero = 18,
+            puntoId = "edif_862",
+            retoId = "reto_camilo_torres",
+            titulo = "La Firma",
+            lugar = "Unidad Camilo Torres",
+            sinopsis = "Con los cuatro folios reunidos, solo falta llenar la casilla: «Firma de quien guarda la memoria». Pero el Sello no se va a rendir sin un último sello.",
+            itemRequeridoId = "folio_cade",
+            itemRecompensaId = "expediente_memoria",
+            xpRecompensa = 620,
+            minijuego = TipoMinijuego.EXPEDIENTE,
+            acto = 4,
+            escenaFinal = ESCENA_EPILOGO_ACTO4
         )
     )
 
@@ -662,6 +682,34 @@ object Historia {
             LineaDialogo(Hablante.SELLO, "¿Y quién la guarda?"),
             LineaDialogo(Hablante.BUHO, "Eso lo dice la casilla. Ya tenemos los cuatro folios: solo falta firmar. Nos vemos en la Unidad Camilo Torres."),
             LineaDialogo(Hablante.NACHO, "¡El último paso, {jugador}! Vamos a cerrar el Expediente de la Memoria.", Expresion.FELIZ)
+        ),
+        "cap18_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Unidad Camilo Torres, sus bloques con letra y número. Aquí funciona el Programa de Egresados, que sigue en contacto con quienes ya se graduaron."),
+            LineaDialogo(Hablante.BUHO, "Por eso los cité aquí. Este es el lugar donde la universidad recuerda a los que ya se fueron."),
+            LineaDialogo(Hablante.NARRADOR, "El Búho pone los cuatro folios sobre la mesa. Al final del último está la casilla en blanco: «Firma de quien guarda la memoria»."),
+            LineaDialogo(Hablante.SELLO, "¡No, no, no! ¡Si la firman se cierra el expediente! ¡PENDIENTE, PENDIENTE, PENDIENTE!"),
+            LineaDialogo(Hablante.ENREDO, "¡Se puso a sellar todas las páginas! Así estaba yo antes de la carrera..."),
+            LineaDialogo(Hablante.NACHO, "Aprueba cada página antes de que la tinta se seque, {jugador}. ¡Es el último sello!", Expresion.DECIDIDO)
+        ),
+        "cap18_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La última página queda aprobada. Al Sello no le queda tinta: se sienta sobre la mesa, cansado."),
+            LineaDialogo(Hablante.SELLO, "Ya está... Ahora firmarán, el expediente se cerrará y todos se irán."),
+            LineaDialogo(Hablante.BUHO, "Mira dónde estamos, pequeño Sello. Aquí la universidad les sigue escribiendo a sus egresados, años después de su grado. Irse no es desaparecer."),
+            LineaDialogo(Hablante.RECUERDO, "Yo fui el Olvido. Quería que todo se borrara. Ahora sé que lo que se cierra bien se guarda para siempre."),
+            LineaDialogo(Hablante.BUHO, "La casilla pide la firma de quien guarda la memoria. {jugador}, recorriste el campus, devolviste fragmentos, ecos, hilos y folios. Esta firma es tuya."),
+            LineaDialogo(Hablante.NARRADOR, "{jugador} firma. La casilla brilla en dorado y el Expediente de la Memoria se cierra."),
+            LineaDialogo(Hablante.SELLO, "Entonces... ¿puedo estampar algo nuevo? Solo una vez."),
+            LineaDialogo(Hablante.NARRADOR, "El Sello toma aire, salta y estampa en la portada, en tinta dorada: COMPLETADO."),
+            LineaDialogo(Hablante.NACHO, "¡Lo lograste, {jugador}! Y tú también, Sello. ¡Qué nota!", Expresion.FELIZ)
+        ),
+        ESCENA_EPILOGO_ACTO4 to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El Expediente de la Memoria descansa ahora en el Archivo Central e Histórico, junto a los papeles de 1867."),
+            LineaDialogo(Hablante.BUHO, "Cada noche lo reviso antes de dormir... bueno, antes de despertar. Los búhos somos así."),
+            LineaDialogo(Hablante.SELLO, "Y yo trabajo en las ventanillas. Ya no sello «PENDIENTE»: ahora sello «RECIBIDO». Me gusta más."),
+            LineaDialogo(Hablante.ENREDO, "¡Y yo le enseño a jugar a la hora del almuerzo!"),
+            LineaDialogo(Hablante.RECUERDO, "La Copa, la Madeja y el Expediente. Todo lo que el campus casi olvida, ahora alguien lo guarda."),
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Tu firma quedó en el Expediente para siempre: eres Guardián de la Memoria de la Ciudad Blanca.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Y si alguna noche miras el plano del campus desde lo alto, quizás veas al Búho mirándote de vuelta.")
         )
     )
 

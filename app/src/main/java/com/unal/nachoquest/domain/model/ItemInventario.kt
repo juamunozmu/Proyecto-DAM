@@ -228,6 +228,16 @@ object CatalogoItems {
             desbloqueaPuntoId = "edif_862",
             nombrePuntoDesbloqueado = "Unidad Camilo Torres",
             requisitoTexto = "Pasa la pila de solicitudes a su ventanilla en el CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "expediente_memoria",
+            nombre = "Expediente de la Memoria",
+            descripcion = "Los cuatro folios reunidos, con tu firma en la casilla de quien guarda la memoria y un sello dorado en la portada: COMPLETADO. Descansa en el Archivo Central e Histórico.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📕",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Aprueba el Expediente y fírmalo en la Unidad Camilo Torres"
         )
     )
 
@@ -401,6 +411,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_408A",
             nombreLugarOrigen = "CADE de Ingeniería",
             requisitoTexto = "Supera el reto del CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "insignia_camilo_torres",
+            nombre = "Firma de la Memoria",
+            descripcion = "Para quien firmó el Expediente: la persona que guarda la memoria de la Ciudad Blanca.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "✍️",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Supera el reto de la Unidad Camilo Torres"
         )
     )
 
@@ -574,6 +594,16 @@ object CatalogoItems {
             puntoOrigenId = "edif_408A",
             nombreLugarOrigen = "CADE de Ingeniería",
             requisitoTexto = "Coleccionable encontrado en el CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "col_sello_dorado",
+            nombre = "Sello «RECIBIDO»",
+            descripcion = "El Sello te regaló una huella de su tinta nueva. Ya no dice «PENDIENTE»: dice «RECIBIDO».",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🟡",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Coleccionable encontrado en la Unidad Camilo Torres"
         )
     )
 

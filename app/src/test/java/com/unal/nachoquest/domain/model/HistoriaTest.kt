@@ -45,7 +45,7 @@ class HistoriaTest {
         assertEquals("edif_761", acto2.last().puntoId)
         assertEquals(Historia.ESCENA_EPILOGO_FINAL, acto2.last().escenaFinal)
         // Solo el último capítulo de cada acto tiene epílogo
-        assertEquals(3, Historia.capitulos.count { it.escenaFinal != null })
+        assertEquals(4, Historia.capitulos.count { it.escenaFinal != null })
     }
 
     @Test
@@ -84,10 +84,23 @@ class HistoriaTest {
     @Test
     fun `los folios del acto IV abren cada capítulo en orden`() {
         val acto4 = Historia.capitulosDelActo(4)
-        assertEquals(listOf("edif_861", "edif_500B", "edif_571", "edif_408A"), acto4.take(4).map { it.puntoId })
+        assertEquals(listOf("edif_861", "edif_500B", "edif_571", "edif_408A", "edif_862"), acto4.map { it.puntoId })
         acto4.zipWithNext().forEach { (anterior, siguiente) ->
             assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
         }
+    }
+
+    @Test
+    fun `el acto IV termina con la firma en la Unidad Camilo Torres y su epílogo`() {
+        val ultimo = Historia.capitulosDelActo(4).last()
+        assertEquals(18, ultimo.numero)
+        assertEquals("edif_862", ultimo.puntoId)
+        assertEquals(TipoMinijuego.EXPEDIENTE, ultimo.minijuego)
+        assertEquals(Historia.ESCENA_EPILOGO_ACTO4, ultimo.escenaFinal)
+        assertEquals(ultimo, Historia.capitulos.last())
+        assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO4, "Ana").any { it.hablante == Hablante.BUHO })
+        // El jugador firma: su nombre aparece en el cierre del capítulo
+        assertTrue(Historia.escena(ultimo.escenaOutro, "Ana").any { "Ana firma" in it.texto })
     }
 
     @Test

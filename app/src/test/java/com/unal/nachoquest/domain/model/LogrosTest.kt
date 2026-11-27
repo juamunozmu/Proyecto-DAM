@@ -80,6 +80,7 @@ class LogrosTest {
         assertEquals(Historia.capitulosDelActo(1).size, logro(perfil, "leyenda").progreso)
         assertTrue(logro(perfil, "guardian_memoria").desbloqueado)
         assertTrue(logro(perfil, "tejedor_memoria").desbloqueado)
+        assertTrue(logro(perfil, "firma_memoria").desbloqueado)
         assertEquals(Historia.capitulosDelActo(3).size, logro(perfil, "tejedor_memoria").meta)
     }
 }
