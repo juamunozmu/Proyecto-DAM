@@ -176,7 +176,68 @@ object CatalogoItems {
             emojiIcono = "🧶",
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
+            desbloqueaPuntoId = "edif_861",
+            nombrePuntoDesbloqueado = "Edificio Uriel Gutiérrez",
             requisitoTexto = "Gánale al Enredo la carrera de relevos en el Centro Polideportivo"
+        ),
+        // ---------- Acto IV: los folios del Expediente de la Memoria ----------
+        ItemInventario(
+            id = "folio_uriel",
+            nombre = "Folio 1 del Expediente",
+            descripcion = "La primera hoja del Expediente de la Memoria, con su sello de lacre. Al final tiene una casilla en blanco: «Firma de quien guarda la memoria». Lleva al Archivo Central e Histórico.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            desbloqueaPuntoId = "edif_500B",
+            nombrePuntoDesbloqueado = "Archivo Central e Histórico",
+            requisitoTexto = "Pon cada trámite en su bandeja en el Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "folio_archivo",
+            nombre = "Folio 2 del Expediente",
+            descripcion = "La segunda hoja del Expediente de la Memoria. Estaba en la última caja del estante, entre actas y fotografías viejas. Huele a tinta de imprenta: lleva a la Hemeroteca.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            desbloqueaPuntoId = "edif_571",
+            nombrePuntoDesbloqueado = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Encuentra los folios en los estantes del Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "folio_hemeroteca",
+            nombre = "Folio 3 del Expediente",
+            descripcion = "La tercera hoja del Expediente de la Memoria. Estaba doblada en cuatro dentro del periódico más viejo de la Hemeroteca. Lleva al CADE de Ingeniería.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            desbloqueaPuntoId = "edif_408A",
+            nombrePuntoDesbloqueado = "CADE de Ingeniería",
+            requisitoTexto = "Devuélvele la fecha a cada titular en la Hemeroteca"
+        ),
+        ItemInventario(
+            id = "folio_cade",
+            nombre = "Folio 4 del Expediente",
+            descripcion = "La cuarta hoja del Expediente de la Memoria, debajo de la pila de solicitudes del CADE. Con ella están todos los folios: solo falta la firma, en la Unidad Camilo Torres.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            desbloqueaPuntoId = "edif_862",
+            nombrePuntoDesbloqueado = "Unidad Camilo Torres",
+            requisitoTexto = "Pasa la pila de solicitudes a su ventanilla en el CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "expediente_memoria",
+            nombre = "Expediente de la Memoria",
+            descripcion = "Los cuatro folios reunidos, con tu firma en la casilla de quien guarda la memoria y un sello dorado en la portada: COMPLETADO. Descansa en el Archivo Central e Histórico.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📕",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Aprueba el Expediente y fírmalo en la Unidad Camilo Torres"
         )
     )
 
@@ -310,6 +371,56 @@ object CatalogoItems {
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
             requisitoTexto = "Supera el reto del Centro Polideportivo"
+        ),
+        ItemInventario(
+            id = "insignia_uriel",
+            nombre = "Ventanilla Ágil",
+            descripcion = "Para quienes despachan un trámite tras otro sin dejar nada pendiente.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🗂️",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            requisitoTexto = "Supera el reto del Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "insignia_archivo",
+            nombre = "Archivista Nocturno",
+            descripcion = "Para quienes buscan por la mitad, como enseña el Búho, y encuentran cualquier folio en pocos pasos.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🦉",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            requisitoTexto = "Supera el reto del Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "insignia_hemeroteca",
+            nombre = "Lector de Prensa",
+            descripcion = "Para quienes saben que una noticia sin fecha es solo un rumor.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "📰",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Supera el reto de la Hemeroteca Nacional Universitaria"
+        ),
+        ItemInventario(
+            id = "insignia_cade",
+            nombre = "Paciencia de Ventanilla",
+            descripcion = "Para quienes despachan una fila entera, carpeta por carpeta, sin doblar ninguna.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🎫",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            requisitoTexto = "Supera el reto del CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "insignia_camilo_torres",
+            nombre = "Firma de la Memoria",
+            descripcion = "Para quien firmó el Expediente: la persona que guarda la memoria de la Ciudad Blanca.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "✍️",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Supera el reto de la Unidad Camilo Torres"
         )
     )
 
@@ -443,6 +554,56 @@ object CatalogoItems {
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
             requisitoTexto = "Coleccionable encontrado en el Centro Polideportivo"
+        ),
+        ItemInventario(
+            id = "col_sello",
+            nombre = "Sello de Caucho",
+            descripcion = "Un sello de oficina con mango de madera, de los que se usaban para marcar cada trámite como recibido, aprobado o pendiente.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🔴",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            requisitoTexto = "Coleccionable encontrado en el Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "col_pluma",
+            nombre = "Pluma de Búho",
+            descripcion = "Una pluma suave que el Búho dejó entre los estantes. El búho es símbolo de la Universidad Nacional, y muchos ven su forma en el plano de la Ciudad Universitaria.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🪶",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            requisitoTexto = "Coleccionable encontrado en el Archivo Central e Histórico"
+        ),
+        ItemInventario(
+            id = "col_hemeroteca",
+            nombre = "Periódico Amarillento",
+            descripcion = "Un periódico viejo, con el papel amarillo por los años. En la Hemeroteca se guardan miles como este para que cualquiera pueda leer lo que pasó.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🗞️",
+            puntoOrigenId = "edif_571",
+            nombreLugarOrigen = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Coleccionable encontrado en la Hemeroteca Nacional Universitaria"
+        ),
+        ItemInventario(
+            id = "col_turno",
+            nombre = "Ficha de Turno",
+            descripcion = "Una ficha con un número de turno. En una fila, el primero que llega es el primero que atienden.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🎟️",
+            puntoOrigenId = "edif_408A",
+            nombreLugarOrigen = "CADE de Ingeniería",
+            requisitoTexto = "Coleccionable encontrado en el CADE de Ingeniería"
+        ),
+        ItemInventario(
+            id = "col_sello_dorado",
+            nombre = "Sello «RECIBIDO»",
+            descripcion = "El Sello te regaló una huella de su tinta nueva. Ya no dice «PENDIENTE»: dice «RECIBIDO».",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🟡",
+            puntoOrigenId = "edif_862",
+            nombreLugarOrigen = "Unidad Camilo Torres",
+            requisitoTexto = "Coleccionable encontrado en la Unidad Camilo Torres"
         )
     )
 

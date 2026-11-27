@@ -52,20 +52,6 @@ object RetosLugares {
             )
         ),
         RetoLugar(
-            puntoId = "edif_571",
-            nombre = "Hemeroteca Nacional Universitaria",
-            preguntas = listOf(
-                p("hemeroteca_1", "¿Qué guarda principalmente una hemeroteca?",
-                    "Periódicos y revistas", "Plantas secas", "Fósiles", "Instrumentos musicales"),
-                p("hemeroteca_2", "¿Qué cargo ocupó Carlos Lleras Restrepo, que da nombre a la Hemeroteca?",
-                    "Presidente de Colombia", "Rector de la universidad", "Alcalde de Medellín", "Arzobispo de Bogotá"),
-                p("hemeroteca_3", "¿En qué periodo gobernó Carlos Lleras Restrepo?",
-                    "1966-1970", "1946-1950", "1982-1986", "1994-1998"),
-                p("hemeroteca_4", "Si buscas la noticia original del Bogotazo de 1948, ¿dónde la encuentras?",
-                    "En la Hemeroteca", "En el Herbario", "En el Observatorio", "En el Conservatorio")
-            )
-        ),
-        RetoLugar(
             puntoId = "edif_413",
             nombre = "Observatorio Astronómico",
             preguntas = listOf(
@@ -133,20 +119,6 @@ object RetosLugares {
                     "Era sacerdote", "Era médico", "Era ingeniero", "Era músico"),
                 p("sociologia_4", "¿En qué año se creó la carrera de Sociología en la Universidad Nacional?",
                     "1959", "1867", "1936", "1991")
-            )
-        ),
-        RetoLugar(
-            puntoId = "edif_861",
-            nombre = "Edificio Uriel Gutiérrez",
-            preguntas = listOf(
-                p("uriel_1", "¿Quién fue Uriel Gutiérrez, que da nombre a este edificio?",
-                    "Un estudiante asesinado en el campus", "Un rector de la universidad", "Un arquitecto", "Un presidente de Colombia"),
-                p("uriel_2", "¿En qué año murió Uriel Gutiérrez?",
-                    "1954", "1929", "1948", "1971"),
-                p("uriel_3", "¿Quién gobernaba Colombia cuando murió Uriel Gutiérrez?",
-                    "Gustavo Rojas Pinilla", "Alfonso López Pumarejo", "Carlos Lleras Restrepo", "Laureano Gómez"),
-                p("uriel_4", "¿Qué estudiante murió el 8 de junio de 1929, la otra fecha que recuerda el Día del Estudiante Caído?",
-                    "Gonzalo Bravo Pérez", "Camilo Torres", "Jorge Eliécer Gaitán", "Manuel Ancízar")
             )
         ),
         RetoLugar(

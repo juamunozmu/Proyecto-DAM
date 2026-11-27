@@ -432,6 +432,137 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_relevos",
                 coleccionableRecompensaId = "col_testigo"
             )
+            // Las cuatro primeras eran del reto de lugar del edificio, que pasó a ser capítulo.
+            // Datos verificados en noviembre de 2026: la División de Registro de la Sede Bogotá
+            // atiende en el Polideportivo y se encarga de carnés y recibos de matrícula
+            "reto_uriel" -> RetoQuiz(
+                id = "reto_uriel",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 14: Todo Pendiente",
+                descripcion = "Donde se firma lo que hace andar la universidad.",
+                preguntas = listOf(
+                    Pregunta("uriel_1", "¿Quién fue Uriel Gutiérrez, que da nombre a este edificio?",
+                        listOf("Un estudiante asesinado en el campus", "Un rector de la universidad", "Un arquitecto", "Un presidente de Colombia"), 0),
+                    Pregunta("uriel_2", "¿En qué año murió Uriel Gutiérrez?",
+                        listOf("1954", "1929", "1948", "1971"), 0),
+                    Pregunta("uriel_3", "¿Quién gobernaba Colombia cuando murió Uriel Gutiérrez?",
+                        listOf("Gustavo Rojas Pinilla", "Alfonso López Pumarejo", "Carlos Lleras Restrepo", "Laureano Gómez"), 0),
+                    Pregunta("uriel_4", "¿Qué estudiante murió el 8 de junio de 1929, la otra fecha que recuerda el Día del Estudiante Caído?",
+                        listOf("Gonzalo Bravo Pérez", "Camilo Torres", "Jorge Eliécer Gaitán", "Manuel Ancízar"), 0),
+                    Pregunta("uriel_5", "En la Sede Bogotá, ¿qué oficina se encarga de la carnetización y de los recibos de matrícula?",
+                        listOf("La División de Registro", "La Biblioteca Central", "El Museo de Arte", "El Observatorio Astronómico"), 0)
+                ),
+                recompensaXp = 480,
+                recompensaMonedas = 95,
+                itemRecompensaId = "folio_uriel",
+                insigniaRecompensaId = "insignia_uriel",
+                coleccionableRecompensaId = "col_sello"
+            )
+            // Datos verificados en noviembre de 2026: el ACH recupera, organiza, preserva y divulga
+            // el patrimonio documental de la Sede Bogotá (Circular UNAL), tiene cerca de 9 km de
+            // archivo y su Fondo UN empieza en 1867; guarda fondos como el de Yu Takeuchi. La forma
+            // de búho del plano de Leopoldo Rother (1936-1940) es una lectura muy difundida
+            "reto_archivo" -> RetoQuiz(
+                id = "reto_archivo",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 15: El Guardián del Archivo",
+                descripcion = "La memoria escrita de la universidad.",
+                preguntas = listOf(
+                    Pregunta("archivo_1", "¿Qué hace el Archivo Central e Histórico de la Sede Bogotá?",
+                        listOf("Recupera, organiza, preserva y divulga los documentos históricos de la universidad", "Vende libros usados", "Presta salones para clase", "Expide los diplomas de grado"), 0),
+                    Pregunta("archivo_2", "Los documentos de la Universidad Nacional que guarda el archivo empiezan en el año de su fundación. ¿Cuál es?",
+                        listOf("1867", "1910", "1950", "1991"), 0),
+                    Pregunta("archivo_3", "¿El archivo personal de qué profesor japonés de matemáticas guarda el Archivo Central e Histórico?",
+                        listOf("Yu Takeuchi", "Akira Kurosawa", "Hideki Yukawa", "Hayao Miyazaki"), 0),
+                    Pregunta("archivo_4", "¿Qué animal, símbolo de la universidad, ven muchos en el plano de la Ciudad Universitaria?",
+                        listOf("Un búho", "Un cóndor", "Un jaguar", "Una mariposa"), 0),
+                    Pregunta("archivo_5", "Más o menos, ¿cuánto archivo central e histórico tiene la Universidad Nacional, si se pusieran las cajas en fila?",
+                        listOf("Cerca de 9 kilómetros", "Cerca de 9 metros", "Cerca de 90 centímetros", "Cerca de 900 kilómetros"), 0)
+                ),
+                recompensaXp = 510,
+                recompensaMonedas = 100,
+                itemRecompensaId = "folio_archivo",
+                insigniaRecompensaId = "insignia_archivo",
+                coleccionableRecompensaId = "col_pluma"
+            )
+            // Las cuatro primeras eran del reto de lugar de la Hemeroteca, que pasó a ser capítulo
+            "reto_hemeroteca" -> RetoQuiz(
+                id = "reto_hemeroteca",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 16: Noticias sin Fecha",
+                descripcion = "Lo que pasó, contado el mismo día.",
+                preguntas = listOf(
+                    Pregunta("hemeroteca_1", "¿Qué guarda principalmente una hemeroteca?",
+                        listOf("Periódicos y revistas", "Plantas secas", "Fósiles", "Instrumentos musicales"), 0),
+                    Pregunta("hemeroteca_2", "¿Qué cargo ocupó Carlos Lleras Restrepo, que da nombre a la Hemeroteca?",
+                        listOf("Presidente de Colombia", "Rector de la universidad", "Alcalde de Medellín", "Arzobispo de Bogotá"), 0),
+                    Pregunta("hemeroteca_3", "¿En qué periodo gobernó Carlos Lleras Restrepo?",
+                        listOf("1966-1970", "1946-1950", "1982-1986", "1994-1998"), 0),
+                    Pregunta("hemeroteca_4", "Si buscas la noticia original del Bogotazo de 1948, ¿dónde la encuentras?",
+                        listOf("En la Hemeroteca", "En el Herbario", "En el Observatorio", "En el Conservatorio"), 0),
+                    Pregunta("hemeroteca_5", "¿Cómo se llaman las publicaciones que salen cada cierto tiempo con el mismo nombre, como los diarios y las revistas?",
+                        listOf("Publicaciones seriadas", "Publicaciones únicas", "Manuscritos", "Enciclopedias"), 0)
+                ),
+                recompensaXp = 540,
+                recompensaMonedas = 105,
+                itemRecompensaId = "folio_hemeroteca",
+                insigniaRecompensaId = "insignia_hemeroteca",
+                coleccionableRecompensaId = "col_hemeroteca"
+            )
+            // Datos verificados en noviembre de 2026 (Facultad de Ingeniería): la Secretaría de
+            // Facultad atiende en el Edificio 408 - CADE; las solicitudes estudiantiles se radican
+            // en el primer piso, en la ventanilla del área curricular; las certificaciones
+            // académicas se piden por el aplicativo Ticket FIBOG
+            "reto_cade" -> RetoQuiz(
+                id = "reto_cade",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 17: La Fila Eterna",
+                descripcion = "Una ventanilla para cada área.",
+                preguntas = listOf(
+                    Pregunta("cade_1", "En el CADE de Ingeniería, ¿dónde se radican las solicitudes de los estudiantes?",
+                        listOf("En el primer piso, en la ventanilla de su área curricular", "En la cafetería", "En el Estadio Alfonso López", "En la Biblioteca Central"), 0),
+                    Pregunta("cade_2", "¿Qué oficina de la Facultad de Ingeniería funciona en el CADE?",
+                        listOf("La Secretaría de Facultad", "El Museo de Arte", "La Hemeroteca", "El Observatorio Astronómico"), 0),
+                    Pregunta("cade_3", "¿Qué laboratorio queda justo al lado del CADE de Ingeniería?",
+                        listOf("El Laboratorio de Hidráulica", "El Laboratorio de Genética", "El Herbario", "El planetario"), 0),
+                    Pregunta("cade_4", "En la Facultad de Ingeniería, ¿cómo se piden las certificaciones académicas?",
+                        listOf("En línea, por el aplicativo Ticket FIBOG", "Por carta en el estadio", "Llamando a la radio", "Solo en persona en la rectoría"), 0),
+                    Pregunta("cade_5", "En una fila bien atendida, ¿a quién se atiende primero?",
+                        listOf("Al que llegó primero", "Al que llegó de último", "Al más alto", "Al que grite más duro"), 0)
+                ),
+                recompensaXp = 570,
+                recompensaMonedas = 110,
+                itemRecompensaId = "folio_cade",
+                insigniaRecompensaId = "insignia_cade",
+                coleccionableRecompensaId = "col_turno"
+            )
+            // Datos verificados en noviembre de 2026 (directorios de la UNAL): la Unidad Camilo
+            // Torres (Calle 44 # 45-67) se organiza en bloques como el B7; allí funcionan el
+            // Programa de Egresados, oficinas de Bienestar y la Unidad de Educación Continua y
+            // Permanente de Ingeniería. Camilo Torres cofundó la carrera de Sociología con Fals Borda
+            "reto_camilo_torres" -> RetoQuiz(
+                id = "reto_camilo_torres",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 18: La Firma",
+                descripcion = "Donde la universidad recuerda a los que se fueron.",
+                preguntas = listOf(
+                    Pregunta("camilo_1", "¿Qué programa de la universidad, que sigue en contacto con quienes ya se graduaron, funciona en la Unidad Camilo Torres?",
+                        listOf("El Programa de Egresados", "El Programa de Admisiones", "El equipo de fútbol", "La emisora"), 0),
+                    Pregunta("camilo_2", "¿Cómo se le dice a una persona que ya terminó su carrera y se graduó de la universidad?",
+                        listOf("Egresada", "Aspirante", "Admitida", "Visitante"), 0),
+                    Pregunta("camilo_3", "¿Cómo se identifican los edificios de la Unidad Camilo Torres?",
+                        listOf("Por bloques con letra y número, como el B7", "Por colores", "Por nombres de animales", "Por números romanos"), 0),
+                    Pregunta("camilo_4", "¿Qué unidad de la Facultad de Ingeniería, que ofrece cursos y diplomados, tiene su sede en la Unidad Camilo Torres?",
+                        listOf("La Unidad de Educación Continua y Permanente", "El Laboratorio de Hidráulica", "El CADE de Ingeniería", "El Observatorio Astronómico"), 0),
+                    Pregunta("camilo_5", "Camilo Torres, cuyo nombre lleva la Unidad, fundó con Orlando Fals Borda una carrera de la universidad. ¿Cuál?",
+                        listOf("Sociología", "Medicina", "Ingeniería Civil", "Música"), 0)
+                ),
+                recompensaXp = 620,
+                recompensaMonedas = 120,
+                itemRecompensaId = "expediente_memoria",
+                insigniaRecompensaId = "insignia_camilo_torres",
+                coleccionableRecompensaId = "col_sello_dorado"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

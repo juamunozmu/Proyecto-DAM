@@ -161,6 +161,11 @@ fun PantallaMinijuego(
                     TipoMinijuego.HELICE -> MinijuegoHelice(pistas, alTerminar)
                     TipoMinijuego.VITRAL -> MinijuegoVitral(pistas, alTerminar)
                     TipoMinijuego.RELEVOS -> MinijuegoRelevos(pistas, alTerminar)
+                    TipoMinijuego.TRAMITES -> MinijuegoTramites(pistas, alTerminar)
+                    TipoMinijuego.ARCHIVO -> MinijuegoArchivo(pistas, alTerminar)
+                    TipoMinijuego.FECHAS -> MinijuegoFechas(pistas, alTerminar)
+                    TipoMinijuego.PILA -> MinijuegoPila(pistas, alTerminar)
+                    TipoMinijuego.EXPEDIENTE -> MinijuegoExpediente(pistas, alTerminar)
                 }
             }
         }
@@ -201,6 +206,11 @@ fun PantallaMinijuego(
                                 TipoMinijuego.HELICE -> "¡Hélice completa!"
                                 TipoMinijuego.VITRAL -> "¡Vitral encendido!"
                                 TipoMinijuego.RELEVOS -> "¡Carrera ganada!"
+                                TipoMinijuego.TRAMITES -> "¡Trámites al día!"
+                                TipoMinijuego.ARCHIVO -> "¡Folios encontrados!"
+                                TipoMinijuego.FECHAS -> "¡Noticias con fecha!"
+                                TipoMinijuego.PILA -> "¡Fila despachada!"
+                                TipoMinijuego.EXPEDIENTE -> "¡Expediente aprobado!"
                                 else -> "¡Recuerdo restaurado!"
                             },
                             style = MaterialTheme.typography.headlineSmall,

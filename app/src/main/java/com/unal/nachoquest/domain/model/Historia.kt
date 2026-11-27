@@ -10,9 +10,10 @@ package com.unal.nachoquest.domain.model
 
 /**
  * Quién habla en una escena. El Olvido se volvió el Recuerdo al final del Acto II y desde el
- * Acto III es aliado de Nacho; el Enredo es el personaje nuevo del Acto III.
+ * Acto III es aliado de Nacho; el Enredo es el personaje nuevo del Acto III y desde el IV
+ * también es aliado. En el Acto IV llegan el Sello Pendiente y el Búho, guardián del Archivo.
  */
-enum class Hablante { NACHO, OLVIDO, RECUERDO, ENREDO, NARRADOR }
+enum class Hablante { NACHO, OLVIDO, RECUERDO, ENREDO, SELLO, BUHO, NARRADOR }
 
 enum class Expresion { NORMAL, FELIZ, SORPRENDIDO, PREOCUPADO, DECIDIDO }
 
@@ -69,6 +70,26 @@ enum class TipoMinijuego(val titulo: String, val instrucciones: String) {
     RELEVOS(
         "La carrera de relevos",
         "Un 4×100 contra el Enredo. Toca los pies en orden para correr y pasa el testigo en la zona amarilla: entre más al final, con más impulso sale el siguiente."
+    ),
+    TRAMITES(
+        "Cada papel a su bandeja",
+        "Los trámites llegan uno por uno. Déjalos en su bandeja antes de que el Sello les estampe «PENDIENTE»."
+    ),
+    ARCHIVO(
+        "Busca el folio",
+        "Las cajas del Archivo están en orden de número. Abre una y sabrás si el folio está antes o después. Encuéntralo abriendo las menos posibles."
+    ),
+    FECHAS(
+        "Fechas en trámite",
+        "El Sello tapó la fecha de los periódicos. Toca un titular y luego el año en que salió la noticia."
+    ),
+    PILA(
+        "La pila de solicitudes",
+        "Pasa todas las carpetas a la ventanilla 3. Se mueve una a la vez, y nunca una grande sobre una pequeña."
+    ),
+    EXPEDIENTE(
+        "El último sello",
+        "El Sello estampa «PENDIENTE» en las páginas del Expediente por última vez. Toca cada página sellada para aprobarla antes de que la tinta se seque."
     )
 }
 
@@ -104,15 +125,18 @@ data class Capitulo(
 object Historia {
 
     const val ESCENA_PROLOGO = "prologo"
-    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8) y del Acto III (después del 13)
+    // Epílogos del Acto I (después del capítulo 5), del Acto II (después del 8), del Acto III
+    // (después del 13) y del Acto IV (después del 18)
     const val ESCENA_EPILOGO = "epilogo"
     const val ESCENA_EPILOGO_FINAL = "epilogo_final"
     const val ESCENA_EPILOGO_ACTO3 = "epilogo_acto3"
+    const val ESCENA_EPILOGO_ACTO4 = "epilogo_acto4"
 
     val titulosActos = mapOf(
         1 to "El Olvido de la Ciudad Blanca",
         2 to "Los Ecos del Olvido",
-        3 to "Los Hilos de la Memoria"
+        3 to "Los Hilos de la Memoria",
+        4 to "El Sello Pendiente"
     )
 
     /** Número romano del acto, para los títulos («ACTO III»). */
@@ -294,6 +318,73 @@ object Historia {
             minijuego = TipoMinijuego.RELEVOS,
             acto = 3,
             escenaFinal = ESCENA_EPILOGO_ACTO3
+        ),
+        // ---------- Acto IV: El Sello Pendiente ----------
+        Capitulo(
+            numero = 14,
+            puntoId = "edif_861",
+            retoId = "reto_uriel",
+            titulo = "Todo Pendiente",
+            lugar = "Edificio Uriel Gutiérrez",
+            sinopsis = "Los carnés y los recibos de matrícula salen con un sello rojo: PENDIENTE. El rastro de tinta lleva a la sede administrativa de la universidad.",
+            itemRequeridoId = "madeja_memoria",
+            itemRecompensaId = "folio_uriel",
+            xpRecompensa = 480,
+            minijuego = TipoMinijuego.TRAMITES,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 15,
+            puntoId = "edif_500B",
+            retoId = "reto_archivo",
+            titulo = "El Guardián del Archivo",
+            lugar = "Archivo Central e Histórico",
+            sinopsis = "El Sello revolvió las cajas donde duerme la memoria escrita de la universidad. Entre los estantes, alguien te espera con los ojos abiertos.",
+            itemRequeridoId = "folio_uriel",
+            itemRecompensaId = "folio_archivo",
+            xpRecompensa = 510,
+            minijuego = TipoMinijuego.ARCHIVO,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 16,
+            puntoId = "edif_571",
+            retoId = "reto_hemeroteca",
+            titulo = "Noticias sin Fecha",
+            lugar = "Hemeroteca Nacional Universitaria",
+            sinopsis = "El Sello tapó con «PENDIENTE» la fecha de los periódicos. Una noticia sin fecha no es memoria: es un rumor.",
+            itemRequeridoId = "folio_archivo",
+            itemRecompensaId = "folio_hemeroteca",
+            xpRecompensa = 540,
+            minijuego = TipoMinijuego.FECHAS,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 17,
+            puntoId = "edif_408A",
+            retoId = "reto_cade",
+            titulo = "La Fila Eterna",
+            lugar = "CADE de Ingeniería",
+            sinopsis = "El Sello amontonó todas las solicitudes de los estudiantes en una sola ventanilla. Si nadie las atiende, nadie se gradúa... y nadie se va.",
+            itemRequeridoId = "folio_hemeroteca",
+            itemRecompensaId = "folio_cade",
+            xpRecompensa = 570,
+            minijuego = TipoMinijuego.PILA,
+            acto = 4
+        ),
+        Capitulo(
+            numero = 18,
+            puntoId = "edif_862",
+            retoId = "reto_camilo_torres",
+            titulo = "La Firma",
+            lugar = "Unidad Camilo Torres",
+            sinopsis = "Con los cuatro folios reunidos, solo falta llenar la casilla: «Firma de quien guarda la memoria». Pero el Sello no se va a rendir sin un último sello.",
+            itemRequeridoId = "folio_cade",
+            itemRecompensaId = "expediente_memoria",
+            xpRecompensa = 620,
+            minijuego = TipoMinijuego.EXPEDIENTE,
+            acto = 4,
+            escenaFinal = ESCENA_EPILOGO_ACTO4
         )
     )
 
@@ -524,6 +615,101 @@ object Historia {
             // Gancho del Acto IV (los edificios de trámites y oficinas)
             LineaDialogo(Hablante.NARRADOR, "Pero esa misma noche, en las oficinas del campus, un sello empezó a estampar solo: «PENDIENTE», «PENDIENTE», «PENDIENTE»..."),
             LineaDialogo(Hablante.NARRADOR, "Y a la mañana siguiente, todos los formularios de la universidad tenían una casilla nueva que nadie sabía llenar.")
+        ),
+
+        // ---------- Acto IV: El Sello Pendiente ----------
+        "cap14_intro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "En la División de Registro, en el segundo piso del Polideportivo, la fila no avanza. Cada carné y cada recibo de matrícula sale con un sello rojo: PENDIENTE."),
+            LineaDialogo(Hablante.NACHO, "¡{jugador}! Hasta mi carné dice «PENDIENTE». ¿Y esta casilla nueva? «Firma de quien guarda la memoria»... ¿Quién es ese?", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.ENREDO, "¡Esta vez no fui yo, lo juro por mis cinco hilos! Seguí el rastro de tinta roja y llega hasta el Edificio Uriel Gutiérrez."),
+            LineaDialogo(Hablante.RECUERDO, "La sede administrativa de la universidad. Lleva el nombre de Uriel Gutiérrez, un estudiante que murió en 1954. Ahí se firma lo que hace que la universidad funcione."),
+            LineaDialogo(Hablante.SELLO, "¡PENDIENTE! ¡PENDIENTE! ¡PENDIENTE! Si nada se termina... nada se acaba. ¡Y si nada se acaba, nadie se va!"),
+            LineaDialogo(Hablante.NACHO, "Revolvió todos los trámites. Pon cada papel en su bandeja antes de que lo selle, {jugador}.", Expresion.DECIDIDO)
+        ),
+        "cap14_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Las bandejas quedan en orden. Debajo de la última, aparece una hoja amarillenta con un sello de lacre: «Expediente de la Memoria. Folio 1»."),
+            LineaDialogo(Hablante.SELLO, "¡Esa hoja no! Esa tiene la casilla que nadie sabe llenar... ¡y si alguien la llena, el expediente se cierra!"),
+            LineaDialogo(Hablante.ENREDO, "Oye, Sello... ¿tú también tienes miedo de que el juego se acabe? Yo lo tenía."),
+            LineaDialogo(Hablante.SELLO, "¡PENDIENTE!", Expresion.NORMAL),
+            LineaDialogo(Hablante.RECUERDO, "Se fue saltando hacia el Archivo Central e Histórico. Si existe un expediente así de viejo, ahí deben estar los otros folios."),
+            LineaDialogo(Hablante.NACHO, "¡El Folio del Expediente! Vamos al Archivo, {jugador}.", Expresion.FELIZ)
+        ),
+        "cap15_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El Archivo Central e Histórico. Aquí se guarda la memoria escrita de la universidad, con documentos desde su fundación, en 1867."),
+            LineaDialogo(Hablante.NARRADOR, "Entre los estantes, en la penumbra, se encienden dos ojos grandes y dorados."),
+            LineaDialogo(Hablante.BUHO, "Uuh, uuh. Por fin llega alguien que busca en vez de sellar. Bienvenidos. Yo cuido este archivo."),
+            LineaDialogo(Hablante.NACHO, "¡Un búho! El búho es el símbolo de la universidad... y dicen que el plano de la Ciudad Universitaria tiene su forma.", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.BUHO, "Desde el aire, las alas son los edificios y la cabeza mira hacia la plaza. Llevo aquí desde que se trazó el campus, guardando lo que otros olvidan."),
+            LineaDialogo(Hablante.BUHO, "El Sello revolvió mis estantes, pero las cajas siguen en orden de número. Abre la del medio: si el folio es menor, está antes; si es mayor, después. Así nunca te pierdes, {jugador}.")
+        ),
+        "cap15_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "En la última caja, entre actas y fotografías viejas, brilla el segundo folio del Expediente de la Memoria."),
+            LineaDialogo(Hablante.BUHO, "Este expediente lo empezó la universidad el día que abrió sus puertas. Cada generación le agrega una hoja. La casilla nueva pide la firma de quien guarda la memoria."),
+            LineaDialogo(Hablante.NACHO, "¿Y no es usted quien la guarda?", Expresion.SORPRENDIDO),
+            LineaDialogo(Hablante.BUHO, "Yo cuido el archivo. La memoria la guarda quien la vive. Ya lo verás."),
+            LineaDialogo(Hablante.SELLO, "Pero si la firman... ¿se acaba todo?"),
+            LineaDialogo(Hablante.BUHO, "Terminar no es olvidar, pequeño Sello. Un recuerdo cerrado se guarda para siempre; uno pendiente se pierde en un cajón."),
+            LineaDialogo(Hablante.RECUERDO, "Los otros folios están entre periódicos viejos. Huele a tinta de imprenta... a la Hemeroteca."),
+            LineaDialogo(Hablante.NACHO, "Pues a la Hemeroteca, {jugador}. ¡Con búho y todo!", Expresion.FELIZ)
+        ),
+        "cap16_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Hemeroteca Nacional Universitaria Carlos Lleras Restrepo. Aquí se guardan periódicos y revistas de hace muchísimos años."),
+            LineaDialogo(Hablante.NARRADOR, "En cada periódico, donde debería ir la fecha, hay un sello rojo: PENDIENTE."),
+            LineaDialogo(Hablante.SELLO, "¡Si las noticias no tienen fecha, nunca se vuelven viejas! ¡Así nada queda en el pasado!"),
+            LineaDialogo(Hablante.BUHO, "Uuh. Una noticia sin fecha no es memoria, pequeño Sello: es un rumor. Nadie sabe si pasó ayer o hace un siglo."),
+            LineaDialogo(Hablante.NACHO, "Toca cada titular y devuélvele su año, {jugador}. ¡Seguro te sabes varios de los capítulos anteriores!", Expresion.DECIDIDO)
+        ),
+        "cap16_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "Las fechas vuelven a su lugar. Dentro del periódico más viejo, doblado en cuatro, aparece el tercer folio del Expediente."),
+            LineaDialogo(Hablante.SELLO, "Esa noticia del estadio... es de 1938. Ya pasó hace mucho, y todavía la recuerdan."),
+            LineaDialogo(Hablante.BUHO, "Exacto. Terminó hace mucho y sigue aquí. Eso es lo que hace la memoria."),
+            LineaDialogo(Hablante.ENREDO, "¡Ey, vi volar una hoja con sello de lacre! Iba hacia Ingeniería, a las ventanillas del CADE."),
+            LineaDialogo(Hablante.RECUERDO, "El CADE, junto al Laboratorio de Hidráulica. Allí los estudiantes de Ingeniería radican sus solicitudes."),
+            LineaDialogo(Hablante.NACHO, "¡Ya van tres folios! Al CADE, {jugador}.", Expresion.FELIZ)
+        ),
+        "cap17_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "El CADE de Ingeniería. En el primer piso, cada área tiene su ventanilla para radicar solicitudes, y arriba está la Secretaría de la Facultad."),
+            LineaDialogo(Hablante.NARRADOR, "Pero hoy todas las carpetas están amontonadas en la primera ventanilla, y la fila sale hasta la calle."),
+            LineaDialogo(Hablante.SELLO, "¡Si nadie atiende las solicitudes, nadie se gradúa! ¡Y si nadie se gradúa, nadie se va del campus!"),
+            LineaDialogo(Hablante.RECUERDO, "Así que eso es lo que te asusta: que la gente se vaya."),
+            LineaDialogo(Hablante.BUHO, "Pasa las carpetas a la tercera ventanilla, {jugador}. Una a la vez, y nunca una grande encima de una pequeña, que se dobla."),
+            LineaDialogo(Hablante.NACHO, "Paciencia de ventanilla, {jugador}. ¡Tú puedes!", Expresion.DECIDIDO)
+        ),
+        "cap17_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La última carpeta llega a su ventanilla. La fila avanza, y debajo de la pila aparece el cuarto folio del Expediente."),
+            LineaDialogo(Hablante.SELLO, "Cada semestre se van... Se gradúan, se despiden y el campus se queda con sus pupitres vacíos."),
+            LineaDialogo(Hablante.BUHO, "Y cada semestre llegan otros. Los que se van dejan su huella aquí: en el archivo, en los periódicos, en los edificios. Nadie se va del todo si alguien guarda su memoria."),
+            LineaDialogo(Hablante.SELLO, "¿Y quién la guarda?"),
+            LineaDialogo(Hablante.BUHO, "Eso lo dice la casilla. Ya tenemos los cuatro folios: solo falta firmar. Nos vemos en la Unidad Camilo Torres."),
+            LineaDialogo(Hablante.NACHO, "¡El último paso, {jugador}! Vamos a cerrar el Expediente de la Memoria.", Expresion.FELIZ)
+        ),
+        "cap18_intro" to listOf(
+            LineaDialogo(Hablante.NACHO, "La Unidad Camilo Torres, sus bloques con letra y número. Aquí funciona el Programa de Egresados, que sigue en contacto con quienes ya se graduaron."),
+            LineaDialogo(Hablante.BUHO, "Por eso los cité aquí. Este es el lugar donde la universidad recuerda a los que ya se fueron."),
+            LineaDialogo(Hablante.NARRADOR, "El Búho pone los cuatro folios sobre la mesa. Al final del último está la casilla en blanco: «Firma de quien guarda la memoria»."),
+            LineaDialogo(Hablante.SELLO, "¡No, no, no! ¡Si la firman se cierra el expediente! ¡PENDIENTE, PENDIENTE, PENDIENTE!"),
+            LineaDialogo(Hablante.ENREDO, "¡Se puso a sellar todas las páginas! Así estaba yo antes de la carrera..."),
+            LineaDialogo(Hablante.NACHO, "Aprueba cada página antes de que la tinta se seque, {jugador}. ¡Es el último sello!", Expresion.DECIDIDO)
+        ),
+        "cap18_outro" to listOf(
+            LineaDialogo(Hablante.NARRADOR, "La última página queda aprobada. Al Sello no le queda tinta: se sienta sobre la mesa, cansado."),
+            LineaDialogo(Hablante.SELLO, "Ya está... Ahora firmarán, el expediente se cerrará y todos se irán."),
+            LineaDialogo(Hablante.BUHO, "Mira dónde estamos, pequeño Sello. Aquí la universidad les sigue escribiendo a sus egresados, años después de su grado. Irse no es desaparecer."),
+            LineaDialogo(Hablante.RECUERDO, "Yo fui el Olvido. Quería que todo se borrara. Ahora sé que lo que se cierra bien se guarda para siempre."),
+            LineaDialogo(Hablante.BUHO, "La casilla pide la firma de quien guarda la memoria. {jugador}, recorriste el campus, devolviste fragmentos, ecos, hilos y folios. Esta firma es tuya."),
+            LineaDialogo(Hablante.NARRADOR, "{jugador} firma. La casilla brilla en dorado y el Expediente de la Memoria se cierra."),
+            LineaDialogo(Hablante.SELLO, "Entonces... ¿puedo estampar algo nuevo? Solo una vez."),
+            LineaDialogo(Hablante.NARRADOR, "El Sello toma aire, salta y estampa en la portada, en tinta dorada: COMPLETADO."),
+            LineaDialogo(Hablante.NACHO, "¡Lo lograste, {jugador}! Y tú también, Sello. ¡Qué nota!", Expresion.FELIZ)
+        ),
+        ESCENA_EPILOGO_ACTO4 to listOf(
+            LineaDialogo(Hablante.NARRADOR, "El Expediente de la Memoria descansa ahora en el Archivo Central e Histórico, junto a los papeles de 1867."),
+            LineaDialogo(Hablante.BUHO, "Cada noche lo reviso antes de dormir... bueno, antes de despertar. Los búhos somos así."),
+            LineaDialogo(Hablante.SELLO, "Y yo trabajo en las ventanillas. Ya no sello «PENDIENTE»: ahora sello «RECIBIDO». Me gusta más."),
+            LineaDialogo(Hablante.ENREDO, "¡Y yo le enseño a jugar a la hora del almuerzo!"),
+            LineaDialogo(Hablante.RECUERDO, "La Copa, la Madeja y el Expediente. Todo lo que el campus casi olvida, ahora alguien lo guarda."),
+            LineaDialogo(Hablante.NACHO, "Gracias, {jugador}. Tu firma quedó en el Expediente para siempre: eres Guardián de la Memoria de la Ciudad Blanca.", Expresion.FELIZ),
+            LineaDialogo(Hablante.NARRADOR, "Y si alguna noche miras el plano del campus desde lo alto, quizás veas al Búho mirándote de vuelta.")
         )
     )
 

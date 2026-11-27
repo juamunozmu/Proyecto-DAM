@@ -45,7 +45,7 @@ class HistoriaTest {
         assertEquals("edif_761", acto2.last().puntoId)
         assertEquals(Historia.ESCENA_EPILOGO_FINAL, acto2.last().escenaFinal)
         // Solo el último capítulo de cada acto tiene epílogo
-        assertEquals(3, Historia.capitulos.count { it.escenaFinal != null })
+        assertEquals(4, Historia.capitulos.count { it.escenaFinal != null })
     }
 
     @Test
@@ -65,9 +65,54 @@ class HistoriaTest {
         assertEquals(13, ultimo.numero)
         assertEquals(TipoMinijuego.RELEVOS, ultimo.minijuego)
         assertEquals(Historia.ESCENA_EPILOGO_ACTO3, ultimo.escenaFinal)
-        assertEquals(ultimo, Historia.capitulos.last())
         assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO3, "Ana").isNotEmpty())
         assertEquals("Los Hilos de la Memoria", Historia.titulosActos[ultimo.acto])
+    }
+
+    @Test
+    fun `quien terminó el acto III sigue con el acto IV en el Uriel Gutiérrez`() {
+        val primero = Historia.capitulosDelActo(4).first()
+        assertEquals(14, primero.numero)
+        assertEquals("edif_861", primero.puntoId)
+        assertEquals("madeja_memoria", primero.itemRequeridoId)
+        assertEquals(primero.puntoId, CatalogoItems.obtenerPorId("madeja_memoria")?.desbloqueaPuntoId)
+        assertEquals("El Sello Pendiente", Historia.titulosActos[4])
+        val retosHastaActo3 = (1..3).flatMap { Historia.capitulosDelActo(it) }.map { it.retoId }
+        assertEquals(primero, Historia.capituloActual(retosHastaActo3))
+    }
+
+    @Test
+    fun `los folios del acto IV abren cada capítulo en orden`() {
+        val acto4 = Historia.capitulosDelActo(4)
+        assertEquals(listOf("edif_861", "edif_500B", "edif_571", "edif_408A", "edif_862"), acto4.map { it.puntoId })
+        acto4.zipWithNext().forEach { (anterior, siguiente) ->
+            assertEquals(siguiente.puntoId, CatalogoItems.obtenerPorId(anterior.itemRecompensaId)?.desbloqueaPuntoId)
+        }
+    }
+
+    @Test
+    fun `el acto IV termina con la firma en la Unidad Camilo Torres y su epílogo`() {
+        val ultimo = Historia.capitulosDelActo(4).last()
+        assertEquals(18, ultimo.numero)
+        assertEquals("edif_862", ultimo.puntoId)
+        assertEquals(TipoMinijuego.EXPEDIENTE, ultimo.minijuego)
+        assertEquals(Historia.ESCENA_EPILOGO_ACTO4, ultimo.escenaFinal)
+        assertEquals(ultimo, Historia.capitulos.last())
+        assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO4, "Ana").any { it.hablante == Hablante.BUHO })
+        // El jugador firma: su nombre aparece en el cierre del capítulo
+        assertTrue(Historia.escena(ultimo.escenaOutro, "Ana").any { "Ana firma" in it.texto })
+    }
+
+    @Test
+    fun `el Sello y el Búho aparecen en el acto IV`() {
+        val escenas = Historia.capitulosDelActo(4).flatMap {
+            Historia.escena(it.escenaIntro, "Ana") + Historia.escena(it.escenaOutro, "Ana")
+        }
+        assertTrue(escenas.any { it.hablante == Hablante.SELLO })
+        assertTrue(escenas.any { it.hablante == Hablante.BUHO })
+        // El Búho llega en el Archivo Central e Histórico
+        val archivo = Historia.capitulosDelActo(4).first { it.puntoId == "edif_500B" }
+        assertTrue(Historia.escena(archivo.escenaIntro, "Ana").any { it.hablante == Hablante.BUHO })
     }
 
     @Test

@@ -31,6 +31,8 @@ object Logros {
         val totalActo2 = Historia.capitulosDelActo(2).size
         val capitulosActo3 = hechosDelActo(3)
         val totalActo3 = Historia.capitulosDelActo(3).size
+        val capitulosActo4 = hechosDelActo(4)
+        val totalActo4 = Historia.capitulosDelActo(4).size
         val coleccionables = CatalogoItems.itemsColeccionables.count { it.id in perfil.itemsDesbloqueados }
         val perfectos = perfil.estrellasPorReto.values.count { it >= 3 }
         val retosLugar = RetosLugares.retos.count { it.retoId in perfil.retosCompletados }
@@ -154,6 +156,15 @@ object Logros {
                 desbloqueado = capitulosActo3 == totalActo3,
                 progreso = capitulosActo3,
                 meta = totalActo3
+            ),
+            Logro(
+                id = "firma_memoria",
+                titulo = "Firma de la Memoria",
+                descripcion = "Reúne los cuatro folios, firma el Expediente y termina el Acto IV",
+                emoji = "✍️",
+                desbloqueado = capitulosActo4 == totalActo4,
+                progreso = capitulosActo4,
+                meta = totalActo4
             )
         )
     }

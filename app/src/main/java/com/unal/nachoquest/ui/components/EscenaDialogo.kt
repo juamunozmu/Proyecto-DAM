@@ -92,6 +92,14 @@ private fun estiloDe(hablante: Hablante): EstiloHablante = when (hablante) {
         Color(0xFF2A1236), Color(0xFF6A2C7A), Color(0xFFFF8AD8),
         "EL ENREDO", Color(0xFF8E24AA), Color.White, Color(0xF0241030), Color(0xFFF6E8FF), cursiva = true
     )
+    Hablante.SELLO -> EstiloHablante(
+        Color(0xFF2B0B0B), Color(0xFF6D1B1B), Color(0xFFFF8A80),
+        "EL SELLO PENDIENTE", Color(0xFFC62828), Color.White, Color(0xF0260A0A), Color(0xFFFFEBEE), cursiva = true
+    )
+    Hablante.BUHO -> EstiloHablante(
+        Color(0xFF1C1408), Color(0xFF4E3A1E), Color(0xFFF2C94C),
+        "EL BÚHO", Color(0xFF6D4C2F), Color(0xFFF2C94C), Color(0xF01E160A), Color(0xFFFFF5DD), cursiva = true
+    )
     Hablante.NARRADOR -> EstiloHablante(
         NachoGreenDark, NachoGreen, NachoYellow,
         null, Color.Transparent, Color.Transparent, Color(0xCC000000), Color(0xFFEDEDED), cursiva = true
@@ -193,6 +201,8 @@ fun EscenaDialogo(
                 Hablante.OLVIDO -> Olvido(modifier = Modifier.size(240.dp))
                 Hablante.RECUERDO -> Olvido(modifier = Modifier.size(240.dp), dorado = true)
                 Hablante.ENREDO -> Enredo(modifier = Modifier.size(230.dp))
+                Hablante.SELLO -> Sello(modifier = Modifier.size(220.dp))
+                Hablante.BUHO -> Buho(modifier = Modifier.size(240.dp))
                 Hablante.NARRADOR -> Spacer(modifier = Modifier.size(190.dp))
             }
         }
