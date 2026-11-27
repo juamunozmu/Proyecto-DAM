@@ -176,7 +176,34 @@ object CatalogoItems {
             emojiIcono = "🧶",
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
+            desbloqueaPuntoId = "edif_861",
+            nombrePuntoDesbloqueado = "Edificio Uriel Gutiérrez",
             requisitoTexto = "Gánale al Enredo la carrera de relevos en el Centro Polideportivo"
+        ),
+        // ---------- Acto IV: los folios del Expediente de la Memoria ----------
+        ItemInventario(
+            id = "folio_uriel",
+            nombre = "Folio 1 del Expediente",
+            descripcion = "La primera hoja del Expediente de la Memoria, con su sello de lacre. Al final tiene una casilla en blanco: «Firma de quien guarda la memoria». Lleva al Archivo Central e Histórico.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            desbloqueaPuntoId = "edif_500B",
+            nombrePuntoDesbloqueado = "Archivo Central e Histórico",
+            requisitoTexto = "Pon cada trámite en su bandeja en el Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "folio_archivo",
+            nombre = "Folio 2 del Expediente",
+            descripcion = "La segunda hoja del Expediente de la Memoria. Estaba en la última caja del estante, entre actas y fotografías viejas. Huele a tinta de imprenta: lleva a la Hemeroteca.",
+            categoria = CategoriaItem.OBJETO,
+            emojiIcono = "📄",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            desbloqueaPuntoId = "edif_571",
+            nombrePuntoDesbloqueado = "Hemeroteca Nacional Universitaria",
+            requisitoTexto = "Encuentra los folios en los estantes del Archivo Central e Histórico"
         )
     )
 
@@ -310,6 +337,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
             requisitoTexto = "Supera el reto del Centro Polideportivo"
+        ),
+        ItemInventario(
+            id = "insignia_uriel",
+            nombre = "Ventanilla Ágil",
+            descripcion = "Para quienes despachan un trámite tras otro sin dejar nada pendiente.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🗂️",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            requisitoTexto = "Supera el reto del Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "insignia_archivo",
+            nombre = "Archivista Nocturno",
+            descripcion = "Para quienes buscan por la mitad, como enseña el Búho, y encuentran cualquier folio en pocos pasos.",
+            categoria = CategoriaItem.INSIGNIA,
+            emojiIcono = "🦉",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            requisitoTexto = "Supera el reto del Archivo Central e Histórico"
         )
     )
 
@@ -443,6 +490,26 @@ object CatalogoItems {
             puntoOrigenId = "edif_103",
             nombreLugarOrigen = "Centro Polideportivo",
             requisitoTexto = "Coleccionable encontrado en el Centro Polideportivo"
+        ),
+        ItemInventario(
+            id = "col_sello",
+            nombre = "Sello de Caucho",
+            descripcion = "Un sello de oficina con mango de madera, de los que se usaban para marcar cada trámite como recibido, aprobado o pendiente.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🔴",
+            puntoOrigenId = "edif_861",
+            nombreLugarOrigen = "Edificio Uriel Gutiérrez",
+            requisitoTexto = "Coleccionable encontrado en el Edificio Uriel Gutiérrez"
+        ),
+        ItemInventario(
+            id = "col_pluma",
+            nombre = "Pluma de Búho",
+            descripcion = "Una pluma suave que el Búho dejó entre los estantes. El búho es símbolo de la Universidad Nacional, y muchos ven su forma en el plano de la Ciudad Universitaria.",
+            categoria = CategoriaItem.COLECCIONABLE,
+            emojiIcono = "🪶",
+            puntoOrigenId = "edif_500B",
+            nombreLugarOrigen = "Archivo Central e Histórico",
+            requisitoTexto = "Coleccionable encontrado en el Archivo Central e Histórico"
         )
     )
 

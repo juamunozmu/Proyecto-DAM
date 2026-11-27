@@ -432,6 +432,59 @@ object BancoRetos {
                 insigniaRecompensaId = "insignia_relevos",
                 coleccionableRecompensaId = "col_testigo"
             )
+            // Las cuatro primeras eran del reto de lugar del edificio, que pasó a ser capítulo.
+            // Datos verificados en noviembre de 2026: la División de Registro de la Sede Bogotá
+            // atiende en el Polideportivo y se encarga de carnés y recibos de matrícula
+            "reto_uriel" -> RetoQuiz(
+                id = "reto_uriel",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 14: Todo Pendiente",
+                descripcion = "Donde se firma lo que hace andar la universidad.",
+                preguntas = listOf(
+                    Pregunta("uriel_1", "¿Quién fue Uriel Gutiérrez, que da nombre a este edificio?",
+                        listOf("Un estudiante asesinado en el campus", "Un rector de la universidad", "Un arquitecto", "Un presidente de Colombia"), 0),
+                    Pregunta("uriel_2", "¿En qué año murió Uriel Gutiérrez?",
+                        listOf("1954", "1929", "1948", "1971"), 0),
+                    Pregunta("uriel_3", "¿Quién gobernaba Colombia cuando murió Uriel Gutiérrez?",
+                        listOf("Gustavo Rojas Pinilla", "Alfonso López Pumarejo", "Carlos Lleras Restrepo", "Laureano Gómez"), 0),
+                    Pregunta("uriel_4", "¿Qué estudiante murió el 8 de junio de 1929, la otra fecha que recuerda el Día del Estudiante Caído?",
+                        listOf("Gonzalo Bravo Pérez", "Camilo Torres", "Jorge Eliécer Gaitán", "Manuel Ancízar"), 0),
+                    Pregunta("uriel_5", "En la Sede Bogotá, ¿qué oficina se encarga de la carnetización y de los recibos de matrícula?",
+                        listOf("La División de Registro", "La Biblioteca Central", "El Museo de Arte", "El Observatorio Astronómico"), 0)
+                ),
+                recompensaXp = 480,
+                recompensaMonedas = 95,
+                itemRecompensaId = "folio_uriel",
+                insigniaRecompensaId = "insignia_uriel",
+                coleccionableRecompensaId = "col_sello"
+            )
+            // Datos verificados en noviembre de 2026: el ACH recupera, organiza, preserva y divulga
+            // el patrimonio documental de la Sede Bogotá (Circular UNAL), tiene cerca de 9 km de
+            // archivo y su Fondo UN empieza en 1867; guarda fondos como el de Yu Takeuchi. La forma
+            // de búho del plano de Leopoldo Rother (1936-1940) es una lectura muy difundida
+            "reto_archivo" -> RetoQuiz(
+                id = "reto_archivo",
+                puntoInteresId = puntoId,
+                titulo = "Capítulo 15: El Guardián del Archivo",
+                descripcion = "La memoria escrita de la universidad.",
+                preguntas = listOf(
+                    Pregunta("archivo_1", "¿Qué hace el Archivo Central e Histórico de la Sede Bogotá?",
+                        listOf("Recupera, organiza, preserva y divulga los documentos históricos de la universidad", "Vende libros usados", "Presta salones para clase", "Expide los diplomas de grado"), 0),
+                    Pregunta("archivo_2", "Los documentos de la Universidad Nacional que guarda el archivo empiezan en el año de su fundación. ¿Cuál es?",
+                        listOf("1867", "1910", "1950", "1991"), 0),
+                    Pregunta("archivo_3", "¿El archivo personal de qué profesor japonés de matemáticas guarda el Archivo Central e Histórico?",
+                        listOf("Yu Takeuchi", "Akira Kurosawa", "Hideki Yukawa", "Hayao Miyazaki"), 0),
+                    Pregunta("archivo_4", "¿Qué animal, símbolo de la universidad, ven muchos en el plano de la Ciudad Universitaria?",
+                        listOf("Un búho", "Un cóndor", "Un jaguar", "Una mariposa"), 0),
+                    Pregunta("archivo_5", "Más o menos, ¿cuánto archivo central e histórico tiene la Universidad Nacional, si se pusieran las cajas en fila?",
+                        listOf("Cerca de 9 kilómetros", "Cerca de 9 metros", "Cerca de 90 centímetros", "Cerca de 900 kilómetros"), 0)
+                ),
+                recompensaXp = 510,
+                recompensaMonedas = 100,
+                itemRecompensaId = "folio_archivo",
+                insigniaRecompensaId = "insignia_archivo",
+                coleccionableRecompensaId = "col_pluma"
+            )
             else -> RetosLugares.porPunto(puntoId)?.let { lugar ->
                 RetoQuiz(
                     id = lugar.retoId,

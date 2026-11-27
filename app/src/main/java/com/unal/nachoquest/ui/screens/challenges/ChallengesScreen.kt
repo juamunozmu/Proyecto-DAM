@@ -51,6 +51,7 @@ import com.unal.nachoquest.domain.model.RetosLugares
 import com.unal.nachoquest.domain.model.TriviaDiaria
 import com.unal.nachoquest.ui.components.BotonJuego
 import com.unal.nachoquest.ui.components.Enredo
+import com.unal.nachoquest.ui.components.Sello
 import com.unal.nachoquest.ui.components.Etiqueta
 import com.unal.nachoquest.ui.components.Nacho
 import com.unal.nachoquest.ui.components.Olvido
@@ -443,9 +444,12 @@ private fun Encabezado(state: ChallengesUiState, onVerEscena: (String) -> Unit) 
                 )
             }
             Box(contentAlignment = Alignment.Center) {
-                // El rival del acto en curso: el Olvido en los actos I y II, el Enredo en el III
+                // El rival del acto en curso: el Olvido en los actos I y II, el Enredo en el III y el
+                // Sello Pendiente en el IV
                 if (!state.historiaCompletada) {
-                    if (state.actoActual >= 3) {
+                    if (state.actoActual >= 4) {
+                        Sello(modifier = Modifier.size(120.dp))
+                    } else if (state.actoActual == 3) {
                         Enredo(modifier = Modifier.size(120.dp))
                     } else {
                         Olvido(modifier = Modifier.size(120.dp))

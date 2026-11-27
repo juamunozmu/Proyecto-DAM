@@ -136,20 +136,6 @@ object RetosLugares {
             )
         ),
         RetoLugar(
-            puntoId = "edif_861",
-            nombre = "Edificio Uriel Gutiérrez",
-            preguntas = listOf(
-                p("uriel_1", "¿Quién fue Uriel Gutiérrez, que da nombre a este edificio?",
-                    "Un estudiante asesinado en el campus", "Un rector de la universidad", "Un arquitecto", "Un presidente de Colombia"),
-                p("uriel_2", "¿En qué año murió Uriel Gutiérrez?",
-                    "1954", "1929", "1948", "1971"),
-                p("uriel_3", "¿Quién gobernaba Colombia cuando murió Uriel Gutiérrez?",
-                    "Gustavo Rojas Pinilla", "Alfonso López Pumarejo", "Carlos Lleras Restrepo", "Laureano Gómez"),
-                p("uriel_4", "¿Qué estudiante murió el 8 de junio de 1929, la otra fecha que recuerda el Día del Estudiante Caído?",
-                    "Gonzalo Bravo Pérez", "Camilo Torres", "Jorge Eliécer Gaitán", "Manuel Ancízar")
-            )
-        ),
-        RetoLugar(
             puntoId = "edif_305",
             nombre = "Conservatorio de Música",
             preguntas = listOf(

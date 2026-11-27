@@ -329,6 +329,22 @@
             "categoria": "LABORATORIO"
         },
         {
+            "id": "edif_408A",
+            "nombre": "CADE de Ingeniería",
+            "edificio": "408A",
+            "descripcion": "Edificio de trámites de la Facultad de Ingeniería. En el primer piso se radican las solicitudes estudiantiles, en la ventanilla de cada área curricular, y allí funciona la Secretaría de Facultad.",
+            "latitud": 4.6380381,
+            "longitud": -74.0814869,
+            "tieneRetoDisponible": false,
+            "alias": [
+                "408A",
+                "CADE",
+                "CADE Ingeniería",
+                "Secretaría de Facultad de Ingeniería"
+            ],
+            "categoria": "SERVICIOS"
+        },
+        {
             "id": "edif_408",
             "nombre": "Laboratorio de Hidráulica",
             "edificio": "408",
@@ -1218,14 +1234,17 @@
         },
         {
             "id": "edif_500B",
-            "nombre": "Archivo Central Histórico",
+            "nombre": "Archivo Central e Histórico",
             "edificio": "500B",
-            "descripcion": "",
+            "descripcion": "Recupera, organiza, preserva y divulga el patrimonio documental de la Sede Bogotá, con documentos desde la fundación de la universidad en 1867.",
             "latitud": 4.6355481,
             "longitud": -74.0885605,
             "tieneRetoDisponible": false,
             "alias": [
-                "500B"
+                "500B",
+                "Archivo Central Histórico",
+                "Archivo Histórico",
+                "Archivo"
             ],
             "categoria": "BIBLIOTECA"
         },
@@ -1553,7 +1572,7 @@
             "id": "edif_861",
             "nombre": "Edificio Uriel Gutiérrez",
             "edificio": "861",
-            "descripcion": "Sede administrativa de la Universidad Nacional de Colombia ubicada en el costado occidental (Transversal 38 / CAN).",
+            "descripcion": "Sede administrativa de la Universidad Nacional de Colombia ubicada en el costado occidental (Transversal 38 / CAN). Lleva el nombre de Uriel Gutiérrez, estudiante asesinado en 1954.",
             "latitud": 4.6397474,
             "longitud": -74.090123,
             "tieneRetoDisponible": false,

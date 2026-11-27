@@ -65,9 +65,32 @@ class HistoriaTest {
         assertEquals(13, ultimo.numero)
         assertEquals(TipoMinijuego.RELEVOS, ultimo.minijuego)
         assertEquals(Historia.ESCENA_EPILOGO_ACTO3, ultimo.escenaFinal)
-        assertEquals(ultimo, Historia.capitulos.last())
         assertTrue(Historia.escena(Historia.ESCENA_EPILOGO_ACTO3, "Ana").isNotEmpty())
         assertEquals("Los Hilos de la Memoria", Historia.titulosActos[ultimo.acto])
+    }
+
+    @Test
+    fun `quien terminó el acto III sigue con el acto IV en el Uriel Gutiérrez`() {
+        val primero = Historia.capitulosDelActo(4).first()
+        assertEquals(14, primero.numero)
+        assertEquals("edif_861", primero.puntoId)
+        assertEquals("madeja_memoria", primero.itemRequeridoId)
+        assertEquals(primero.puntoId, CatalogoItems.obtenerPorId("madeja_memoria")?.desbloqueaPuntoId)
+        assertEquals("El Sello Pendiente", Historia.titulosActos[4])
+        val retosHastaActo3 = (1..3).flatMap { Historia.capitulosDelActo(it) }.map { it.retoId }
+        assertEquals(primero, Historia.capituloActual(retosHastaActo3))
+    }
+
+    @Test
+    fun `el Sello y el Búho aparecen en el acto IV`() {
+        val escenas = Historia.capitulosDelActo(4).flatMap {
+            Historia.escena(it.escenaIntro, "Ana") + Historia.escena(it.escenaOutro, "Ana")
+        }
+        assertTrue(escenas.any { it.hablante == Hablante.SELLO })
+        assertTrue(escenas.any { it.hablante == Hablante.BUHO })
+        // El Búho llega en el Archivo Central e Histórico
+        val archivo = Historia.capitulosDelActo(4).first { it.puntoId == "edif_500B" }
+        assertTrue(Historia.escena(archivo.escenaIntro, "Ana").any { it.hablante == Hablante.BUHO })
     }
 
     @Test
